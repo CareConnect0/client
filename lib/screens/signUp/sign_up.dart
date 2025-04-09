@@ -1,3 +1,4 @@
+import 'package:client/screens/signUp/terms.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatelessWidget {
@@ -5,6 +6,8 @@ class SignUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Terms(),
+    );
   }
 }

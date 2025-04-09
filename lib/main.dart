@@ -1,6 +1,7 @@
+import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/sign_in.dart';
-import 'package:client/screens/sign_up.dart';
+import 'package:client/screens/signUp/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -39,6 +40,8 @@ class CareConnect extends ConsumerWidget {
     return MaterialApp.router(
       title: 'CareConnect',
       theme: ThemeData(
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: CareConnectColor.neutral[50]!),
         appBarTheme: AppBarTheme(
             // systemOverlayStyle: SystemUiOverlayStyle(
             //   statusBarColor: Colors.transparent,
