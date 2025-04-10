@@ -2,7 +2,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/signUp/%08id_verification.dart';
 import 'package:client/screens/signUp/enroll_info.dart';
-import 'package:client/screens/sign_in.dart';
+import 'package:client/screens/signIn/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +18,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/signIn',
-        builder: (context, state) => const SignIn(),
+        builder: (context, state) => SignIn(),
       ),
       GoRoute(
         path: '/signUp',
