@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // 다중 체크 상태 관리
 final termsCheckedProvider = StateProvider<Map<String, bool>>((ref) {
@@ -31,6 +32,8 @@ final isEveryTermCheckedProvider = Provider<bool>((ref) {
   final checkedMap = ref.watch(termsCheckedProvider);
   return checkedMap.values.every((checked) => checked == true);
 });
+
+final PageController controller = PageController(initialPage: 0);
 
 class Terms extends ConsumerWidget {
   const Terms({super.key});
@@ -94,14 +97,19 @@ class Terms extends ConsumerWidget {
                 ref,
               ),
               SizedBox(height: 30),
-            ]
+            ],
+            Spacer(),
+            PageIndicator(),
+            SizedBox(
+              height: 39,
+            ),
           ],
         ),
       ),
       bottomSheet: GestureDetector(
         onTap: () {
           if (isAllChecked) {
-            context.go('/signIn');
+            context.go('/signUp/enrollInfo');
           }
         },
         child: Container(
@@ -167,6 +175,26 @@ class Terms extends ConsumerWidget {
         Medium_16px(text: title),
         Spacer(),
         SvgPicture.asset("assets/icons/chevron-right.svg"),
+      ],
+    );
+  }
+
+  Widget PageIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SmoothPageIndicator(
+          controller: controller,
+          count: 3,
+          axisDirection: Axis.horizontal,
+          effect: ScrollingDotsEffect(
+            spacing: 20,
+            dotWidth: 12,
+            dotHeight: 12,
+            dotColor: CareConnectColor.neutral[100]!,
+            activeDotColor: CareConnectColor.primary[900]!,
+          ),
+        ),
       ],
     );
   }

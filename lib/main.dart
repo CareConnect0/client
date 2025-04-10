@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/signUp',
         builder: (context, state) => const SignUp(),
       ),
+      GoRoute(
+        path: '/signUp/enrollInfo',
+        builder: (context, state) => EnrollInfo(),
+      ),
     ],
   );
 });
@@ -40,14 +45,18 @@ class CareConnect extends ConsumerWidget {
     return MaterialApp.router(
       title: 'CareConnect',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: CareConnectColor.neutral[50]!),
+        colorScheme: ColorScheme.fromSeed(seedColor: CareConnectColor.white),
         appBarTheme: AppBarTheme(
             // systemOverlayStyle: SystemUiOverlayStyle(
             //   statusBarColor: Colors.transparent,
             //   statusBarIconBrightness: Brightness.light,
             // ),
             ),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: CareConnectColor.neutral[700],
+          selectionColor: CareConnectColor.neutral[700],
+          selectionHandleColor: CareConnectColor.neutral[700],
+        ),
       ),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
