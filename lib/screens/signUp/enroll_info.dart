@@ -1,10 +1,9 @@
-import 'dart:collection';
-
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class EnrollInfo extends ConsumerWidget {
@@ -125,7 +124,11 @@ class EnrollInfo extends ConsumerWidget {
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid ? () {} : null,
+        onTap: isAllValid
+            ? () {
+                context.go('/signUp/idVerification');
+              }
+            : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
