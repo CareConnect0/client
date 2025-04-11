@@ -2,6 +2,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/signUp/%08check_verification.dart';
 import 'package:client/screens/signUp/%08id_verification.dart';
+import 'package:client/screens/signUp/congratulation.dart';
 import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/signIn/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
@@ -11,7 +12,7 @@ import 'package:go_router/go_router.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/signUp/congratulation',
     routes: [
       GoRoute(
         path: '/',
@@ -36,6 +37,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/signUp/checkVerification',
         builder: (context, state) => CheckVerification(),
+      ),
+      GoRoute(
+        path: '/signUp/congratulation',
+        builder: (context, state) => Congratulation(),
       ),
     ],
   );
