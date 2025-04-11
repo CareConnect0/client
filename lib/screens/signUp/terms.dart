@@ -185,7 +185,7 @@ class Terms extends ConsumerWidget {
       children: [
         SmoothPageIndicator(
           controller: controller,
-          count: 3,
+          count: 4,
           axisDirection: Axis.horizontal,
           effect: ScrollingDotsEffect(
             spacing: 20,

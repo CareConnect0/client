@@ -27,10 +27,12 @@ class EnrollInfo extends ConsumerWidget {
       final id = ref.watch(idProvider);
       final password = ref.watch(passwordProvider);
       final checkPassword = ref.watch(checkPasswordProvider);
+      final type = ref.watch(typeProvider);
       return id.isNotEmpty &&
           password.isNotEmpty &&
           checkPassword.isNotEmpty &&
-          password == checkPassword;
+          password == checkPassword &&
+          (type[0] == true || type[1] == true);
     });
     final isAllValid = ref.watch(isAllValidProvider);
 
@@ -126,7 +128,9 @@ class EnrollInfo extends ConsumerWidget {
       bottomSheet: GestureDetector(
         onTap: isAllValid
             ? () {
-                context.go('/signUp/idVerification');
+                type[0]
+                    ? context.go('/signUp/checkVerification')
+                    : context.go('/signUp/idVerification');
               }
             : null,
         child: Container(
@@ -310,7 +314,7 @@ class EnrollInfo extends ConsumerWidget {
       children: [
         SmoothPageIndicator(
           controller: controller,
-          count: 3,
+          count: 4,
           axisDirection: Axis.horizontal,
           effect: ScrollingDotsEffect(
             spacing: 20,

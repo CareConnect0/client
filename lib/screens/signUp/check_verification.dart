@@ -7,14 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class IdVerification extends ConsumerWidget {
-  IdVerification({super.key});
+class CheckVerification extends ConsumerWidget {
+  CheckVerification({super.key});
 
   final nameProvider = StateProvider<String>((ref) => '');
   final numberProvider = StateProvider<String>((ref) => '');
   final checkNumberProvider = StateProvider<String>((ref) => '');
 
   final PageController controller = PageController(initialPage: 2);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAllValidProvider = Provider<bool>((ref) {
@@ -33,9 +34,9 @@ class IdVerification extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Bold_24px(text: "본인 인증"),
+            Bold_24px(text: "피보호자 인증"),
             SizedBox(height: 11),
-            Medium_16px(text: "본인인증을 위해 필요한 정보를 입력해 주세요."),
+            Medium_16px(text: "피보호자 인증을 위해 필요한 정보를 입력해 주세요."),
             SizedBox(height: 40),
             nameTextField(ref),
             Spacer(),

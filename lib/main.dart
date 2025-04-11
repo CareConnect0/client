@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/signUp/%08check_verification.dart';
 import 'package:client/screens/signUp/%08id_verification.dart';
 import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/signIn/sign_in.dart';
@@ -31,7 +32,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/signUp/idVerification',
         builder: (context, state) => IdVerification(),
-      )
+      ),
+      GoRoute(
+        path: '/signUp/checkVerification',
+        builder: (context, state) => CheckVerification(),
+      ),
     ],
   );
 });
