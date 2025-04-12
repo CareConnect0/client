@@ -39,7 +39,7 @@ class IdVerification extends ConsumerWidget {
             SizedBox(height: 40),
             nameTextField(ref),
             Spacer(),
-            numberTextField(ref),
+            numberTextField(ref, context),
             SizedBox(
               height: 11,
             ),
@@ -124,7 +124,7 @@ class IdVerification extends ConsumerWidget {
     );
   }
 
-  Widget numberTextField(WidgetRef ref) {
+  Widget numberTextField(WidgetRef ref, context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -156,7 +156,7 @@ class IdVerification extends ConsumerWidget {
             ),
             suffixIcon: GestureDetector(
               onTap: () {
-                startTimer(ref);
+                startTimer(ref, context);
               },
               child: Container(
                 margin: EdgeInsets.only(top: 15, left: 8),
@@ -233,7 +233,7 @@ class IdVerification extends ConsumerWidget {
 
   Timer? timer;
   final timerProvider = StateProvider<int>((ref) => 300); // 5분
-  void startTimer(WidgetRef ref) {
+  void startTimer(WidgetRef ref, context) {
     timer?.cancel(); // 기존 타이머 중복 방지
     ref.read(timerProvider.notifier).state = 300;
 
@@ -241,6 +241,44 @@ class IdVerification extends ConsumerWidget {
       final remain = ref.read(timerProvider);
       if (remain <= 1) {
         t.cancel();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 34, horizontal: 34),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Medium_18px(text: "인증 요청 시간이 초과되었습니다."),
+                      Medium_18px(text: "재인증 후 시도해주세요."),
+                      SizedBox(
+                        height: 33,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          context.pop();
+                        },
+                        child: Container(
+                          width: 130,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: CareConnectColor.neutral[600],
+                          ),
+                          child: Center(
+                            child: Semibold_16px(
+                              text: "확인",
+                              color: CareConnectColor.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
       }
       ref.read(timerProvider.notifier).state--;
     });
