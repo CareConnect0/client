@@ -1,7 +1,7 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
-import 'package:client/screens/signUp/%08check_verification.dart';
-import 'package:client/screens/signUp/%08id_verification.dart';
+import 'package:client/screens/signUp/check_verification.dart';
+import 'package:client/screens/signUp/id_verification.dart';
 import 'package:client/screens/signUp/congratulation.dart';
 import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/signIn/sign_in.dart';
