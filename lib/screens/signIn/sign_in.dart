@@ -44,6 +44,13 @@ class SignIn extends ConsumerWidget {
               ),
             ),
             Spacer(),
+            Bold_26px(
+              text: '로그인',
+              color: CareConnectColor.white,
+            ),
+            SizedBox(
+              height: 130,
+            ),
             IdTextField(ref),
             SizedBox(
               height: 27,

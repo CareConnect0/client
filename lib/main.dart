@@ -6,16 +6,21 @@ import 'package:client/screens/signUp/congratulation.dart';
 import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/signIn/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
+import 'package:client/screens/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/signUp/congratulation',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
+        builder: (context, state) => Splash(),
+      ),
+      GoRoute(
+        path: '/home',
         builder: (context, state) => const Home(),
       ),
       GoRoute(
