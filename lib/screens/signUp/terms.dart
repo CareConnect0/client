@@ -141,25 +141,34 @@ class Terms extends ConsumerWidget {
     final isChecked = checkedMap[title] ?? false;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Transform.scale(
-          scale: 1.4,
-          child: Checkbox(
-            value: isChecked,
-            onChanged: (bool? value) {
-              ref.read(termsCheckedProvider.notifier).update((state) {
-                return {
-                  ...state,
-                  title: value ?? false,
-                };
-              });
-            },
-            activeColor: Colors.green,
-            checkColor: CareConnectColor.white,
-            side: const BorderSide(color: Colors.grey, width: 1),
+        InkWell(
+          onTap: () {
+            ref.read(termsCheckedProvider.notifier).update((state) {
+              return {
+                ...state,
+                title: !isChecked,
+              };
+            });
+          },
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isChecked
+                  ? CareConnectColor.primary[900]!
+                  : CareConnectColor.neutral[200]!,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.check,
+              size: 18,
+              color: CareConnectColor.white,
+            ),
           ),
         ),
-        SizedBox(width: 11),
+        SizedBox(width: 18),
         Container(
           padding: EdgeInsets.symmetric(vertical: 4.5, horizontal: 7.5),
           decoration: BoxDecoration(
