@@ -15,6 +15,8 @@ class EnrollInfo extends ConsumerWidget {
   final checkPasswordProvider = StateProvider<String>((ref) => '');
   final obscureProvider = StateProvider<bool>((ref) => true);
   final obscureCheckProvider = StateProvider<bool>((ref) => true);
+  final isPasswordFocusedProvider = StateProvider<bool>((ref) => false);
+  final isCheckPasswordFocusedProvider = StateProvider<bool>((ref) => false);
 
   final PageController controller = PageController(initialPage: 1);
 
@@ -199,54 +201,67 @@ class EnrollInfo extends ConsumerWidget {
 
   Widget PasswordTextField(WidgetRef ref) {
     final isObscure = ref.watch(obscureProvider);
+    final isFocused = ref.watch(isPasswordFocusedProvider);
+    final password = ref.watch(passwordProvider); // 입력된 비밀번호 값
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '비밀번호'),
-        SizedBox(
-          height: 6,
-        ),
-        TextFormField(
-          onChanged: (value) =>
-              ref.read(passwordProvider.notifier).state = value,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: CareConnectColor.black,
-          ),
-          obscureText: isObscure,
-          obscuringCharacter: '*',
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: CareConnectColor.neutral[100],
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: CareConnectColor.black),
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            labelText: "비밀번호를 입력해 주세요",
-            labelStyle: TextStyle(
-              fontFamily: 'Pretendard',
+        SizedBox(height: 6),
+        Focus(
+          onFocusChange: (hasFocus) {
+            ref.read(isPasswordFocusedProvider.notifier).state = hasFocus;
+          },
+          child: TextFormField(
+            onChanged: (value) =>
+                ref.read(passwordProvider.notifier).state = value,
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: CareConnectColor.neutral[400],
+              color: CareConnectColor.black,
             ),
-            suffixIcon: IconButton(
-              onPressed: () {
-                ref.read(obscureProvider.notifier).state =
-                    !ref.read(obscureProvider);
-              },
-              icon: SvgPicture.asset(
-                "assets/icons/eye-slash.svg",
-                color: CareConnectColor.black,
+            obscureText: isObscure,
+            obscuringCharacter: '*',
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
+              filled: true,
+              fillColor: CareConnectColor.neutral[100],
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: CareConnectColor.black),
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: "비밀번호를 입력해 주세요",
+              labelStyle: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: CareConnectColor.neutral[400],
+              ),
+
+              // ✅ focused거나 password가 비어있지 않으면 eye 아이콘 보이기
+              suffixIcon: (isFocused || password.isNotEmpty)
+                  ? IconButton(
+                      onPressed: () {
+                        ref.read(obscureProvider.notifier).state =
+                            !ref.read(obscureProvider);
+                      },
+                      icon: SvgPicture.asset(
+                        isObscure
+                            ? "assets/icons/eye-slash.svg"
+                            : "assets/icons/eye-open.svg",
+                        color: CareConnectColor.black,
+                      ),
+                    )
+                  : null,
+
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
           ),
         ),
       ],
@@ -255,53 +270,67 @@ class EnrollInfo extends ConsumerWidget {
 
   Widget CheckPasswordTextField(WidgetRef ref) {
     final isObscure = ref.watch(obscureCheckProvider);
+    final isFocused = ref.watch(isCheckPasswordFocusedProvider);
+    final checkPassword = ref.watch(checkPasswordProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '비밀번호 재입력'),
-        SizedBox(
-          height: 6,
-        ),
-        TextFormField(
-          onChanged: (value) =>
-              ref.read(checkPasswordProvider.notifier).state = value,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: CareConnectColor.black,
-          ),
-          obscureText: isObscure,
-          obscuringCharacter: '*',
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: CareConnectColor.neutral[100],
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: CareConnectColor.black),
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            labelText: "비밀번호를 한번 더 입력해 주세요",
-            labelStyle: TextStyle(
-              fontFamily: 'Pretendard',
+        SizedBox(height: 6),
+        Focus(
+          onFocusChange: (hasFocus) {
+            ref.read(isCheckPasswordFocusedProvider.notifier).state = hasFocus;
+          },
+          child: TextFormField(
+            onChanged: (value) =>
+                ref.read(checkPasswordProvider.notifier).state = value,
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: CareConnectColor.neutral[400],
+              color: CareConnectColor.black,
             ),
-            suffixIcon: IconButton(
-              onPressed: () {
-                ref.read(obscureCheckProvider.notifier).state =
-                    !ref.read(obscureCheckProvider);
-              },
-              icon: SvgPicture.asset(
-                "assets/icons/eye-slash.svg",
-                color: CareConnectColor.black,
+            obscureText: isObscure,
+            obscuringCharacter: '*',
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
+              filled: true,
+              fillColor: CareConnectColor.neutral[100],
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: CareConnectColor.black),
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: "비밀번호를 한번 더 입력해 주세요",
+              labelStyle: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: CareConnectColor.neutral[400],
+              ),
+
+              // 👇 focused 상태 또는 값이 있을 때만 아이콘 보이게
+              suffixIcon: (isFocused || checkPassword.isNotEmpty)
+                  ? IconButton(
+                      onPressed: () {
+                        ref.read(obscureCheckProvider.notifier).state =
+                            !ref.read(obscureCheckProvider);
+                      },
+                      icon: SvgPicture.asset(
+                        isObscure
+                            ? "assets/icons/eye-slash.svg"
+                            : "assets/icons/eye-open.svg",
+                        color: CareConnectColor.black,
+                      ),
+                    )
+                  : null,
+
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
           ),
         ),
       ],
