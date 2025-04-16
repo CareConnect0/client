@@ -204,12 +204,14 @@ class Semibold_22px extends StatelessWidget {
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
+  final TextAlign? textAlign;
 
   const Semibold_22px({
     Key? key,
     required this.text,
     this.color,
     this.overflow,
+    this.textAlign,
     this.style = const TextStyle(),
   }) : super(key: key);
 
@@ -217,11 +219,13 @@ class Semibold_22px extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
+      textAlign: textAlign ?? TextAlign.start,
       style: style.copyWith(
-          color: color ?? CareConnectColor.neutral[900],
-          fontFamily: 'Pretendard',
-          fontSize: 22,
-          fontWeight: FontWeight.w600),
+        color: color ?? CareConnectColor.neutral[900],
+        fontFamily: 'Pretendard',
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+      ),
       overflow: overflow ?? TextOverflow.clip,
     );
   }

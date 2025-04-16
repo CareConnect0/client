@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
 import 'package:client/screens/signUp/id_verification.dart';
 import 'package:client/screens/signUp/congratulation.dart';
@@ -13,15 +14,15 @@ import 'package:go_router/go_router.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/home',
     routes: [
       GoRoute(
         path: '/',
         builder: (context, state) => Splash(),
       ),
       GoRoute(
-        path: '/home',
-        builder: (context, state) => const Home(),
+        path: '/sign',
+        builder: (context, state) => const SplashSign(),
       ),
       GoRoute(
         path: '/signIn',
@@ -46,6 +47,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/signUp/congratulation',
         builder: (context, state) => Congratulation(),
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => Home(),
       ),
     ],
   );

@@ -23,9 +23,9 @@ class _SplashState extends ConsumerState<Splash>
   void initState() {
     super.initState();
 
-    // 3초 후 /home 이동
+    // 3초 후 /sign 이동
     Timer(const Duration(seconds: 3), () {
-      context.go('/home');
+      context.go('/sign');
     });
 
     // Progress animation
