@@ -1,4 +1,5 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/screens/calendar.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
@@ -51,6 +52,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/home',
         builder: (context, state) => Home(),
+      ),
+      GoRoute(
+        path: '/calendar',
+        builder: (context, state) => Calendar(),
       ),
     ],
   );
