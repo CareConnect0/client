@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/screens/timeTable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -318,6 +320,9 @@ class Calendar extends ConsumerWidget {
 
                   showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
+                    barrierColor: Colors.transparent,
+                    // backgroundColor: CareConnectColor.neutral[100],
                     builder: (context) => TimeTable(selected),
                   );
                 },
@@ -337,26 +342,6 @@ class Calendar extends ConsumerWidget {
           ],
         );
       },
-    );
-  }
-
-  Widget TimeTable(selected) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            DateFormat('yyyy년 MM월 dd일', 'ko_KR').format(selected),
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 16),
-        ],
-      ),
     );
   }
 }
