@@ -345,6 +345,34 @@ class Semibold_16px extends StatelessWidget {
 
 // pretendard medium
 
+class Medium_23px extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  final Color? color;
+  final TextOverflow? overflow;
+
+  const Medium_23px({
+    Key? key,
+    required this.text,
+    this.color,
+    this.overflow,
+    this.style = const TextStyle(),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: style.copyWith(
+          color: color ?? CareConnectColor.neutral[900],
+          fontFamily: 'Pretendard',
+          fontSize: 23,
+          fontWeight: FontWeight.w500),
+      overflow: overflow ?? TextOverflow.clip,
+    );
+  }
+}
+
 class Medium_20px extends StatelessWidget {
   final String text;
   final TextStyle style;
