@@ -1,6 +1,7 @@
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog.dart';
+import 'package:client/designs/TimePickerDialog.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -206,7 +207,16 @@ class TimeTable extends ConsumerWidget {
                 ),
                 child: CareConnectButton(
                   onPressed: () {
-                    // 일정 추가 로직 작성
+                    final timeState = ref.watch(selectedTimeProvider);
+                    showDialog(
+                      context: context,
+                      builder: (context) => CareConnectTimePickerDialog(
+                        onTimeSelected: (period, hour, minute) {
+                          print(
+                              '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');
+                        },
+                      ),
+                    );
                   },
                   text: '일정 추가하기',
                   textColor: CareConnectColor.white,
