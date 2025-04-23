@@ -30,8 +30,12 @@ class Home extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(context, '/', CareConnectColor.primary[900],
-                        "달력", "assets/icons/calendar.svg",
+                    child: MenuCard(
+                        context,
+                        '/calendar',
+                        CareConnectColor.primary[900],
+                        "달력",
+                        "assets/icons/calendar.svg",
                         hasNotification: hasCalendarNotification),
                   ),
                   SizedBox(

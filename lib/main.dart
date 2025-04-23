@@ -1,4 +1,5 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/screens/calendar.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
@@ -11,10 +12,12 @@ import 'package:client/screens/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/calendar',
     routes: [
       GoRoute(
         path: '/',
@@ -52,11 +55,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home',
         builder: (context, state) => Home(),
       ),
+      GoRoute(
+        path: '/calendar',
+        builder: (context, state) => Calendar(),
+      ),
     ],
   );
 });
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ko_KR', null);
   runApp(const ProviderScope(child: CareConnect()));
 }
 
@@ -85,6 +94,15 @@ class CareConnect extends ConsumerWidget {
       ),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      locale: const Locale('ko', 'KR'),
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }
