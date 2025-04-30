@@ -1,5 +1,7 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/calendar.dart';
+import 'package:client/screens/confirmSchedule.dart';
+import 'package:client/screens/record/enrollSchedule.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
@@ -9,6 +11,7 @@ import 'package:client/screens/signUp/enroll_info.dart';
 import 'package:client/screens/signIn/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:client/screens/splash.dart';
+import 'package:client/screens/timeTable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,6 +61,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/calendar',
         builder: (context, state) => Calendar(),
+      ),
+      GoRoute(
+        path: '/calendar/timetable',
+        name: 'TimeTable',
+        builder: (context, state) {
+          final selected = state.extra! as DateTime;
+          return TimeTable(selected);
+        },
+      ),
+      GoRoute(
+        path: '/calendar/enroll',
+        builder: (context, state) => EnrollSchedule(),
+      ),
+      GoRoute(
+        path: '/calendar/enroll/confirm',
+        builder: (context, state) => ConfirmSchedule(),
       ),
     ],
   );

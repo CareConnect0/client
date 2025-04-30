@@ -318,13 +318,7 @@ class Calendar extends ConsumerWidget {
                   ref.read(selectedDayProvider.notifier).state = selected;
                   ref.read(focusedDayProvider.notifier).state = focused;
 
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    // backgroundColor: CareConnectColor.neutral[100],
-                    builder: (context) => TimeTable(selected),
-                  );
+                  context.push('/calendar/timetable', extra: selected);
                 },
                 onFormatChanged: (format) {
                   ref.read(calendarFormatProvider.notifier).state = format;

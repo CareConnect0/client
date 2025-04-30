@@ -1,7 +1,9 @@
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog.dart';
+import 'package:client/designs/TimePickerDialog.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/scheduleInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -54,10 +56,50 @@ class TimeTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final schedule = ref.watch(scheduleProvider);
 
-    return FractionallySizedBox(
-      heightFactor: (MediaQuery.of(context).size.height - 100) /
-          MediaQuery.of(context).size.height,
-      child: Container(
+    return Scaffold(
+      backgroundColor: CareConnectColor.neutral[700],
+      appBar: AppBar(
+        backgroundColor: CareConnectColor.neutral[700],
+        surfaceTintColor: Colors.transparent,
+        title: Bold_22px(
+          text: "달력",
+          color: CareConnectColor.white,
+        ),
+        centerTitle: true,
+        leadingWidth: 97,
+        leading: InkWell(
+          onTap: () {
+            context.pop();
+          },
+          child: Row(
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              SizedBox(
+                width: 6,
+                height: 12,
+                child: SvgPicture.asset('assets/icons/chevron-left.svg'),
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Semibold_16px(
+                text: "뒤로가기",
+                color: CareConnectColor.white,
+              )
+            ],
+          ),
+        ),
+        shape: Border(
+          bottom: BorderSide(
+            color: CareConnectColor.neutral[200]!,
+            width: 1,
+          ),
+        ),
+      ),
+      body: Container(
+        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
         decoration: BoxDecoration(
           color: CareConnectColor.neutral[100],
           borderRadius: BorderRadius.only(
@@ -68,6 +110,7 @@ class TimeTable extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               width: double.infinity,
@@ -206,7 +249,32 @@ class TimeTable extends ConsumerWidget {
                 ),
                 child: CareConnectButton(
                   onPressed: () {
-                    // 일정 추가 로직 작성
+                    final timeState = ref.watch(selectedTimeProvider);
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) => CareConnectTimePickerDialog(
+                    //     onPressed: () => context.go('/calendar/enroll'),
+                    //     onTimeSelected: (period, hour, minute) {
+                    //       print(
+                    //           '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');
+                    //     },
+                    //   ),
+                    // );
+                    showDialog(
+                      context: context,
+                      builder: (context) => CareConnectTimePickerDialog(
+                        onTimeSelected: (period, hour, minute) {
+                          final timeString =
+                              '$period ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+                          final info = ScheduleInfo(
+                              date: selected, timeString: timeString);
+
+                          context.go('/calendar/enroll', extra: info);
+                        },
+                        onPressed: () {},
+                      ),
+                    );
                   },
                   text: '일정 추가하기',
                   textColor: CareConnectColor.white,
