@@ -3,6 +3,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog.dart';
 import 'package:client/designs/TimePickerDialog.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/scheduleInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -249,14 +250,29 @@ class TimeTable extends ConsumerWidget {
                 child: CareConnectButton(
                   onPressed: () {
                     final timeState = ref.watch(selectedTimeProvider);
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) => CareConnectTimePickerDialog(
+                    //     onPressed: () => context.go('/calendar/enroll'),
+                    //     onTimeSelected: (period, hour, minute) {
+                    //       print(
+                    //           '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');
+                    //     },
+                    //   ),
+                    // );
                     showDialog(
                       context: context,
                       builder: (context) => CareConnectTimePickerDialog(
-                        onPressed: () => context.go('/calendar/enroll'),
                         onTimeSelected: (period, hour, minute) {
-                          print(
-                              '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');
+                          final timeString =
+                              '$period ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+                          final info = ScheduleInfo(
+                              date: selected, timeString: timeString);
+
+                          context.go('/calendar/enroll', extra: info);
                         },
+                        onPressed: () {},
                       ),
                     );
                   },

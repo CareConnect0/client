@@ -26,10 +26,9 @@ class RecorderViewModel extends Notifier<RecorderModel> {
 
   Future<void> _initRecorder() async {
     final status = await Permission.microphone.request();
-    if (!status.isGranted) throw Exception("🎤 마이크 권한이 필요합니다.");
+    if (!status.isGranted) throw Exception("마이크 권한이 필요합니다.");
     await _recorder.openRecorder();
     await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
-    print("🎤 녹음기 초기화 완료");
   }
 
   Future<void> toggleRecording(RecorderController controller) async {
@@ -42,7 +41,7 @@ class RecorderViewModel extends Notifier<RecorderModel> {
 
       state = state.copyWith(
         isRecording: false,
-        statusText: "녹음 완료!",
+        statusText: "",
         recordedFilePath: path,
         readyForNavigation: true,
       );
@@ -73,5 +72,15 @@ class RecorderViewModel extends Notifier<RecorderModel> {
 
   void resetNavigation() {
     state = state.copyWith(readyForNavigation: false);
+  }
+
+  void resetAll() {
+    state = RecorderModel(
+      isRecording: false,
+      statusText: "버튼을 누르고\n가까이서 말해주세요",
+      recordedFilePath: null,
+      readyForNavigation: false,
+    );
+    ref.read(recorderVolumeProvider.notifier).state = 0.0;
   }
 }

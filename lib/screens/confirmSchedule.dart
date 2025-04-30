@@ -1,20 +1,29 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/scheduleInfo.dart';
+import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-class ConfirmSchedule extends StatelessWidget {
+class ConfirmSchedule extends ConsumerWidget {
   const ConfirmSchedule({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final info = GoRouterState.of(context).extra as ScheduleInfo;
+
+    Text('선택한 날짜: ${DateFormat('yyyy-MM-dd').format(info.date)}');
+
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Bold_36px(
-            text: "n월 nn일\nnn시nn분에\n[  ]\n일정을 등록할까요?",
+            text:
+                "${DateFormat('MM월 dd일').format(info.date)}\n${info.timeString}에\n[  ]\n일정을 등록할까요?",
             color: CareConnectColor.white,
           ),
           SizedBox(
@@ -26,7 +35,8 @@ class ConfirmSchedule extends StatelessWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () => '/calendar',
+                    onTap: () =>
+                        context.go('/calendar/timetable', extra: info.date),
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
@@ -47,7 +57,10 @@ class ConfirmSchedule extends StatelessWidget {
                 ),
                 Expanded(
                   child: InkWell(
-                    onTap: () => context.go('/calendar/enroll'),
+                    onTap: () {
+                      ref.read(recorderViewModelProvider.notifier).resetAll();
+                      context.go('/calendar/enroll', extra: info);
+                    },
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(

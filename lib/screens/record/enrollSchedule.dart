@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/scheduleInfo.dart';
 import 'package:client/screens/record/controller.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:client/screens/record/waveform/view.dart';
@@ -24,10 +25,12 @@ class _EnrollScheduleState extends ConsumerState<EnrollSchedule> {
     final recorderController = ref.read(recorderControllerProvider); // 파형 컨트롤러
 
     // 녹음이 끝나면 자동 이동
+    final info = GoRouterState.of(context).extra as ScheduleInfo;
     if (recorderState.readyForNavigation) {
       Future.microtask(() {
         viewModelNotifier.resetNavigation();
-        context.go('/calendar/enroll/confirm');
+
+        context.go('/calendar/enroll/confirm', extra: info);
       });
     }
 
