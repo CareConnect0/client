@@ -29,6 +29,36 @@ class Bold_32px extends StatelessWidget {
   }
 }
 
+class Bold_30px extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  final Color? color;
+  final TextOverflow? overflow;
+
+  const Bold_30px({
+    Key? key,
+    required this.text,
+    this.color,
+    this.overflow,
+    this.style = const TextStyle(),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: style.copyWith(
+        color: color ?? CareConnectColor.neutral[900],
+        fontFamily: 'Pretendard',
+        fontSize: 30,
+        fontWeight: FontWeight.w700,
+      ),
+      textAlign: TextAlign.center,
+      overflow: overflow ?? TextOverflow.clip,
+    );
+  }
+}
+
 class Bold_26px extends StatelessWidget {
   final String text;
   final TextStyle style;

@@ -1,5 +1,7 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/screens/calendar.dart';
+import 'package:client/screens/confirmSchedule.dart';
+import 'package:client/screens/enrollSchedule.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
@@ -17,7 +19,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/calendar',
+    initialLocation: '/calendar/enroll',
     routes: [
       GoRoute(
         path: '/',
@@ -58,6 +60,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/calendar',
         builder: (context, state) => Calendar(),
+      ),
+      GoRoute(
+        path: '/calendar/enroll',
+        builder: (context, state) => EnrollSchedule(),
+      ),
+      GoRoute(
+        path: '/calendar/enroll/confirm',
+        builder: (context, state) => ConfirmSchedule(),
       ),
     ],
   );

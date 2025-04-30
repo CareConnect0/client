@@ -211,6 +211,7 @@ class TimeTable extends ConsumerWidget {
                     showDialog(
                       context: context,
                       builder: (context) => CareConnectTimePickerDialog(
+                        onPressed: () => context.go('/calendar/enroll'),
                         onTimeSelected: (period, hour, minute) {
                           print(
                               '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');

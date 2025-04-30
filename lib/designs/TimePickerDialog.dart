@@ -67,8 +67,9 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
   final List<int> minutes = List.generate(60, (index) => index);
 
   final Function(String period, int hour, int minute)? onTimeSelected;
+  final VoidCallback? onPressed;
 
-  CareConnectTimePickerDialog({Key? key, this.onTimeSelected})
+  CareConnectTimePickerDialog({Key? key, this.onTimeSelected, this.onPressed})
       : super(key: key);
 
   @override
@@ -113,7 +114,8 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                       onTimeSelected!(
                           timeState.period, timeState.hour, timeState.minute);
                     }
-                    Navigator.of(context).pop(timeState);
+                    // Navigator.of(context).pop(timeState);
+                    onPressed?.call();
                   },
                   child: Semibold_18px(
                     text: "다음",
