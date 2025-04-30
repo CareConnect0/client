@@ -55,10 +55,50 @@ class TimeTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final schedule = ref.watch(scheduleProvider);
 
-    return FractionallySizedBox(
-      heightFactor: (MediaQuery.of(context).size.height - 100) /
-          MediaQuery.of(context).size.height,
-      child: Container(
+    return Scaffold(
+      backgroundColor: CareConnectColor.neutral[700],
+      appBar: AppBar(
+        backgroundColor: CareConnectColor.neutral[700],
+        surfaceTintColor: Colors.transparent,
+        title: Bold_22px(
+          text: "달력",
+          color: CareConnectColor.white,
+        ),
+        centerTitle: true,
+        leadingWidth: 97,
+        leading: InkWell(
+          onTap: () {
+            context.pop();
+          },
+          child: Row(
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              SizedBox(
+                width: 6,
+                height: 12,
+                child: SvgPicture.asset('assets/icons/chevron-left.svg'),
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Semibold_16px(
+                text: "뒤로가기",
+                color: CareConnectColor.white,
+              )
+            ],
+          ),
+        ),
+        shape: Border(
+          bottom: BorderSide(
+            color: CareConnectColor.neutral[200]!,
+            width: 1,
+          ),
+        ),
+      ),
+      body: Container(
+        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
         decoration: BoxDecoration(
           color: CareConnectColor.neutral[100],
           borderRadius: BorderRadius.only(
@@ -69,6 +109,7 @@ class TimeTable extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               width: double.infinity,
