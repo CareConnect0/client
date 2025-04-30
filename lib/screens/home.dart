@@ -176,7 +176,7 @@ class Home extends ConsumerWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: CareConnectColor.secondary[500],
+                color: CareConnectColor.secondary[300],
                 shape: BoxShape.circle,
               ),
             ),

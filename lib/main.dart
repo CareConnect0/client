@@ -20,7 +20,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/calendar',
+    initialLocation: '/home',
     routes: [
       GoRoute(
         path: '/',
