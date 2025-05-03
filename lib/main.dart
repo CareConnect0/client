@@ -1,6 +1,9 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/model/messengerInfo.dart';
 import 'package:client/screens/calendar.dart';
+import 'package:client/screens/confirmMessage.dart';
 import 'package:client/screens/confirmSchedule.dart';
+import 'package:client/screens/enrollMessage.dart';
 import 'package:client/screens/enrollSchedule.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/contact.dart';
@@ -86,7 +89,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/contact/messenger',
-        builder: (context, state) => Messenger(),
+        name: 'Messenger',
+        builder: (context, state) {
+          final selected = state.extra! as MessengerInfo;
+          return Messenger(selected);
+        },
+      ),
+      GoRoute(
+        path: '/contact/messenger/enroll',
+        builder: (context, state) => EnrollMessage(),
+      ),
+      GoRoute(
+        path: '/contact/messenger/confirm',
+        builder: (context, state) => ConfirmMessage(),
       ),
     ],
   );

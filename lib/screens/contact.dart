@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/messengerInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -145,7 +146,10 @@ class Contact extends ConsumerWidget {
           const SizedBox(height: 36),
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
-          onTap: () => context.push('/contact/messenger'),
+          onTap: () {
+            context.push('/contact/messenger',
+                extra: MessengerInfo(person: 'example'));
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
             decoration: BoxDecoration(

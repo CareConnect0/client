@@ -1,13 +1,15 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTextFormField.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/messengerInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class Messenger extends ConsumerWidget {
-  Messenger({super.key});
+  final MessengerInfo selected;
+  Messenger(this.selected, {super.key});
 
   final List<Map<String, dynamic>> messages = [
     {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
@@ -104,23 +106,30 @@ class Messenger extends ConsumerWidget {
                   SizedBox(
                     width: 8,
                   ),
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 2,
-                        color: CareConnectColor.white,
-                      ),
-                    ),
+                  InkWell(
+                    onTap: () {
+                      final info = MessengerInfo(person: 'example');
+
+                      context.go('/contact/messenger/enroll', extra: info);
+                    },
                     child: Container(
-                      width: 31,
-                      height: 31,
-                      margin: const EdgeInsets.all(3),
+                      width: 42,
+                      height: 42,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: CareConnectColor.secondary[500],
+                        border: Border.all(
+                          width: 2,
+                          color: CareConnectColor.white,
+                        ),
+                      ),
+                      child: Container(
+                        width: 31,
+                        height: 31,
+                        margin: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: CareConnectColor.secondary[500],
+                        ),
                       ),
                     ),
                   ),
