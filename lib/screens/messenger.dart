@@ -53,6 +53,7 @@ class Messenger extends ConsumerWidget {
         ),
       ),
       body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
@@ -92,6 +93,41 @@ class Messenger extends ConsumerWidget {
                     CareConnectColor.neutral[700]!.withOpacity(0),
                     CareConnectColor.neutral[700]!.withOpacity(0),
                     CareConnectColor.neutral[700]!.withOpacity(0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            child: InkWell(
+              onTap: () => context.go('/home'),
+              child: Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: CareConnectColor.primary[900],
+                  boxShadow: [
+                    BoxShadow(
+                      color: CareConnectColor.black.withOpacity(0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/home.svg',
+                      color: CareConnectColor.white,
+                    ),
+                    Semibold_16px(
+                      text: "홈 화면",
+                      color: CareConnectColor.white,
+                    ),
                   ],
                 ),
               ),
