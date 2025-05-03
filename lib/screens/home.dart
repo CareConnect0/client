@@ -42,8 +42,12 @@ class Home extends ConsumerWidget {
                     width: 13,
                   ),
                   Expanded(
-                    child: MenuCard(context, '/', CareConnectColor.primary[400],
-                        "메신저", "assets/icons/mail.svg",
+                    child: MenuCard(
+                        context,
+                        '/messenger',
+                        CareConnectColor.primary[400],
+                        "메신저",
+                        "assets/icons/mail.svg",
                         hasNotification: hasMessengerNotification),
                   ),
                 ],
