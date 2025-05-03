@@ -13,7 +13,12 @@ class Messenger extends ConsumerWidget {
     {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
     {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
     {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
+    {
+      "text":
+          "조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!",
+      "isMe": true,
+      "time": "오후 3:13"
+    },
     {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
     {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
     {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
@@ -216,20 +221,30 @@ class MyMessageBubble extends ConsumerWidget {
       children: [
         Semibold_11px(text: time, color: CareConnectColor.white),
         const SizedBox(width: 8),
-        Stack(children: [
-          SvgPicture.asset("assets/icons/chat-bubble.svg"),
-          Container(
-            padding:
-                const EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 32),
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.6),
-            color: Colors.transparent,
-            child: Medium_16px(
-              text: message,
-              color: CareConnectColor.white,
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: 15),
+              padding: const EdgeInsets.only(
+                  top: 20, bottom: 20, left: 20, right: 32),
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.6),
+              decoration: BoxDecoration(
+                color: CareConnectColor.neutral[600],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Medium_16px(
+                text: message,
+                color: CareConnectColor.white,
+              ),
             ),
-          ),
-        ]),
+            Positioned(
+                top: 20,
+                child:
+                    SvgPicture.asset("assets/icons/chat-bubble-polygon.svg")),
+          ],
+        )
       ],
     );
   }
