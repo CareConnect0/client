@@ -81,10 +81,13 @@ class Messenger extends ConsumerWidget {
             // 메세지 표시 영역
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+                reverse: true,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
-                  final msg = messages[index];
+                  final reversedMessages = messages.reversed.toList();
+                  final msg = reversedMessages[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: msg["isMe"]
