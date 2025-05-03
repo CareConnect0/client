@@ -52,30 +52,52 @@ class Messenger extends ConsumerWidget {
           ),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              width: double.infinity,
+      body: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: CareConnectColor.primary[900],
+                  ),
+                  child: Center(
+                    child: Bold_20px(
+                      text: "누구에게 연락할까요?",
+                      color: CareConnectColor.white,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 28,
+                ),
+                Expanded(child: PersonCard(ref)),
+              ],
+            ),
+          ),
+          IgnorePointer(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: CareConnectColor.primary[900],
-              ),
-              child: Center(
-                child: Bold_20px(
-                  text: "누구에게 연락할까요?",
-                  color: CareConnectColor.white,
+                gradient: LinearGradient(
+                  end: Alignment.topCenter,
+                  begin: Alignment.bottomCenter,
+                  colors: [
+                    CareConnectColor.neutral[700]!.withOpacity(1),
+                    CareConnectColor.neutral[700]!.withOpacity(0.3),
+                    CareConnectColor.neutral[700]!.withOpacity(0),
+                    CareConnectColor.neutral[700]!.withOpacity(0),
+                    CareConnectColor.neutral[700]!.withOpacity(0),
+                  ],
                 ),
               ),
             ),
-            SizedBox(
-              height: 28,
-            ),
-            Expanded(child: PersonCard(ref)),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
