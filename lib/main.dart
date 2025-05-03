@@ -3,6 +3,7 @@ import 'package:client/screens/calendar.dart';
 import 'package:client/screens/confirmSchedule.dart';
 import 'package:client/screens/enrollSchedule.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/contact.dart';
 import 'package:client/screens/messenger.dart';
 import 'package:client/screens/splashSign.dart';
 import 'package:client/screens/signUp/check_verification.dart';
@@ -80,7 +81,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ConfirmSchedule(),
       ),
       GoRoute(
-        path: '/messenger',
+        path: '/contact',
+        builder: (context, state) => Contact(),
+      ),
+      GoRoute(
+        path: '/contact/messenger',
         builder: (context, state) => Messenger(),
       ),
     ],
