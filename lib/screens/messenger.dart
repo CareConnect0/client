@@ -1,4 +1,5 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/designs/CareConnectTextFormField.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +7,22 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class Messenger extends ConsumerWidget {
-  const Messenger({super.key});
+  Messenger({super.key});
+
+  final List<Map<String, dynamic>> messages = [
+    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
+    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
+    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
+    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
+    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
+    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
+    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
+    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
+    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
+    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
+    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
+    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -53,18 +69,62 @@ class Messenger extends ConsumerWidget {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 36, horizontal: 20),
         child: Column(
           children: [
             // 메세지 표시 영역
-            OtherMessageBubble(),
-            SizedBox(
-              height: 20,
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final msg = messages[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: msg["isMe"]
+                        ? MyMessageBubble(
+                            message: msg["text"], time: msg["time"])
+                        : OtherMessageBubble(
+                            message: msg["text"], time: msg["time"]),
+                  );
+                },
+              ),
             ),
-            MyMessageBubble(
-                message: "Bibendum dictum quisque id aliquam.",
-                time: "오후 3:14"),
             // 메세지 입력 영역
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              height: 70,
+              child: Row(
+                children: [
+                  Expanded(child: CareConnectTextFormField()),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        color: CareConnectColor.white,
+                      ),
+                    ),
+                    child: Container(
+                      width: 31,
+                      height: 31,
+                      margin: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CareConnectColor.secondary[500],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 34,
+            ),
           ],
         ),
       ),
@@ -73,7 +133,10 @@ class Messenger extends ConsumerWidget {
 }
 
 class OtherMessageBubble extends ConsumerWidget {
-  const OtherMessageBubble({super.key});
+  final String message;
+  final String time;
+  const OtherMessageBubble(
+      {required this.message, required this.time, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,8 +184,7 @@ class OtherMessageBubble extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                     color: CareConnectColor.primary[400],
                   ),
-                  child: Medium_16px(
-                      text: "Lorem ipsum dolor sit amet consectetur. "),
+                  child: Medium_16px(text: message),
                 ),
               ],
             ),
@@ -132,7 +194,7 @@ class OtherMessageBubble extends ConsumerWidget {
           width: 8,
         ),
         Semibold_11px(
-          text: "오후 3:14",
+          text: time,
           color: CareConnectColor.white,
         ),
       ],
