@@ -8,10 +8,13 @@ import 'package:go_router/go_router.dart';
 class Home extends ConsumerWidget {
   Home({super.key});
 
+  final typeProvider = StateProvider<List<bool>>((ref) => [false, true]);
+  final selectProvider = StateProvider<int>((ref) => 0);
   final calendarNotificationProvider = StateProvider<bool>((ref) => true);
   final messengerNotificationProvider = StateProvider<bool>((ref) => true);
   final AINotificationProvider = StateProvider<bool>((ref) => true);
   final emergencyNotificationProvider = StateProvider<bool>((ref) => true);
+  final names = ["아버지", "어머니", "할머니"];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +24,7 @@ class Home extends ConsumerWidget {
     final hasEmergencyNotification = ref.watch(emergencyNotificationProvider);
 
     return Scaffold(
-      appBar: AppbarWidget(context),
+      appBar: AppbarWidget(context, ref),
       body: Padding(
         padding: const EdgeInsets.all(38.0),
         child: Column(
@@ -89,7 +92,10 @@ class Home extends ConsumerWidget {
     );
   }
 
-  PreferredSizeWidget AppbarWidget(BuildContext context) {
+  PreferredSizeWidget AppbarWidget(BuildContext context, ref) {
+    final type = ref.watch(typeProvider);
+    final selectedIndex = ref.watch(selectProvider);
+
     return PreferredSize(
       preferredSize: Size.fromHeight(160),
       child: Container(
@@ -129,10 +135,54 @@ class Home extends ConsumerWidget {
               text: "안녕하세요, 사용자님",
               color: CareConnectColor.white,
             ),
-            Medium_20px(
-              text: "오늘도 좋은 하루 되세요.",
-              color: CareConnectColor.white,
-            ),
+            type[0] == true
+                ? Medium_20px(
+                    text: "오늘도 좋은 하루 되세요.",
+                    color: CareConnectColor.white,
+                  )
+                : Row(
+                    children: [
+                      Medium_20px(
+                        text: "현재 피보호자님은 ",
+                        color: CareConnectColor.white,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => SelectDialog(ref),
+                          );
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6600),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            children: [
+                              Medium_18px(
+                                text: names[selectedIndex],
+                                color: CareConnectColor.white,
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              SvgPicture.asset(
+                                "assets/icons/chevron-down.svg",
+                                color: CareConnectColor.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Medium_20px(
+                        text: " 입니다.",
+                        color: CareConnectColor.white,
+                      )
+                    ],
+                  ),
             SizedBox(
               height: 20,
             )
@@ -196,6 +246,99 @@ class Home extends ConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+
+  Widget SelectDialog(ref) {
+    final selectedIndex = ref.watch(selectProvider);
+
+    return Dialog(
+      backgroundColor: CareConnectColor.neutral[100],
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+        constraints: BoxConstraints(maxHeight: 500),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: CareConnectColor.primary[900],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Bold_20px(
+                  text: "피보호자를 선택해주세요",
+                  color: CareConnectColor.white,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: names.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () {
+                    ref.read(selectProvider.notifier).state = index;
+                    context.pop();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 12),
+                    padding: EdgeInsets.symmetric(vertical: 24, horizontal: 30),
+                    decoration: BoxDecoration(
+                      color: selectedIndex == index
+                          ? CareConnectColor.primary[200]
+                          : CareConnectColor.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: selectedIndex == index
+                            ? CareConnectColor.primary[900]!
+                            : CareConnectColor.white,
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: AssetImage("assets/images/example.png")),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Medium_20px(text: names[index]),
+                        Spacer(),
+                        selectedIndex == index
+                            ? Container(
+                                width: 30,
+                                height: 30,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: CareConnectColor.primary[900],
+                                ),
+                                child:
+                                    SvgPicture.asset("assets/icons/check.svg"),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
