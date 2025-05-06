@@ -44,7 +44,7 @@ class Home extends ConsumerWidget {
                   Expanded(
                     child: MenuCard(
                         context,
-                        '/messenger',
+                        '/contact',
                         CareConnectColor.primary[400],
                         "메신저",
                         "assets/icons/mail.svg",
@@ -60,8 +60,12 @@ class Home extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(context, '/', CareConnectColor.primary[200],
-                        "AI\n대화 도우미", "assets/icons/user.svg",
+                    child: MenuCard(
+                        context,
+                        '/ai',
+                        CareConnectColor.primary[200],
+                        "AI\n대화 도우미",
+                        "assets/icons/user.svg",
                         hasNotification: hasAINotification),
                   ),
                   SizedBox(
@@ -140,7 +144,7 @@ class Home extends ConsumerWidget {
       children: [
         InkWell(
           onTap: () {
-            context.go(link);
+            context.push(link);
           },
           child: Container(
             width: double.infinity,
