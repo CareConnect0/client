@@ -56,8 +56,8 @@ class Profile extends ConsumerWidget {
       body: Column(
         children: [
           Myprofile(),
-          OptionCard1("비밀번호 변경"),
-          OptionCard1("이용약관"),
+          OptionCard1(context, "비밀번호 변경", '/profile/password'),
+          OptionCard1(context, "이용약관", '/profile/terms'),
           OptionCard2(
             context,
             "로그아웃",
@@ -132,9 +132,11 @@ class Profile extends ConsumerWidget {
     );
   }
 
-  Widget OptionCard1(text) {
+  Widget OptionCard1(BuildContext context, text, done) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        context.push(done);
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: 20),
         child: Row(
