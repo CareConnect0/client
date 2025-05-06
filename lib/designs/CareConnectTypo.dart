@@ -149,12 +149,14 @@ class Bold_22px extends StatelessWidget {
   final TextStyle style;
   final Color? color;
   final TextOverflow? overflow;
+  final TextAlign? textAlign;
 
   const Bold_22px({
     Key? key,
     required this.text,
     this.color,
     this.overflow,
+    this.textAlign,
     this.style = const TextStyle(),
   }) : super(key: key);
 
@@ -168,6 +170,7 @@ class Bold_22px extends StatelessWidget {
           fontSize: 22,
           fontWeight: FontWeight.w700),
       overflow: overflow ?? TextOverflow.clip,
+      textAlign: textAlign ?? TextAlign.center,
     );
   }
 }
