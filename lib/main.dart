@@ -4,8 +4,10 @@ import 'package:client/screens/ai_chat.dart';
 import 'package:client/screens/calendar.dart';
 import 'package:client/screens/confirmMessage.dart';
 import 'package:client/screens/confirmSchedule.dart';
+import 'package:client/screens/confirm_ai_chat.dart';
 import 'package:client/screens/enrollMessage.dart';
 import 'package:client/screens/enrollSchedule.dart';
+import 'package:client/screens/enroll_ai_chat.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/contact.dart';
 import 'package:client/screens/messenger.dart';
@@ -107,6 +109,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/ai',
         builder: (context, state) => AIChat(),
+      ),
+      GoRoute(
+        path: '/ai/enroll',
+        builder: (context, state) => EnrollAiChat(),
+      ),
+      GoRoute(
+        path: '/ai/confirm',
+        builder: (context, state) => ConfirmAiChat(),
       ),
     ],
   );
