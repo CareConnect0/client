@@ -3,7 +3,7 @@
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
-import 'package:client/screens/timeTable.dart';
+import 'package:client/screens/schedule/timeTable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
