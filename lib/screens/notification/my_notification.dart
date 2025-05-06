@@ -89,7 +89,8 @@ class MyNotification extends ConsumerWidget {
             child: ListView.builder(
               itemCount: 3,
               itemBuilder: (context, index) {
-                return NotificationCard(CareConnectColor.secondary[200]);
+                return NotificationCard(
+                    context, CareConnectColor.secondary[200]);
               },
             ),
           ),
@@ -98,40 +99,43 @@ class MyNotification extends ConsumerWidget {
     );
   }
 
-  Widget NotificationCard(color) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CareConnectColor.black.withOpacity(0.25),
-            blurRadius: 2,
-            offset: Offset(0, 0),
-          ),
-        ],
-        color: color,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semibold_18px(text: "00님이\n[]일정을 등록했습니다!"),
-              SizedBox(
-                height: 16,
-              ),
-              Medium_16px(
-                text: "2025.03.01",
-                color: CareConnectColor.neutral[600],
-              ),
-            ],
-          ),
-          Spacer(),
-          SvgPicture.asset("assets/icons/x-close.svg"),
-        ],
+  Widget NotificationCard(BuildContext context, color) {
+    return InkWell(
+      onTap: () => context.push('/notification/emergency'),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: CareConnectColor.black.withOpacity(0.25),
+              blurRadius: 2,
+              offset: Offset(0, 0),
+            ),
+          ],
+          color: color,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semibold_18px(text: "00님이\n[]일정을 등록했습니다!"),
+                SizedBox(
+                  height: 16,
+                ),
+                Medium_16px(
+                  text: "2025.03.01",
+                  color: CareConnectColor.neutral[600],
+                ),
+              ],
+            ),
+            Spacer(),
+            SvgPicture.asset("assets/icons/x-close.svg"),
+          ],
+        ),
       ),
     );
   }
