@@ -1,4 +1,5 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/designs/CareConnectDialog2.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,8 +58,20 @@ class Profile extends ConsumerWidget {
           Myprofile(),
           OptionCard1("비밀번호 변경"),
           OptionCard1("이용약관"),
-          OptionCard2("로그아웃"),
-          OptionCard2("회원탈퇴"),
+          OptionCard2(
+            context,
+            "로그아웃",
+            "로그아웃하시겠습니까?",
+            "로그아웃해도 정보가 사라지지 않습니다.",
+            '/',
+          ),
+          OptionCard2(
+            context,
+            "회원탈퇴",
+            "회원을 탈퇴하시겠습니까?",
+            "회원탈퇴 시, 모든 정보가 사라집니다.",
+            '/',
+          ),
         ],
       ),
     );
@@ -135,9 +148,20 @@ class Profile extends ConsumerWidget {
     );
   }
 
-  Widget OptionCard2(text) {
+  Widget OptionCard2(BuildContext context, text, titleText, contentText, done) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => CareConnectDialog2(
+            titleText: titleText,
+            contentText: contentText,
+            done: () {
+              context.go(done);
+            },
+          ),
+        );
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: 20),
         child: Row(
