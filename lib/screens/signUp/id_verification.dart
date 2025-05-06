@@ -57,7 +57,7 @@ class IdVerification extends ConsumerWidget {
       bottomSheet: GestureDetector(
         onTap: isAllValid
             ? () {
-                context.go('/SignIn');
+                context.go('/signUp/congratulation');
               }
             : null,
         child: Container(

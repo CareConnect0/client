@@ -73,7 +73,7 @@ class SignIn extends ConsumerWidget {
       bottomSheet: GestureDetector(
         onTap: isAllValid
             ? () {
-                // context.go('/home');
+                context.go('/home');
               }
             : null,
         child: Container(

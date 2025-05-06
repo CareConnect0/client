@@ -25,7 +25,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/contact',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
