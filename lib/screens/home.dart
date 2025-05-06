@@ -21,7 +21,7 @@ class Home extends ConsumerWidget {
     final hasEmergencyNotification = ref.watch(emergencyNotificationProvider);
 
     return Scaffold(
-      appBar: AppbarWidget(),
+      appBar: AppbarWidget(context),
       body: Padding(
         padding: const EdgeInsets.all(38.0),
         child: Column(
@@ -89,7 +89,7 @@ class Home extends ConsumerWidget {
     );
   }
 
-  PreferredSizeWidget AppbarWidget() {
+  PreferredSizeWidget AppbarWidget(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(160),
       child: Container(
@@ -116,7 +116,10 @@ class Home extends ConsumerWidget {
                 Spacer(),
                 SvgPicture.asset('assets/icons/bell.svg'),
                 SizedBox(width: 12),
-                SvgPicture.asset('assets/icons/settings.svg'),
+                InkWell(
+                  onTap: () => context.push('/profile'),
+                  child: SvgPicture.asset('assets/icons/settings.svg'),
+                ),
               ],
             ),
             Bold_26px(
