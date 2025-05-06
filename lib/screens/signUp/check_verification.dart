@@ -14,6 +14,9 @@ class CheckVerification extends ConsumerWidget {
   final numberProvider = StateProvider<String>((ref) => '');
   final checkNumberProvider = StateProvider<String>((ref) => '');
 
+  final familyNameProvider = StateProvider<String>((ref) => '');
+  final familyIdProvider = StateProvider<String>((ref) => '');
+
   final PageController controller = PageController(initialPage: 2);
 
   @override
@@ -22,9 +25,13 @@ class CheckVerification extends ConsumerWidget {
       final name = ref.watch(nameProvider);
       final number = ref.watch(numberProvider);
       final checkNumber = ref.watch(checkNumberProvider);
+      final familyName = ref.watch(familyNameProvider);
+      final familyId = ref.watch(familyIdProvider);
       return name.isNotEmpty &&
           number.isNotEmpty &&
-          checkNumber.isNotEmpty; // 추후 인증번호와 확인하는 로직 추가
+          checkNumber.isNotEmpty && // 추후 인증번호와 확인하는 로직 추가
+          familyName.isNotEmpty &&
+          familyId.isNotEmpty;
     });
     final isAllValid = ref.watch(isAllValidProvider);
 
@@ -39,12 +46,16 @@ class CheckVerification extends ConsumerWidget {
             Medium_16px(text: "피보호자 인증을 위해 필요한 정보를 입력해 주세요."),
             SizedBox(height: 40),
             nameTextField(ref),
-            Spacer(),
+            SizedBox(
+              height: 24,
+            ),
             numberTextField(ref, context),
             SizedBox(
-              height: 11,
+              height: 8,
             ),
             checkNumberTextField(ref),
+            Spacer(),
+            familyField(ref, context),
             SizedBox(
               height: 32,
             ),
@@ -58,7 +69,7 @@ class CheckVerification extends ConsumerWidget {
       bottomSheet: GestureDetector(
         onTap: isAllValid
             ? () {
-                context.go('/SignIn');
+                context.go('/signUp/congratulation');
               }
             : null,
         child: Container(
@@ -112,6 +123,79 @@ class CheckVerification extends ConsumerWidget {
             ),
             floatingLabelBehavior: FloatingLabelBehavior.never,
             labelText: "이름을 입력해 주세요",
+            labelStyle: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: CareConnectColor.neutral[400],
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget familyField(WidgetRef ref, context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semibold_20px(text: '보호자 인증'),
+        SizedBox(
+          height: 6,
+        ),
+        TextFormField(
+          onChanged: (value) =>
+              ref.read(familyNameProvider.notifier).state = value,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: CareConnectColor.black),
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: CareConnectColor.neutral[100],
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: CareConnectColor.black),
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+            labelText: "이름을 입력해 주세요",
+            labelStyle: TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: CareConnectColor.neutral[400],
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+          ),
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        TextFormField(
+          onChanged: (value) =>
+              ref.read(familyIdProvider.notifier).state = value,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: CareConnectColor.black),
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: CareConnectColor.neutral[100],
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: CareConnectColor.black),
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+            labelText: "아이디를 입력해 주세요",
             labelStyle: TextStyle(
               fontFamily: 'Pretendard',
               fontSize: 18,
