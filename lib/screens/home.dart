@@ -114,7 +114,10 @@ class Home extends ConsumerWidget {
             Row(
               children: [
                 Spacer(),
-                SvgPicture.asset('assets/icons/bell.svg'),
+                InkWell(
+                  onTap: () => context.push('/notification'),
+                  child: SvgPicture.asset('assets/icons/bell.svg'),
+                ),
                 SizedBox(width: 12),
                 InkWell(
                   onTap: () => context.push('/profile'),
