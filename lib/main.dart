@@ -1,6 +1,9 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
+import 'package:client/screens/profile/change_password.dart';
+import 'package:client/screens/profile/profile.dart';
+import 'package:client/screens/profile/profile_terms.dart';
 import 'package:client/screens/schedule/calendar.dart';
 import 'package:client/screens/messenger/confirmMessage.dart';
 import 'package:client/screens/schedule/confirmSchedule.dart';
@@ -117,6 +120,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/ai/confirm',
         builder: (context, state) => ConfirmAiChat(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => Profile(),
+      ),
+      GoRoute(
+        path: '/profile/password',
+        builder: (context, state) => ChangePassword(),
+      ),
+      GoRoute(
+        path: '/profile/terms',
+        builder: (context, state) => ProfileTerms(),
       ),
     ],
   );
