@@ -1,6 +1,7 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
+import 'package:client/screens/notification/my_notification.dart';
 import 'package:client/screens/profile/change_password.dart';
 import 'package:client/screens/profile/profile.dart';
 import 'package:client/screens/profile/profile_terms.dart';
@@ -132,6 +133,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/terms',
         builder: (context, state) => ProfileTerms(),
+      ),
+      GoRoute(
+        path: '/notification',
+        builder: (context, state) => MyNotification(),
       ),
     ],
   );
