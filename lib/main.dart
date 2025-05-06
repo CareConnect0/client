@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/model/messengerInfo.dart';
+import 'package:client/screens/ai_chat.dart';
 import 'package:client/screens/calendar.dart';
 import 'package:client/screens/confirmMessage.dart';
 import 'package:client/screens/confirmSchedule.dart';
@@ -25,7 +26,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/home',
     routes: [
       GoRoute(
         path: '/',
@@ -102,6 +103,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/contact/messenger/confirm',
         builder: (context, state) => ConfirmMessage(),
+      ),
+      GoRoute(
+        path: '/ai',
+        builder: (context, state) => AIChat(),
       ),
     ],
   );
