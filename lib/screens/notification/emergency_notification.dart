@@ -3,6 +3,7 @@ import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class EmergencyNotification extends ConsumerWidget {
   const EmergencyNotification({super.key});
@@ -11,12 +12,36 @@ class EmergencyNotification extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
+      appBar: AppBar(
+        backgroundColor: CareConnectColor.neutral[700],
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+        leadingWidth: 97,
+        leading: InkWell(
+          onTap: () => context.pop(),
+          child: Row(
+            children: [
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 6,
+                height: 12,
+                child: SvgPicture.asset('assets/icons/chevron-left.svg'),
+              ),
+              const SizedBox(width: 8),
+              Semibold_16px(
+                text: "뒤로가기",
+                color: CareConnectColor.white,
+              )
+            ],
+          ),
+        ),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
+            height: MediaQuery.of(context).size.height * 0.05,
           ),
           SvgPicture.asset("assets/icons/emergency-notification.svg"),
           SizedBox(

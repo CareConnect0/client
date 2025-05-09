@@ -22,6 +22,7 @@ class Home extends ConsumerWidget {
     final hasMessengerNotification = ref.watch(messengerNotificationProvider);
     final hasAINotification = ref.watch(AINotificationProvider);
     final hasEmergencyNotification = ref.watch(emergencyNotificationProvider);
+    final type = ref.watch(typeProvider);
 
     return Scaffold(
       appBar: AppbarWidget(context, ref),
@@ -75,13 +76,21 @@ class Home extends ConsumerWidget {
                     width: 13,
                   ),
                   Expanded(
-                    child: MenuCard(
-                        context,
-                        '/',
-                        CareConnectColor.secondary[500],
-                        "비상 호출",
-                        "assets/icons/emergency-call.svg",
-                        hasNotification: hasEmergencyNotification),
+                    child: type[1] == true
+                        ? MenuCard(
+                            context,
+                            '/emergency/family',
+                            CareConnectColor.secondary[500],
+                            "비상 호출",
+                            "assets/icons/emergency-call.svg",
+                            hasNotification: hasEmergencyNotification)
+                        : MenuCard(
+                            context,
+                            '/emergency',
+                            CareConnectColor.secondary[500],
+                            "비상 호출",
+                            "assets/icons/emergency-call.svg",
+                            hasNotification: hasEmergencyNotification),
                   ),
                 ],
               ),
