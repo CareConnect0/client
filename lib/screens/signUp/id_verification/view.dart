@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/singUp.dart';
+import 'package:client/screens/signUp/id_verification/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class IdVerification extends ConsumerWidget {
-  IdVerification({super.key});
+  final SignupData signupData;
+  IdVerification({super.key, required this.signupData});
 
   final nameProvider = StateProvider<String>((ref) => '');
   final numberProvider = StateProvider<String>((ref) => '');
@@ -56,7 +59,14 @@ class IdVerification extends ConsumerWidget {
       ),
       bottomSheet: GestureDetector(
         onTap: isAllValid
-            ? () {
+            ? () async {
+                final updatedData = signupData.copyWith(
+                  name: ref.read(nameProvider),
+                  phoneNumber: ref.read(numberProvider),
+                );
+                await ref
+                    .read(authViewModelProvider)
+                    .signUpWithFullData(updatedData);
                 context.go('/signUp/congratulation');
               }
             : null,

@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/model/messengerInfo.dart';
+import 'package:client/model/singUp.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
 import 'package:client/screens/emergency/emergency_family.dart';
 import 'package:client/screens/notification/emergency_notification.dart';
@@ -17,11 +18,12 @@ import 'package:client/screens/ai_chat/enroll_ai_chat.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/messenger/contact.dart';
 import 'package:client/screens/messenger/messenger.dart';
+import 'package:client/screens/signUp/connect_family/view.dart';
 import 'package:client/screens/splashSign.dart';
-import 'package:client/screens/signUp/check_verification.dart';
-import 'package:client/screens/signUp/id_verification.dart';
+import 'package:client/screens/signUp/check_verification/view.dart';
+import 'package:client/screens/signUp/id_verification/view.dart';
 import 'package:client/screens/signUp/congratulation.dart';
-import 'package:client/screens/signUp/enroll_info.dart';
+import 'package:client/screens/signUp/enroll_info/view.dart';
 import 'package:client/screens/signIn/sign_in.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:client/screens/splash.dart';
@@ -34,7 +36,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
@@ -58,11 +60,23 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/signUp/idVerification',
-        builder: (context, state) => IdVerification(),
+        builder: (context, state) {
+          final signupData = state.extra as SignupData;
+          return IdVerification(signupData: signupData);
+        },
       ),
       GoRoute(
         path: '/signUp/checkVerification',
-        builder: (context, state) => CheckVerification(),
+        builder: (context, state) {
+          final signupData = state.extra as SignupData;
+          return CheckVerification(signupData: signupData);
+        },
+      ),
+      GoRoute(
+        path: '/signUp/checkVerification/connect',
+        builder: (context, state) {
+          return ConnectFamily();
+        },
       ),
       GoRoute(
         path: '/signUp/congratulation',
