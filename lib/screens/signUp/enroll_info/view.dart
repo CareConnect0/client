@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/singUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,12 +25,11 @@ class EnrollInfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final type = ref.watch(typeProvider); // 현재 상태
     final typeNotifier = ref.read(typeProvider.notifier); // 상태 변경용
+    final id = ref.watch(idProvider);
+    final password = ref.watch(passwordProvider);
+    final checkPassword = ref.watch(checkPasswordProvider);
 
     final isAllValidProvider = Provider<bool>((ref) {
-      final id = ref.watch(idProvider);
-      final password = ref.watch(passwordProvider);
-      final checkPassword = ref.watch(checkPasswordProvider);
-      final type = ref.watch(typeProvider);
       return id.isNotEmpty &&
           password.isNotEmpty &&
           checkPassword.isNotEmpty &&
@@ -130,9 +130,17 @@ class EnrollInfo extends ConsumerWidget {
       bottomSheet: GestureDetector(
         onTap: isAllValid
             ? () {
+                final userType = type[0] ? 'DEPENDENT' : 'GUARDIAN';
+
+                final signupData = SignupData(
+                  username: id,
+                  password: password,
+                  userType: userType,
+                );
+
                 type[0]
-                    ? context.go('/signUp/checkVerification')
-                    : context.go('/signUp/idVerification');
+                    ? context.go('/signUp/checkVerification', extra: signupData)
+                    : context.go('/signUp/idVerification', extra: signupData);
               }
             : null,
         child: Container(
