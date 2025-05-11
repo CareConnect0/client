@@ -3,6 +3,7 @@ import 'package:client/model/messengerInfo.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
 import 'package:client/screens/emergency/emergency_family.dart';
+import 'package:client/screens/emergency_player/view.dart';
 import 'package:client/screens/notification/emergency_notification.dart';
 import 'package:client/screens/notification/my_notification.dart';
 import 'package:client/screens/profile/change_password.dart';
@@ -161,6 +162,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/emergency/family',
         builder: (context, state) => EmergencyFamily(),
+      ),
+      GoRoute(
+        path: '/emergency/player',
+        builder: (context, state) => EmergencyPlayer(),
       ),
     ],
   );
