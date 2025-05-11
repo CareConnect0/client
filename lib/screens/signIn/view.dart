@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/screens/signIn/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -72,8 +73,22 @@ class SignIn extends ConsumerWidget {
       ),
       bottomSheet: GestureDetector(
         onTap: isAllValid
-            ? () {
-                context.go('/home');
+            ? () async {
+                final username = ref.read(idProvider);
+                final password = ref.read(passwordProvider);
+                final authViewModel = ref.read(authViewModelProvider.notifier);
+
+                await authViewModel.login(username, password);
+
+                final loginState = ref.read(authViewModelProvider);
+                if (loginState is AsyncData) {
+                  context.go('/home');
+                } else if (loginState is AsyncError) {
+                  // 에러 처리
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('로그인 실패: ${loginState.error}')),
+                  );
+                }
               }
             : null,
         child: Container(
