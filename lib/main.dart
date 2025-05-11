@@ -25,7 +25,7 @@ import 'package:client/screens/signUp/check_verification/view.dart';
 import 'package:client/screens/signUp/id_verification/view.dart';
 import 'package:client/screens/signUp/congratulation.dart';
 import 'package:client/screens/signUp/enroll_info/view.dart';
-import 'package:client/screens/signIn/sign_in.dart';
+import 'package:client/screens/signIn/view.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:client/screens/splash.dart';
 import 'package:client/screens/schedule/timeTable.dart';
