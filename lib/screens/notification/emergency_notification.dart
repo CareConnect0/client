@@ -70,7 +70,9 @@ class EmergencyNotification extends ConsumerWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/emergency/record');
+                    },
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
