@@ -46,4 +46,27 @@ class AuthViewModel extends StateNotifier<AsyncValue<void>> {
       state = AsyncError(e, st);
     }
   }
+
+  /// 휴대폰 인증번호 전송
+  Future<void> sendPhoneVerificationCode(String phoneNumber) async {
+    final repo = ref.read(authRepositoryProvider);
+    try {
+      await repo.sendVerificationCode(phoneNumber);
+      print('✅ 인증번호 전송 완료');
+    } catch (e) {
+      print('❌ 인증번호 전송 실패: $e');
+    }
+  }
+
+  /// 전화번호 인증번호 확인
+  Future<void> verifyPhoneVerificationCode(
+      String phoneNumber, String code) async {
+    final repo = ref.read(authRepositoryProvider);
+    try {
+      await repo.verifyPhoneVerificationCode(phoneNumber, code);
+      print('✅ 인증번호 확인 완료');
+    } catch (e) {
+      print('❌ 인증번호 확인 실패: $e');
+    }
+  }
 }
