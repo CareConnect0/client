@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,11 +9,13 @@ class CareConnectDialog2 extends ConsumerWidget {
   final String titleText;
   final String contentText;
   final VoidCallback done;
+  final bool hasTextField;
 
   CareConnectDialog2({
     required this.titleText,
     required this.contentText,
     required this.done,
+    this.hasTextField = false,
   });
 
   @override
@@ -38,6 +41,41 @@ class CareConnectDialog2 extends ConsumerWidget {
             SizedBox(
               height: 33,
             ),
+            if (hasTextField) ...[
+              TextField(
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: CareConnectColor.black),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: CareConnectColor.neutral[100],
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  labelText: "비밀번호를 입력해주세요",
+                  labelStyle: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: CareConnectColor.neutral[400],
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+                obscureText: true,
+                onChanged: (value) {
+                  ref.read(withdrawalPasswordProvider.notifier).state = value;
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
             Row(
               children: [
                 Expanded(

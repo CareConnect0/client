@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:client/Auth/auth_storage.dart';
-import 'package:client/model/singUp.dart';
+import 'package:client/api/Auth/auth_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,24 +33,6 @@ class AuthRepository {
       };
     } else {
       throw Exception('로그인 실패: ${response.statusCode}');
-    }
-  }
-
-  /// 회원가입
-  Future<void> signup(SignupData data) async {
-    final url = Uri.parse('$_baseUrl/users/signup');
-
-    print('📦 보내는 데이터: ${jsonEncode(data.toJson())}');
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data.toJson()),
-    );
-
-    if (response.statusCode != 201) {
-      final decodedBody = jsonDecode(utf8.decode(response.bodyBytes));
-      throw Exception(decodedBody['message'] ?? '회원가입 실패');
     }
   }
 

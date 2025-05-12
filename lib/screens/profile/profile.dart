@@ -1,12 +1,14 @@
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog2.dart';
 import 'package:client/designs/CareConnectTypo.dart';
-import 'package:client/Auth/auth_repository.dart';
-import 'package:client/Auth/auth_storage.dart';
+import 'package:client/api/Auth/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+
+final withdrawalPasswordProvider = StateProvider<String>((ref) => '');
 
 class Profile extends ConsumerWidget {
   Profile({super.key});
@@ -69,6 +71,7 @@ class Profile extends ConsumerWidget {
               await AuthRepository().logout();
               context.go('/');
             },
+            false,
           ),
           OptionCard2(
             context,
@@ -76,9 +79,12 @@ class Profile extends ConsumerWidget {
             "회원을 탈퇴하시겠습니까?",
             "회원탈퇴 시, 모든 정보가 사라집니다.",
             () async {
-              await AuthStorage.clear();
-              // TODO: 탈퇴로직 추가
+              final password = ref.read(withdrawalPasswordProvider);
+              final viewModel = ref.read(userViewModelProvider.notifier);
+              await viewModel.withdrawal(password);
+              context.go('/');
             },
+            true,
           ),
         ],
       ),
@@ -164,6 +170,7 @@ class Profile extends ConsumerWidget {
     titleText,
     contentText,
     Future<void> Function() route,
+    bool textfield,
   ) {
     return InkWell(
       onTap: () {
@@ -176,6 +183,7 @@ class Profile extends ConsumerWidget {
               context.pop();
               await route();
             },
+            hasTextField: textfield,
           ),
         );
       },
