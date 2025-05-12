@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client/model/auth_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRepository {
@@ -15,6 +16,11 @@ class AuthRepository {
     if (response.statusCode == 200) {
       final accessToken = response.headers['authorization'] ?? '';
       final refreshToken = response.headers['refreshtoken'] ?? '';
+      // 토큰 저장
+      await AuthStorage.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
       return {
         'accessToken': accessToken,
         'refreshToken': refreshToken,
