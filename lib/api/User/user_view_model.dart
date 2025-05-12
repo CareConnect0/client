@@ -42,15 +42,14 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
   }
 
   /// 피보호자-보호자 연결
-  Future<void> linkfamily(String guardianUsername, String guardianName) async {
-    state = const AsyncLoading();
-
+  Future<bool> linkfamily(String guardianUsername, String guardianName) async {
     try {
       final repo = ref.read(userRepositoryProvider);
       await repo.linkfamily(guardianUsername, guardianName);
-      state = const AsyncData(null);
+      return true;
     } catch (e, st) {
-      state = AsyncError(e, st);
+      print('❌ 연결 실패: $e');
+      return false;
     }
   }
 }

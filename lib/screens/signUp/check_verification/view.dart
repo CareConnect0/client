@@ -79,6 +79,10 @@ class CheckVerification extends ConsumerWidget {
                 await ref
                     .read(userViewModelProvider.notifier)
                     .signUpWithFullData(updatedData);
+                await ref.read(authViewModelProvider.notifier).login(
+                      signupData.username,
+                      signupData.password,
+                    );
                 context.go('/signUp/checkVerification/connect');
               }
             : null,
@@ -309,6 +313,11 @@ class CheckVerification extends ConsumerWidget {
     ref.read(isButtonVisibleProvider.notifier).state = false; // 버튼 숨기기
 
     timer = Timer.periodic(Duration(seconds: 1), (t) {
+      if (!context.mounted) {
+        t.cancel();
+        return;
+      }
+
       final remain = ref.read(timerProvider);
       if (remain <= 1) {
         t.cancel();

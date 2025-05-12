@@ -1,3 +1,4 @@
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class ConnectFamily extends ConsumerWidget {
     final isAllValid = ref.watch(isAllValidProvider);
 
     return Scaffold(
+      backgroundColor: CareConnectColor.white,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
         child: Column(
@@ -46,8 +48,23 @@ class ConnectFamily extends ConsumerWidget {
       ),
       bottomSheet: GestureDetector(
         onTap: isAllValid
-            ? () {
-                context.go('/signUp/congratulation');
+            ? () async {
+                final viewModel = ref.read(userViewModelProvider.notifier);
+                final guardianUsername = ref.watch(familyIdProvider);
+                final guardianName = ref.watch(familyNameProvider);
+                print('$guardianUsername, $guardianName');
+
+                final isSuccess =
+                    await viewModel.linkfamily(guardianUsername, guardianName);
+
+                if (isSuccess) {
+                  context.go('/signUp/congratulation');
+                } else {
+                  // 실패했을 경우 스낵바 등 처리
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('연결에 실패했습니다. 다시 시도해주세요.')),
+                  );
+                }
               }
             : null,
         child: Container(
