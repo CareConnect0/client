@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:client/Auth/view_model.dart';
+import 'package:client/api/Auth/auth_view_model.dart';
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/singUp.dart';
@@ -69,7 +70,7 @@ class CheckVerification extends ConsumerWidget {
                   phoneNumber: ref.read(numberProvider),
                 );
                 await ref
-                    .read(authViewModelProvider.notifier)
+                    .read(userViewModelProvider.notifier)
                     .signUpWithFullData(updatedData);
                 context.go('/signUp/checkVerification/connect');
               }

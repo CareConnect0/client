@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:client/Auth/auth_repository.dart';
-import 'package:client/model/singUp.dart';
+import 'package:client/api/Auth/auth_repository.dart';
 
 // Repository Provider
 final authRepositoryProvider = Provider((ref) => AuthRepository());
@@ -26,20 +25,6 @@ class AuthViewModel extends StateNotifier<AsyncValue<void>> {
 
       print('AccessToken: ${tokens['accessToken']}');
       print('RefreshToken: ${tokens['refreshToken']}');
-
-      state = const AsyncData(null);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-    }
-  }
-
-  // 회원가입 로직
-  Future<void> signUpWithFullData(SignupData data) async {
-    state = const AsyncLoading();
-
-    try {
-      final repo = ref.read(authRepositoryProvider);
-      await repo.signup(data);
 
       state = const AsyncData(null);
     } catch (e, st) {

@@ -1,8 +1,8 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog2.dart';
 import 'package:client/designs/CareConnectTypo.dart';
-import 'package:client/Auth/auth_repository.dart';
-import 'package:client/Auth/auth_storage.dart';
+import 'package:client/api/Auth/auth_repository.dart';
+import 'package:client/api/Auth/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
