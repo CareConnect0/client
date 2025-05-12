@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/singUp.dart';
 
@@ -50,6 +51,26 @@ class UserRepository {
       rethrow;
     } finally {
       await AuthStorage.clear();
+    }
+  }
+
+  /// 피보호자-보호자 연결
+  Future<void> linkfamily(String guardianUsername, String guardianName) async {
+    final accessToken = await AuthStorage.getAccessToken();
+
+    try {
+      final response = await _dio.post(
+        '/api/users/link',
+        data: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+      print('피보호자-보호자 연결 성공: ${response.data}');
+    } catch (e) {
+      print('피보호자-보호자 연결 실패: $e');
+      rethrow;
     }
   }
 }

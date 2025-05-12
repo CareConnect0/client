@@ -40,4 +40,17 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       state = AsyncError(e, st);
     }
   }
+
+  /// 피보호자-보호자 연결
+  Future<void> linkfamily(String guardianUsername, String guardianName) async {
+    state = const AsyncLoading();
+
+    try {
+      final repo = ref.read(userRepositoryProvider);
+      await repo.linkfamily(guardianUsername, guardianName);
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
 }
