@@ -27,4 +27,17 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       state = AsyncError(e, st);
     }
   }
+
+  // 회원탈퇴
+  Future<void> withdrawal(String password) async {
+    state = const AsyncLoading();
+
+    try {
+      final repo = ref.read(userRepositoryProvider);
+      await repo.withdraw(password);
+      state = const AsyncData(null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
 }
