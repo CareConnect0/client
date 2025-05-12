@@ -29,10 +29,11 @@ class IdVerification extends ConsumerWidget {
       final name = ref.watch(nameProvider);
       final number = ref.watch(numberProvider);
       final checkNumber = ref.watch(checkNumberProvider);
+      final verification = ref.watch(isVerificationSuccessProvider);
       return name.isNotEmpty &&
           number.isNotEmpty &&
           checkNumber.isNotEmpty &&
-          (isVerificationSuccessProvider == true);
+          (verification == true);
     });
     final isAllValid = ref.watch(isAllValidProvider);
 

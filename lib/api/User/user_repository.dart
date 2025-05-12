@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/singUp.dart';
 
@@ -50,6 +51,40 @@ class UserRepository {
       rethrow;
     } finally {
       await AuthStorage.clear();
+    }
+  }
+
+  /// 피보호자-보호자 연결
+  Future<void> linkfamily(String guardianUsername, String guardianName) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+    print('보내는 토큰: $accessToken');
+    print('보내는 데이터: $guardianUsername, $guardianName');
+
+    final url = Uri.parse('$_baseUrl/users/link');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+      body: jsonEncode(
+        {
+          'guardianUsername': guardianUsername,
+          'guardianName': guardianName,
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        print(responseBody['message']);
+      } else {
+        throw Exception('피보호자-보호자 연결 실패: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('피보호자-보호자 연결 실패: ${response.statusCode}');
     }
   }
 }
