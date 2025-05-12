@@ -164,9 +164,12 @@ class IdVerification extends ConsumerWidget {
               fontWeight: FontWeight.w600,
               color: CareConnectColor.neutral[400],
             ),
-            suffixIcon: GestureDetector(
+            suffixIcon: InkWell(
               onTap: () {
                 startTimer(ref, context);
+                print(ref.watch(numberProvider));
+                final viewModel = ref.read(authViewModelProvider.notifier);
+                viewModel.sendPhoneVerificationCode(ref.read(numberProvider));
               },
               child: Container(
                 margin: EdgeInsets.only(top: 15, left: 8),
@@ -225,13 +228,20 @@ class IdVerification extends ConsumerWidget {
               SizedBox(
                 width: 4,
               ),
-              Container(
-                width: 73,
-                decoration: BoxDecoration(
-                  border: Border.all(color: CareConnectColor.black, width: 1),
-                  borderRadius: BorderRadius.circular(90),
+              InkWell(
+                onTap: () {
+                  final viewModel = ref.read(authViewModelProvider.notifier);
+                  viewModel.verifyPhoneVerificationCode(
+                      "01082233619", "148229");
+                },
+                child: Container(
+                  width: 73,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: CareConnectColor.black, width: 1),
+                    borderRadius: BorderRadius.circular(90),
+                  ),
+                  child: Center(child: Medium_16px(text: '확인')),
                 ),
-                child: Center(child: Medium_16px(text: '확인')),
               ),
             ],
           ),
