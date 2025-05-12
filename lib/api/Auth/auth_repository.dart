@@ -129,9 +129,11 @@ class AuthRepository {
         print('인증번호 확인 성공: ${responseBody['message']}');
       } else {
         print('인증번호 확인 실패: ${response.reasonPhrase}');
+        throw Exception('인증번호가 올바르지 않습니다.');
       }
     } catch (e) {
       print('API 호출 실패: $e');
+      throw e; // ❗ 중요: 예외를 다시 던져야 상위 try-catch에서 감지 가능
     }
   }
 }

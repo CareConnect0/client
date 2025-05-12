@@ -1,3 +1,4 @@
+import 'package:client/screens/signUp/id_verification/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/api/Auth/auth_repository.dart';
 
@@ -52,6 +53,7 @@ class AuthViewModel extends StateNotifier<AsyncValue<void>> {
       print('✅ 인증번호 확인 완료');
     } catch (e) {
       print('❌ 인증번호 확인 실패: $e');
+      throw e;
     }
   }
 }

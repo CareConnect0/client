@@ -10,13 +10,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+final nameProvider = StateProvider<String>((ref) => '');
+final numberProvider = StateProvider<String>((ref) => '');
+final checkNumberProvider = StateProvider<String>((ref) => '');
+final isButtonVisibleProvider = StateProvider<bool>((ref) => true);
+final isVerificationSuccessProvider = StateProvider<bool>((ref) => false);
+Timer? timer;
+final timerProvider = StateProvider<int>((ref) => 300); // 5분
+
 class IdVerification extends ConsumerWidget {
   final SignupData signupData;
   IdVerification({super.key, required this.signupData});
-
-  final nameProvider = StateProvider<String>((ref) => '');
-  final numberProvider = StateProvider<String>((ref) => '');
-  final checkNumberProvider = StateProvider<String>((ref) => '');
 
   final PageController controller = PageController(initialPage: 2);
   @override
@@ -27,11 +31,13 @@ class IdVerification extends ConsumerWidget {
       final checkNumber = ref.watch(checkNumberProvider);
       return name.isNotEmpty &&
           number.isNotEmpty &&
-          checkNumber.isNotEmpty; // 추후 인증번호와 확인하는 로직 추가
+          checkNumber.isNotEmpty &&
+          (isVerificationSuccessProvider == true);
     });
     final isAllValid = ref.watch(isAllValidProvider);
 
     return Scaffold(
+      backgroundColor: CareConnectColor.white,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
         child: Column(
@@ -165,22 +171,31 @@ class IdVerification extends ConsumerWidget {
               fontWeight: FontWeight.w600,
               color: CareConnectColor.neutral[400],
             ),
-            suffixIcon: InkWell(
-              onTap: () {
-                startTimer(ref, context);
-                print(ref.watch(numberProvider));
-                final viewModel = ref.read(authViewModelProvider.notifier);
-                viewModel.sendPhoneVerificationCode(ref.read(numberProvider));
+            suffixIcon: Consumer(
+              builder: (context, ref, _) {
+                final isVisible = ref.watch(isButtonVisibleProvider);
+
+                if (!isVisible) return SizedBox.shrink(); // 안 보이게
+
+                return InkWell(
+                  onTap: () {
+                    startTimer(ref, context);
+                    final viewModel = ref.read(authViewModelProvider.notifier);
+                    viewModel
+                        .sendPhoneVerificationCode(ref.read(numberProvider));
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 15, left: 8),
+                    width: 73,
+                    decoration: BoxDecoration(
+                      border:
+                          Border.all(color: CareConnectColor.black, width: 1),
+                      borderRadius: BorderRadius.circular(90),
+                    ),
+                    child: Center(child: Medium_16px(text: '인증요청')),
+                  ),
+                );
               },
-              child: Container(
-                margin: EdgeInsets.only(top: 15, left: 8),
-                width: 73,
-                decoration: BoxDecoration(
-                  border: Border.all(color: CareConnectColor.black, width: 1),
-                  borderRadius: BorderRadius.circular(90),
-                ),
-                child: Center(child: Medium_16px(text: '인증요청')),
-              ),
             ),
             contentPadding: EdgeInsets.symmetric(vertical: 10),
           ),
@@ -220,29 +235,58 @@ class IdVerification extends ConsumerWidget {
           padding: const EdgeInsets.only(top: 15.0, left: 8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Medium_16px(
                 text: '$minutes:$seconds',
                 color: Colors.lightBlue,
               ),
-              SizedBox(
-                width: 4,
-              ),
-              InkWell(
-                onTap: () {
-                  final viewModel = ref.read(authViewModelProvider.notifier);
-                  viewModel.verifyPhoneVerificationCode(
-                      "01082233619", "148229");
+              SizedBox(width: 4),
+              Consumer(
+                builder: (context, ref, _) {
+                  final isVerified = ref.watch(isVerificationSuccessProvider);
+                  if (isVerified) {
+                    return Icon(Icons.check_circle,
+                        color: Colors.green, size: 24);
+                  } else {
+                    return InkWell(
+                      onTap: () async {
+                        final viewModel =
+                            ref.read(authViewModelProvider.notifier);
+                        try {
+                          await viewModel.verifyPhoneVerificationCode(
+                            ref.read(numberProvider),
+                            ref.read(checkNumberProvider),
+                          );
+                          ref
+                              .read(isVerificationSuccessProvider.notifier)
+                              .state = true;
+                        } catch (_) {
+                          ref
+                              .read(isVerificationSuccessProvider.notifier)
+                              .state = false;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('인증번호가 올바르지 않습니다.'),
+                              backgroundColor:
+                                  CareConnectColor.black.withOpacity(0.5),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        width: 73,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: CareConnectColor.black, width: 1),
+                          borderRadius: BorderRadius.circular(90),
+                        ),
+                        child: Center(child: Medium_16px(text: '확인')),
+                      ),
+                    );
+                  }
                 },
-                child: Container(
-                  width: 73,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: CareConnectColor.black, width: 1),
-                    borderRadius: BorderRadius.circular(90),
-                  ),
-                  child: Center(child: Medium_16px(text: '확인')),
-                ),
               ),
             ],
           ),
@@ -252,54 +296,55 @@ class IdVerification extends ConsumerWidget {
     );
   }
 
-  Timer? timer;
-  final timerProvider = StateProvider<int>((ref) => 300); // 5분
-  void startTimer(WidgetRef ref, context) {
+  void startTimer(WidgetRef ref, BuildContext context) {
     timer?.cancel(); // 기존 타이머 중복 방지
     ref.read(timerProvider.notifier).state = 300;
+    ref.read(isButtonVisibleProvider.notifier).state = false; // 버튼 숨기기
 
     timer = Timer.periodic(Duration(seconds: 1), (t) {
       final remain = ref.read(timerProvider);
       if (remain <= 1) {
         t.cancel();
+        ref.read(isButtonVisibleProvider.notifier).state =
+            true; // 5분 지나면 버튼 다시 보이게
+
         showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 34, horizontal: 34),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Medium_18px(text: "인증 요청 시간이 초과되었습니다."),
-                      Medium_18px(text: "재인증 후 시도해주세요."),
-                      SizedBox(
-                        height: 33,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: Container(
-                          width: 130,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: CareConnectColor.neutral[600],
-                          ),
-                          child: Center(
-                            child: Semibold_16px(
-                              text: "확인",
-                              color: CareConnectColor.white,
-                            ),
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 34, horizontal: 34),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Medium_18px(text: "인증 요청 시간이 초과되었습니다."),
+                    Medium_18px(text: "재인증 후 시도해주세요."),
+                    SizedBox(height: 33),
+                    InkWell(
+                      onTap: () {
+                        context.pop();
+                      },
+                      child: Container(
+                        width: 130,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: CareConnectColor.neutral[600],
+                        ),
+                        child: Center(
+                          child: Semibold_16px(
+                            text: "확인",
+                            color: CareConnectColor.white,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            });
+              ),
+            );
+          },
+        );
       }
       ref.read(timerProvider.notifier).state--;
     });
