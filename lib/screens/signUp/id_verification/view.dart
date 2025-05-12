@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:client/Auth/view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/singUp.dart';
-import 'package:client/screens/signUp/id_verification/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +65,7 @@ class IdVerification extends ConsumerWidget {
                   phoneNumber: ref.read(numberProvider),
                 );
                 await ref
-                    .read(authViewModelProvider)
+                    .read(authViewModelProvider.notifier)
                     .signUpWithFullData(updatedData);
                 context.go('/signUp/congratulation');
               }
