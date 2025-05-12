@@ -1,6 +1,8 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog2.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/auth_repository.dart';
+import 'package:client/model/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,14 +65,20 @@ class Profile extends ConsumerWidget {
             "로그아웃",
             "로그아웃하시겠습니까?",
             "로그아웃해도 정보가 사라지지 않습니다.",
-            '/',
+            () async {
+              await AuthRepository().logout();
+              context.go('/');
+            },
           ),
           OptionCard2(
             context,
             "회원탈퇴",
             "회원을 탈퇴하시겠습니까?",
             "회원탈퇴 시, 모든 정보가 사라집니다.",
-            '/',
+            () async {
+              await AuthStorage.clear();
+              // TODO: 탈퇴로직 추가
+            },
           ),
         ],
       ),
@@ -150,7 +158,13 @@ class Profile extends ConsumerWidget {
     );
   }
 
-  Widget OptionCard2(BuildContext context, text, titleText, contentText, done) {
+  Widget OptionCard2(
+    BuildContext context,
+    text,
+    titleText,
+    contentText,
+    Future<void> Function() route,
+  ) {
     return InkWell(
       onTap: () {
         showDialog(
@@ -158,8 +172,9 @@ class Profile extends ConsumerWidget {
           builder: (context) => CareConnectDialog2(
             titleText: titleText,
             contentText: contentText,
-            done: () {
-              context.go(done);
+            done: () async {
+              context.pop();
+              await route();
             },
           ),
         );
