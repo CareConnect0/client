@@ -1,3 +1,4 @@
+import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog.dart';
@@ -16,14 +17,7 @@ final scheduleProvider =
 );
 
 class ScheduleNotifier extends StateNotifier<Map<String, List<String>>> {
-  ScheduleNotifier()
-      : super({
-          '07:00': ['비타민 복용', '아침 식사'],
-          '10:00': ['회의'],
-          '14:00': ['병원 예약', '내시경 검사 받으러 가기 ( 병원명 )'],
-          '15:00': ['병원 예약', '내시경 검사 받으러 가기 ( 병원명 )'],
-          '16:00': ['병원 예약', '내시경 검사 받으러 가기 ( 병원명 )'],
-        });
+  ScheduleNotifier() : super({});
 
   void modifySchedule(String time, String oldEvent, String newEvent) {
     final updated = [...state[time]!];
@@ -45,15 +39,48 @@ class ScheduleNotifier extends StateNotifier<Map<String, List<String>>> {
       time: updated,
     };
   }
+
+  void setSchedulesFromAPI(List<ScheduleInfo> schedules) {
+    final Map<String, List<String>> grouped = {};
+
+    for (var schedule in schedules) {
+      final dateTime = DateTime.parse(schedule.formattedDate);
+      final hourStr = DateFormat('HH:mm').format(dateTime);
+
+      if (grouped[hourStr] == null) {
+        grouped[hourStr] = [];
+      }
+
+      grouped[hourStr]!.add(schedule.content);
+    }
+
+    state = grouped;
+  }
 }
 
-class TimeTable extends ConsumerWidget {
+class TimeTable extends ConsumerStatefulWidget {
   final DateTime selected;
 
-  TimeTable(this.selected, {super.key});
+  const TimeTable(this.selected, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TimeTable> createState() => _TimeTableState();
+}
+
+class _TimeTableState extends ConsumerState<TimeTable> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 일정 조회 API 호출
+      ref
+          .read(scheduleViewModelProvider.notifier)
+          .getSchedules(widget.selected);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final schedule = ref.watch(scheduleProvider);
 
     return Scaffold(
@@ -123,7 +150,8 @@ class TimeTable extends ConsumerWidget {
                 ),
               ),
               child: Medium_18px(
-                text: DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR').format(selected),
+                text: DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR')
+                    .format(widget.selected),
               ),
             ),
 
@@ -248,27 +276,45 @@ class TimeTable extends ConsumerWidget {
                   ],
                 ),
                 child: CareConnectButton(
+                  // onPressed: () {
+                  //   final timeState = ref.watch(selectedTimeProvider);
+                  //   showDialog(
+                  //     context: context,
+                  //     builder: (context) => CareConnectTimePickerDialog(
+                  //       onTimeSelected: (period, hour, minute) {
+                  //         final timeString =
+                  //             '$period ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+                  //         final info = ScheduleInfo(
+                  //             content: widget.selected, timeString: timeString);
+
+                  //         context.go('/calendar/enroll', extra: info);
+                  //       },
+                  //       onPressed: () {},
+                  //     ),
+                  //   );
+                  // },
                   onPressed: () {
-                    final timeState = ref.watch(selectedTimeProvider);
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) => CareConnectTimePickerDialog(
-                    //     onPressed: () => context.go('/calendar/enroll'),
-                    //     onTimeSelected: (period, hour, minute) {
-                    //       print(
-                    //           '선택된 시간: $period $hour시 ${minute.toString().padLeft(2, '0')}분');
-                    //     },
-                    //   ),
-                    // );
                     showDialog(
                       context: context,
                       builder: (context) => CareConnectTimePickerDialog(
                         onTimeSelected: (period, hour, minute) {
-                          final timeString =
-                              '$period ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                          int hour24 =
+                              (period == '오전') ? hour : (hour % 12) + 12;
+
+                          // 날짜 + 시간 조합
+                          final selectedDateTime = DateTime(
+                            widget.selected.year,
+                            widget.selected.month,
+                            widget.selected.day,
+                            hour24,
+                            minute,
+                          );
 
                           final info = ScheduleInfo(
-                              date: selected, timeString: timeString);
+                            content: "저녁 약 먹기",
+                            dateTime: selectedDateTime,
+                          );
 
                           context.go('/calendar/enroll', extra: info);
                         },
@@ -276,6 +322,7 @@ class TimeTable extends ConsumerWidget {
                       ),
                     );
                   },
+
                   text: '일정 추가하기',
                   textColor: CareConnectColor.white,
                   assetName: 'assets/icons/plus.svg',

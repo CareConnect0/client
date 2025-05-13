@@ -1,5 +1,8 @@
 import 'package:client/api/Schedule/schedule_repository.dart';
+import 'package:client/model/scheduleInfo.dart';
+import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 final scheduleRepositoryProvider = Provider((ref) => ScheduleRepository());
 
@@ -14,12 +17,23 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
   ScheduleViewModel(this.ref) : super(const AsyncData(null));
 
   /// 일정 등록(피보호자)
-  Future<void> enrollSchedule(String content, String startTime) async {
+  Future<void> enrollSchedule(ScheduleInfo info) async {
     try {
       final repo = ref.read(scheduleRepositoryProvider);
-      await repo.enrollSchedule(content, startTime);
-    } catch (e, st) {
-      print('연결 실패: $e');
+      await repo.enrollSchedule(info);
+    } catch (e) {
+      print('일정 등록 에러: $e');
+    }
+  }
+
+  /// 일정 조회(피보호자)
+  Future<void> getSchedules(DateTime selectedDate) async {
+    try {
+      final repo = ref.read(scheduleRepositoryProvider);
+      final schedules = await repo.getScheduleList(selectedDate);
+      ref.read(scheduleProvider.notifier).setSchedulesFromAPI(schedules);
+    } catch (e) {
+      print('일정 조회 에러: $e');
     }
   }
 }
