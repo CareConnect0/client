@@ -1,3 +1,4 @@
+import 'package:client/api/Schedule/guardian_view_model.dart';
 import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
@@ -5,6 +6,7 @@ import 'package:client/designs/CareConnectDialog.dart';
 import 'package:client/designs/TimePickerDialog.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/scheduleInfo.dart';
+import 'package:client/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,6 +17,8 @@ final scheduleProvider =
     StateNotifierProvider<ScheduleNotifier, Map<String, List<ScheduleInfo>>>(
   (ref) => ScheduleNotifier(),
 );
+
+final dependentIdProvider = StateProvider<List<int>>((ref) => []);
 
 class ScheduleNotifier extends StateNotifier<Map<String, List<ScheduleInfo>>> {
   ScheduleNotifier() : super({});
@@ -77,16 +81,31 @@ class _TimeTableState extends ConsumerState<TimeTable> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 일정 조회 API 호출
-      ref
-          .read(scheduleViewModelProvider.notifier)
-          .getSchedules(widget.selected);
+      // 일정 조회 API 호출 (피보호자)
+      // ref
+      //     .read(scheduleViewModelProvider.notifier)
+      //     .getSchedules(widget.selected);
+
+      // 일정 조회 API 호출 (보호자)
+      final selectedIndex = ref.watch(selectProvider); // 현재 선택된 인덱스
+      final dependentIds = ref.watch(dependentIdProvider); // ID 리스트
+      if (dependentIds.isNotEmpty && selectedIndex < dependentIds.length) {
+        final selectedDependentId = dependentIds[selectedIndex];
+
+        ref
+            .read(scheduleGuardianViewModelProvider.notifier)
+            .getGuardianSchedules(selectedDependentId, widget.selected);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final schedule = ref.watch(scheduleProvider);
+
+    final selectedIndex = ref.watch(selectProvider); // 현재 선택된 인덱스
+    final dependentIds = ref.watch(dependentIdProvider); // ID 리스트
+    final selectedDependentId = dependentIds[selectedIndex];
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
@@ -216,38 +235,78 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                                               context.pop();
                                             },
                                             modify: () async {
-                                              final newInfo = ScheduleInfo(
+                                              // final newInfo = ScheduleInfo(
+                                              //   scheduleId: schedule.scheduleId,
+                                              //   content: controller.text,
+                                              //   dateTime: schedule.dateTime,
+                                              // );
+                                              // 피보호자
+                                              // await ref
+                                              //     .read(
+                                              //         scheduleViewModelProvider
+                                              //             .notifier)
+                                              //     .modifySchedule(newInfo);
+                                              // await ref
+                                              //     .read(
+                                              //         scheduleViewModelProvider
+                                              //             .notifier)
+                                              //     .getSchedules(
+                                              //         widget.selected);
+                                              // 보호자
+                                              final newInfoGuardian =
+                                                  ScheduleInfo(
+                                                dependentId:
+                                                    selectedDependentId,
                                                 scheduleId: schedule.scheduleId,
                                                 content: controller.text,
                                                 dateTime: schedule.dateTime,
                                               );
-
                                               await ref
                                                   .read(
-                                                      scheduleViewModelProvider
+                                                      scheduleGuardianViewModelProvider
                                                           .notifier)
-                                                  .modifySchedule(newInfo);
+                                                  .modifyGuardianSchedule(
+                                                      newInfoGuardian);
                                               await ref
                                                   .read(
-                                                      scheduleViewModelProvider
+                                                      scheduleGuardianViewModelProvider
                                                           .notifier)
-                                                  .getSchedules(
+                                                  .getGuardianSchedules(
+                                                      selectedDependentId,
                                                       widget.selected);
                                               context.pop();
                                             },
                                             delete: () async {
+                                              // 피보호자
+                                              // await ref
+                                              //     .read(
+                                              //         scheduleViewModelProvider
+                                              //             .notifier)
+                                              //     .deleteSchedule(
+                                              //         schedule.scheduleId!);
+
+                                              // await ref
+                                              //     .read(
+                                              //         scheduleViewModelProvider
+                                              //             .notifier)
+                                              //     .getSchedules(
+                                              //         widget.selected);
+
+                                              // 보호자
                                               await ref
                                                   .read(
-                                                      scheduleViewModelProvider
+                                                      scheduleGuardianViewModelProvider
                                                           .notifier)
-                                                  .deleteSchedule(
-                                                      schedule.scheduleId!);
+                                                  .deleteGuardianSchedule(
+                                                      schedule.scheduleId!,
+                                                      selectedDependentId);
 
                                               await ref
                                                   .read(
-                                                      scheduleViewModelProvider
+                                                      scheduleGuardianViewModelProvider
                                                           .notifier)
-                                                  .getSchedules(
+                                                  .getGuardianSchedules(
+                                                      selectedDependentId,
                                                       widget.selected);
 
                                               context.pop();
@@ -336,13 +395,20 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                             hour24,
                             minute,
                           );
+                          // 피보호자
+                          // final info = ScheduleInfo(
+                          //   content: "저녁 약 먹기",
+                          //   dateTime: selectedDateTime,
+                          // );
+                          // context.go('/calendar/enroll', extra: info);
 
-                          final info = ScheduleInfo(
+                          // 보호자
+                          final infoGuardian = ScheduleInfo(
+                            dependentId: selectedDependentId,
                             content: "저녁 약 먹기",
                             dateTime: selectedDateTime,
                           );
-
-                          context.go('/calendar/enroll', extra: info);
+                          context.go('/calendar/enroll', extra: infoGuardian);
                         },
                         onPressed: () {},
                       ),

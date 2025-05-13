@@ -1,6 +1,7 @@
 import 'package:client/api/User/user_repository.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final userRepositoryProvider = Provider((ref) => UserRepository());
@@ -61,6 +62,8 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       final dependents = await repo.getDependentList();
       final names = dependents.map((e) => e.name).toList(); // 이름만 반환
       ref.read(dependentNamesProvider.notifier).state = names;
+      final dependentIds = dependents.map((e) => e.dependentId).toList(); // id
+      ref.read(dependentIdProvider.notifier).state = dependentIds;
     } catch (e) {
       print('❌ 에러: $e');
     }
