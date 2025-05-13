@@ -36,4 +36,14 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
       print('일정 조회 에러: $e');
     }
   }
+
+  /// 일정 수정(피보호자)
+  Future<void> modifySchedule(ScheduleInfo info) async {
+    try {
+      final repo = ref.read(scheduleRepositoryProvider);
+      await repo.modifySchedule(info);
+    } catch (e) {
+      print('일정 수정 에러: $e');
+    }
+  }
 }

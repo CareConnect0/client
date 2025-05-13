@@ -31,13 +31,6 @@ class ScheduleRepository {
       ),
     );
 
-    print('accessToken: $accessToken');
-    print('refreshToken: $refreshToken');
-    print('보낼 바디: ${jsonEncode({
-          "content": info.content,
-          "startTime": info.startTime
-        })}');
-
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       if (responseBody['success']) {
@@ -72,6 +65,41 @@ class ScheduleRepository {
       return data.map((e) => ScheduleInfo.fromJson(e)).toList();
     } else {
       throw Exception('일정 조회 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 일정 수정(피보호자)
+  Future<void> modifySchedule(ScheduleInfo info) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    if (info.scheduleId == null) {
+      throw Exception('수정할 일정의 ID가 없습니다.');
+    }
+
+    final url = Uri.parse('$_baseUrl/schedules/${info.scheduleId}');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+      body: jsonEncode({
+        "content": info.content,
+        "startTime": info.startTime,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        print(responseBody['message']);
+      } else {
+        throw Exception('일정 수정 실패 : ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('일정 수정 실패 : ${response.statusCode}');
     }
   }
 }

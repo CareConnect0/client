@@ -12,18 +12,23 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 final scheduleProvider =
-    StateNotifierProvider<ScheduleNotifier, Map<String, List<String>>>(
+    StateNotifierProvider<ScheduleNotifier, Map<String, List<ScheduleInfo>>>(
   (ref) => ScheduleNotifier(),
 );
 
-class ScheduleNotifier extends StateNotifier<Map<String, List<String>>> {
+class ScheduleNotifier extends StateNotifier<Map<String, List<ScheduleInfo>>> {
   ScheduleNotifier() : super({});
 
-  void modifySchedule(String time, String oldEvent, String newEvent) {
+  void modifySchedule(String time, ScheduleInfo oldEvent, String newContent) {
     final updated = [...state[time]!];
-    final index = updated.indexOf(oldEvent);
+    final index =
+        updated.indexWhere((e) => e.scheduleId == oldEvent.scheduleId);
     if (index != -1) {
-      updated[index] = newEvent;
+      updated[index] = ScheduleInfo(
+        scheduleId: oldEvent.scheduleId,
+        content: newContent,
+        dateTime: oldEvent.dateTime,
+      );
       state = {
         ...state,
         time: updated,
@@ -31,9 +36,9 @@ class ScheduleNotifier extends StateNotifier<Map<String, List<String>>> {
     }
   }
 
-  void deleteSchedule(String time, String event) {
+  void deleteSchedule(String time, ScheduleInfo event) {
     final updated = [...state[time]!];
-    updated.remove(event);
+    updated.removeWhere((e) => e.scheduleId == event.scheduleId);
     state = {
       ...state,
       time: updated,
@@ -41,17 +46,17 @@ class ScheduleNotifier extends StateNotifier<Map<String, List<String>>> {
   }
 
   void setSchedulesFromAPI(List<ScheduleInfo> schedules) {
-    final Map<String, List<String>> grouped = {};
+    final Map<String, List<ScheduleInfo>> grouped = {};
 
     for (var schedule in schedules) {
-      final dateTime = DateTime.parse(schedule.formattedDate);
+      final dateTime = schedule.dateTime;
       final hourStr = DateFormat('HH:mm').format(dateTime);
 
       if (grouped[hourStr] == null) {
         grouped[hourStr] = [];
       }
 
-      grouped[hourStr]!.add(schedule.content);
+      grouped[hourStr]!.add(schedule);
     }
 
     state = grouped;
@@ -190,12 +195,12 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: eventsAtTime.map((event) {
-                                final controller =
-                                    TextEditingController(text: event);
+                              children: eventsAtTime.map((schedule) {
+                                final controller = TextEditingController(
+                                    text: schedule.content);
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.only(bottom: 9),
                                   child: InkWell(
                                     onTap: () {
                                       showDialog(
@@ -203,28 +208,39 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                                         builder: (BuildContext context) {
                                           return CareConnectDialog(
                                             time: time,
-                                            scheduleText: event,
+                                            scheduleText: schedule.content,
                                             scheduleController: controller,
                                             cancel: () {
-                                              controller.text = event;
+                                              controller.text =
+                                                  schedule.content;
                                               context.pop();
                                             },
-                                            modify: () {
-                                              ref
+                                            modify: () async {
+                                              final newInfo = ScheduleInfo(
+                                                scheduleId: schedule.scheduleId,
+                                                content: controller.text,
+                                                dateTime: schedule.dateTime,
+                                              );
+
+                                              await ref
                                                   .read(
-                                                      scheduleProvider.notifier)
-                                                  .modifySchedule(
-                                                    time,
-                                                    event,
-                                                    controller.text,
-                                                  );
+                                                      scheduleViewModelProvider
+                                                          .notifier)
+                                                  .modifySchedule(newInfo);
+                                              await ref
+                                                  .read(
+                                                      scheduleViewModelProvider
+                                                          .notifier)
+                                                  .getSchedules(
+                                                      widget.selected);
                                               context.pop();
                                             },
                                             delete: () {
                                               ref
                                                   .read(
                                                       scheduleProvider.notifier)
-                                                  .deleteSchedule(time, event);
+                                                  .deleteSchedule(
+                                                      time, schedule);
                                               context.pop();
                                             },
                                           );
@@ -246,7 +262,8 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                                         ),
                                         const SizedBox(width: 8),
                                         Expanded(
-                                            child: Medium_16px(text: event)),
+                                            child: Medium_16px(
+                                                text: schedule.content)),
                                       ],
                                     ),
                                   ),
