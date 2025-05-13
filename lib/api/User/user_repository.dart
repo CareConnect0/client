@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:client/api/Auth/auth_storage.dart';
+import 'package:client/model/dependent.dart';
 import 'package:dio/dio.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/singUp.dart';
 
@@ -85,6 +85,32 @@ class UserRepository {
       }
     } else {
       throw Exception('피보호자-보호자 연결 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 피보호자 목록 조회
+  Future<List<Dependent>> getDependentList() async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    print('보내는 토큰: $accessToken');
+    final url = Uri.parse('$_baseUrl/users/dependent-list');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('피보호자 목록 조회 성공: ${response.body}');
+      final jsonBody = jsonDecode(response.body);
+      final List<dynamic> data = jsonBody['data'];
+      return data.map((e) => Dependent.fromJson(e)).toList();
+    } else {
+      print('피보호자 목록 조회 실패: ${response.body}');
+      throw Exception('피보호자 목록 조회 실패: ${response.statusCode}');
     }
   }
 }
