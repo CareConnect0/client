@@ -102,4 +102,31 @@ class ScheduleRepository {
       throw Exception('일정 수정 실패 : ${response.statusCode}');
     }
   }
+
+  /// 일정 삭제(피보호자)
+  Future<void> deleteSchedule(int scheduleId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl/schedules/$scheduleId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        print('일정 삭제 성공: ${responseBody['message']}');
+      } else {
+        throw Exception('일정 삭제 실패: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('일정 삭제 실패: ${response.statusCode}');
+    }
+  }
 }

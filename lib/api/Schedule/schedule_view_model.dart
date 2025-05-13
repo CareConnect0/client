@@ -46,4 +46,14 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
       print('일정 수정 에러: $e');
     }
   }
+
+  /// 일정 삭제(피보호자)
+  Future<void> deleteSchedule(int scheduleId) async {
+    try {
+      final repo = ref.read(scheduleRepositoryProvider);
+      await repo.deleteSchedule(scheduleId);
+    } catch (e) {
+      print('일정 삭제 에러: $e');
+    }
+  }
 }

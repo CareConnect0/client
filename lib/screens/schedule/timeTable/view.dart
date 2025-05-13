@@ -235,12 +235,21 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                                                       widget.selected);
                                               context.pop();
                                             },
-                                            delete: () {
-                                              ref
+                                            delete: () async {
+                                              await ref
                                                   .read(
-                                                      scheduleProvider.notifier)
+                                                      scheduleViewModelProvider
+                                                          .notifier)
                                                   .deleteSchedule(
-                                                      time, schedule);
+                                                      schedule.scheduleId!);
+
+                                              await ref
+                                                  .read(
+                                                      scheduleViewModelProvider
+                                                          .notifier)
+                                                  .getSchedules(
+                                                      widget.selected);
+
                                               context.pop();
                                             },
                                           );
