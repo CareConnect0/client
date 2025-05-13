@@ -101,7 +101,7 @@ class _TimeTableState extends ConsumerState<TimeTable> {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
-            context.pop();
+            context.go('/calendar');
           },
           child: Row(
             children: [
