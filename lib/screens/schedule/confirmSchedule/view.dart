@@ -1,3 +1,4 @@
+import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/scheduleInfo.dart';
@@ -14,7 +15,7 @@ class ConfirmSchedule extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final info = GoRouterState.of(context).extra as ScheduleInfo;
 
-    Text('선택한 날짜: ${DateFormat('yyyy-MM-dd').format(info.date)}');
+    Text('선택한 날짜: ${DateFormat('yyyy-MM-dd').format(info.dateTime)}');
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
@@ -23,7 +24,7 @@ class ConfirmSchedule extends ConsumerWidget {
         children: [
           Bold_36px(
             text:
-                "${DateFormat('MM월 dd일').format(info.date)}\n${info.timeString}에\n[  ]\n일정을 등록할까요?",
+                "${DateFormat('MM월 dd일').format(info.dateTime)}\n${info.formattedTime}에\n[  ]\n일정을 등록할까요?",
             color: CareConnectColor.white,
           ),
           SizedBox(
@@ -35,8 +36,13 @@ class ConfirmSchedule extends ConsumerWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () =>
-                        context.go('/calendar/timetable', extra: info.date),
+                    onTap: () async {
+                      await ref
+                          .read(scheduleViewModelProvider.notifier)
+                          .enrollSchedule(info);
+                      // 등록 후 이동
+                      context.go('/calendar/timetable', extra: info.dateTime);
+                    },
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
