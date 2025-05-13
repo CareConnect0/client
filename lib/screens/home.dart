@@ -1,3 +1,4 @@
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
@@ -5,19 +6,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-class Home extends ConsumerWidget {
-  Home({super.key});
-
-  final typeProvider = StateProvider<List<bool>>((ref) => [false, true]);
-  final selectProvider = StateProvider<int>((ref) => 0);
-  final calendarNotificationProvider = StateProvider<bool>((ref) => true);
-  final messengerNotificationProvider = StateProvider<bool>((ref) => true);
-  final AINotificationProvider = StateProvider<bool>((ref) => true);
-  final emergencyNotificationProvider = StateProvider<bool>((ref) => true);
-  final names = ["아버지", "어머니", "할머니"];
+class Home extends ConsumerStatefulWidget {
+  const Home({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Home> createState() => _HomeState();
+}
+
+final typeProvider = StateProvider<List<bool>>((ref) => [false, true]);
+final selectProvider = StateProvider<int>((ref) => 0);
+final calendarNotificationProvider = StateProvider<bool>((ref) => true);
+final messengerNotificationProvider = StateProvider<bool>((ref) => true);
+final AINotificationProvider = StateProvider<bool>((ref) => true);
+final emergencyNotificationProvider = StateProvider<bool>((ref) => true);
+final dependentNamesProvider = StateProvider<List<String>>((ref) => []);
+
+class _HomeState extends ConsumerState<Home> {
+  @override
+  void initState() {
+    super.initState();
+    // API 요청은 여기서 실행
+    Future.microtask(() {
+      ref.read(userViewModelProvider.notifier).getDependents();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final hasCalendarNotification = ref.watch(calendarNotificationProvider);
     final hasMessengerNotification = ref.watch(messengerNotificationProvider);
     final hasAINotification = ref.watch(AINotificationProvider);
@@ -104,6 +119,7 @@ class Home extends ConsumerWidget {
   PreferredSizeWidget AppbarWidget(BuildContext context, ref) {
     final type = ref.watch(typeProvider);
     final selectedIndex = ref.watch(selectProvider);
+    final names = ref.watch(dependentNamesProvider);
 
     return PreferredSize(
       preferredSize: Size.fromHeight(160),
@@ -171,10 +187,15 @@ class Home extends ConsumerWidget {
                           ),
                           child: Row(
                             children: [
-                              Medium_18px(
-                                text: names[selectedIndex],
-                                color: CareConnectColor.white,
-                              ),
+                              (names.length == 0)
+                                  ? Medium_18px(
+                                      text: '없음',
+                                      color: CareConnectColor.white,
+                                    )
+                                  : Medium_18px(
+                                      text: names[selectedIndex],
+                                      color: CareConnectColor.white,
+                                    ),
                               SizedBox(
                                 width: 8,
                               ),
@@ -260,6 +281,7 @@ class Home extends ConsumerWidget {
 
   Widget SelectDialog(ref) {
     final selectedIndex = ref.watch(selectProvider);
+    final names = ref.watch(dependentNamesProvider);
 
     return Dialog(
       backgroundColor: CareConnectColor.neutral[100],

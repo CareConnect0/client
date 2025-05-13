@@ -1,5 +1,6 @@
 import 'package:client/api/User/user_repository.dart';
 import 'package:client/model/singUp.dart';
+import 'package:client/screens/home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final userRepositoryProvider = Provider((ref) => UserRepository());
@@ -50,6 +51,18 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
     } catch (e, st) {
       print('❌ 연결 실패: $e');
       return false;
+    }
+  }
+
+  /// 피보호자 목록 조회
+  Future<void> getDependents() async {
+    try {
+      final repo = ref.read(userRepositoryProvider);
+      final dependents = await repo.getDependentList();
+      final names = dependents.map((e) => e.name).toList(); // 이름만 반환
+      ref.read(dependentNamesProvider.notifier).state = names;
+    } catch (e) {
+      print('❌ 에러: $e');
     }
   }
 }
