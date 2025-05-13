@@ -1,11 +1,13 @@
 import 'package:intl/intl.dart';
 
 class ScheduleInfo {
+  final int? dependentId;
   final int? scheduleId;
   final String content;
   final DateTime dateTime;
 
   ScheduleInfo({
+    this.dependentId,
     this.scheduleId,
     required this.content,
     required this.dateTime,

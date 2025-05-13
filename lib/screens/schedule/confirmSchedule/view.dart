@@ -1,3 +1,4 @@
+import 'package:client/api/Schedule/guardian_view_model.dart';
 import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
@@ -37,9 +38,14 @@ class ConfirmSchedule extends ConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () async {
+                      // 피보호자
+                      // await ref
+                      //     .read(scheduleViewModelProvider.notifier)
+                      //     .enrollSchedule(info);
+                      // 보호자
                       await ref
-                          .read(scheduleViewModelProvider.notifier)
-                          .enrollSchedule(info);
+                          .read(scheduleGuardianViewModelProvider.notifier)
+                          .enrollGuardianSchedule(info);
                       // 등록 후 이동
                       context.go('/calendar/timetable', extra: info.dateTime);
                     },
