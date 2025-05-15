@@ -113,4 +113,18 @@ class UserRepository {
       throw Exception('피보호자 목록 조회 실패: ${response.statusCode}');
     }
   }
+
+  /// 아이디 중복 확인
+  Future<bool> checkUsername(String username) async {
+    final url = Uri.parse('$_baseUrl/users/check-username?username=$username');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 400) {
+      return false;
+    } else {
+      throw Exception('일정 조회 실패: ${response.statusCode}');
+    }
+  }
 }
