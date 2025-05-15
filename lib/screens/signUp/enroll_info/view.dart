@@ -18,6 +18,7 @@ class EnrollInfo extends ConsumerWidget {
   final obscureCheckProvider = StateProvider<bool>((ref) => true);
   final isPasswordFocusedProvider = StateProvider<bool>((ref) => false);
   final isCheckPasswordFocusedProvider = StateProvider<bool>((ref) => false);
+  final idCheckResultProvider = StateProvider<bool?>((ref) => null);
 
   final PageController controller = PageController(initialPage: 1);
 
@@ -168,6 +169,7 @@ class EnrollInfo extends ConsumerWidget {
   }
 
   Widget IdTextField(WidgetRef ref) {
+    final idCheckResult = ref.watch(idCheckResultProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,7 +178,10 @@ class EnrollInfo extends ConsumerWidget {
           height: 6,
         ),
         TextFormField(
-          onChanged: (value) => ref.read(idProvider.notifier).state = value,
+          onChanged: (value) {
+            ref.read(idProvider.notifier).state = value;
+            ref.read(idCheckResultProvider.notifier).state = null;
+          },
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -184,10 +189,18 @@ class EnrollInfo extends ConsumerWidget {
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderSide: idCheckResult != null
+                  ? (idCheckResult
+                      ? BorderSide.none
+                      : BorderSide(color: const Color(0xFFF63D68)))
+                  : BorderSide.none,
             ),
             filled: true,
-            fillColor: CareConnectColor.neutral[100],
+            fillColor: idCheckResult != null
+                ? (idCheckResult
+                    ? CareConnectColor.neutral[100]
+                    : const Color(0xFFFFF1F3))
+                : CareConnectColor.neutral[100],
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: CareConnectColor.black),
@@ -201,8 +214,43 @@ class EnrollInfo extends ConsumerWidget {
               color: CareConnectColor.neutral[400],
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+            suffixIcon: InkWell(
+              onTap: () async {
+                // final id = ref.read(idProvider);
+                // final isAvailable = await checkIdAvailable(id);
+                // ref.read(idCheckResultProvider.notifier).state = isAvailable;
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                child: Container(
+                  width: 71,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: CareConnectColor.neutral[700],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Medium_12px(
+                      text: '중복 확인',
+                      color: CareConnectColor.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
+        const SizedBox(height: 8),
+        if (idCheckResult != null)
+          Text(
+            idCheckResult ? '사용할 수 있는 아이디입니다.' : '중복된 아이디입니다.',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: CareConnectColor.neutral[400],
+            ),
+          ),
       ],
     );
   }
