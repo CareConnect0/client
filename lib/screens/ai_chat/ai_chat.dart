@@ -87,14 +87,13 @@ class AIChat extends ConsumerWidget {
                 Expanded(
                   child: ListView.builder(
                     reverse: true,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 36, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final reversedMessages = messages.reversed.toList();
                       final msg = reversedMessages[index];
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.only(top: 28),
                         child: msg["isMe"]
                             ? MyMessageBubble(
                                 message: msg["text"], time: msg["time"])
