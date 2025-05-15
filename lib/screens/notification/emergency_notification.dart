@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyNotification extends ConsumerWidget {
   const EmergencyNotification({super.key});
@@ -93,7 +94,15 @@ class EmergencyNotification extends ConsumerWidget {
                 ),
                 Expanded(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      final url = Uri.parse('tel:01012341234');
+                      print('tel:01012341234');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    },
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
