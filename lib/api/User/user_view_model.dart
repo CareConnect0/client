@@ -2,6 +2,7 @@ import 'package:client/api/User/user_repository.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/home.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
+import 'package:client/screens/signUp/enroll_info/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final userRepositoryProvider = Provider((ref) => UserRepository());
@@ -66,6 +67,18 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       ref.read(dependentIdProvider.notifier).state = dependentIds;
     } catch (e) {
       print('❌ 에러: $e');
+    }
+  }
+
+  Future<bool> checkUsername(String username) async {
+    try {
+      final repo = ref.read(userRepositoryProvider);
+      final check = await repo.checkUsername(username);
+      ref.read(idCheckResultProvider.notifier).state = check;
+      return true;
+    } catch (e) {
+      print('연결 실패: $e');
+      return false;
     }
   }
 }

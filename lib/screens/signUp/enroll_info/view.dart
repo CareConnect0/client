@@ -1,3 +1,4 @@
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/singUp.dart';
@@ -7,18 +8,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+final typeProvider = StateProvider<List<bool>>((ref) => [false, false]);
+final idProvider = StateProvider<String>((ref) => '');
+final passwordProvider = StateProvider<String>((ref) => '');
+final checkPasswordProvider = StateProvider<String>((ref) => '');
+final obscureProvider = StateProvider<bool>((ref) => true);
+final obscureCheckProvider = StateProvider<bool>((ref) => true);
+final isPasswordFocusedProvider = StateProvider<bool>((ref) => false);
+final isCheckPasswordFocusedProvider = StateProvider<bool>((ref) => false);
+final idCheckResultProvider = StateProvider<bool?>((ref) => null);
+
 class EnrollInfo extends ConsumerWidget {
   EnrollInfo({super.key});
-
-  final typeProvider = StateProvider<List<bool>>((ref) => [false, false]);
-  final idProvider = StateProvider<String>((ref) => '');
-  final passwordProvider = StateProvider<String>((ref) => '');
-  final checkPasswordProvider = StateProvider<String>((ref) => '');
-  final obscureProvider = StateProvider<bool>((ref) => true);
-  final obscureCheckProvider = StateProvider<bool>((ref) => true);
-  final isPasswordFocusedProvider = StateProvider<bool>((ref) => false);
-  final isCheckPasswordFocusedProvider = StateProvider<bool>((ref) => false);
-  final idCheckResultProvider = StateProvider<bool?>((ref) => null);
 
   final PageController controller = PageController(initialPage: 1);
 
@@ -216,9 +217,10 @@ class EnrollInfo extends ConsumerWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
             suffixIcon: InkWell(
               onTap: () async {
-                // final id = ref.read(idProvider);
-                // final isAvailable = await checkIdAvailable(id);
-                // ref.read(idCheckResultProvider.notifier).state = isAvailable;
+                final id = ref.read(idProvider);
+                await ref
+                    .read(userViewModelProvider.notifier)
+                    .checkUsername(id);
               },
               child: Padding(
                 padding:
