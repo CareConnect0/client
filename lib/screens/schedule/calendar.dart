@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/YearMonth.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -116,27 +118,61 @@ class Calendar extends ConsumerWidget {
       ),
     );
   }
+}
 
-  final calendarFormatProvider =
-      StateProvider<CalendarFormat>((ref) => CalendarFormat.month);
-  final focusedDayProvider = StateProvider<DateTime>((ref) => DateTime.now());
-  final selectedDayProvider = StateProvider<DateTime?>((ref) => null);
+final calendarFormatProvider =
+    StateProvider<CalendarFormat>((ref) => CalendarFormat.month);
+final focusedDayProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final selectedDayProvider = StateProvider<DateTime?>((ref) => null);
 
-  Widget MonthCalendar() {
-    // 예시 이벤트 목록 ...TODO: api 연결
-    final Map<DateTime, List<String>> events = {
-      DateTime.utc(2025, 3, 15): ['Event 1'],
-      DateTime.utc(2025, 4, 15): ['Event 1'],
-      DateTime.utc(2025, 4, 19): ['Event 1'],
-      DateTime.utc(2025, 4, 23): ['Event 2'],
-    };
+class MonthCalendar extends ConsumerStatefulWidget {
+  const MonthCalendar({super.key});
 
-    return Consumer(
-      builder: (context, ref, _) {
-        final calendarFormat = ref.watch(calendarFormatProvider);
-        final focusedDay = ref.watch(focusedDayProvider);
-        final selectedDay = ref.watch(selectedDayProvider);
+  @override
+  ConsumerState<MonthCalendar> createState() => _MonthCalendarState();
+}
 
+class _MonthCalendarState extends ConsumerState<MonthCalendar> {
+  YearMonth? _lastFetchedYM;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    final ym = YearMonth(now.year, now.month);
+    _lastFetchedYM = ym;
+
+    // 초기 데이터를 미리 fetch하도록 프리로드
+    Future.microtask(() {
+      ref.read(scheduleMonthProvider(ym));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final calendarFormat = ref.watch(calendarFormatProvider);
+    final focusedDay = ref.watch(focusedDayProvider);
+    final selectedDay = ref.watch(selectedDayProvider);
+
+    final currentYM = YearMonth(focusedDay.year, focusedDay.month);
+
+    // 이전 YM과 다르면 새로 fetch하고 _lastFetchedYM 업데이트
+    if (_lastFetchedYM != currentYM) {
+      _lastFetchedYM = currentYM;
+      ref.read(scheduleMonthProvider(currentYM)); // 새로 불러오기
+    }
+
+// 이제는 항상 마지막으로 가져온 month로 표시
+    final monthlyScheduleAsync =
+        ref.watch(scheduleMonthProvider(_lastFetchedYM!));
+
+    return monthlyScheduleAsync.when(
+      data: (dateList) {
+        final events = <DateTime, List<String>>{};
+        for (final date in dateList) {
+          final key = DateTime.utc(date.year, date.month, date.day);
+          events[key] = ['일정 있음']; // 임의 텍스트
+        }
         return Column(
           children: [
             // nnnn년 n월
@@ -336,6 +372,8 @@ class Calendar extends ConsumerWidget {
           ],
         );
       },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (e, st) => Center(child: Text('일정 정보를 불러오는 중 오류가 발생했습니다.')),
     );
   }
 }
