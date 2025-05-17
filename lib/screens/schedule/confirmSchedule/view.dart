@@ -3,6 +3,7 @@ import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/scheduleInfo.dart';
+import 'package:client/screens/home.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,14 +39,17 @@ class ConfirmSchedule extends ConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      // 피보호자
-                      // await ref
-                      //     .read(scheduleViewModelProvider.notifier)
-                      //     .enrollSchedule(info);
-                      // 보호자
-                      await ref
-                          .read(scheduleGuardianViewModelProvider.notifier)
-                          .enrollGuardianSchedule(info);
+                      if (ref.read(userTypeProvider) == "DEPENDENT") {
+                        // 피보호자
+                        await ref
+                            .read(scheduleViewModelProvider.notifier)
+                            .enrollSchedule(info);
+                      } else {
+                        // 보호자
+                        await ref
+                            .read(scheduleGuardianViewModelProvider.notifier)
+                            .enrollGuardianSchedule(info);
+                      }
                       // 등록 후 이동
                       context.go('/calendar/timetable', extra: info.dateTime);
                     },

@@ -61,7 +61,8 @@ class ScheduleGuardianRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonBody = jsonDecode(response.body);
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
       final List<dynamic> data = jsonBody['data'];
       return data.map((e) => ScheduleInfo.fromJson(e)).toList();
     } else {
