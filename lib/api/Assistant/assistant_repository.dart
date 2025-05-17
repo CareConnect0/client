@@ -54,6 +54,7 @@ class AssistantRepository {
     if (response.statusCode == 200) {
       final jsonBody = jsonDecode(utf8.decode(response.bodyBytes));
       final data = jsonBody['data'];
+      print('메시지 데이터: $data');
       return (data['responseDtoList'] as List)
           .map((e) => Message.fromJson(e))
           .toList();
@@ -66,5 +67,37 @@ class AssistantRepository {
     required Map<String, dynamic> data,
   }) async {
     return data['hasNext'];
+  }
+
+  /// 사용자 메시지 저장
+  Future<Message> sendUserMessage({
+    required int roomId,
+    required String requestMessage,
+  }) async {
+    final url = Uri.parse('$_baseUrl/request');
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'roomId': roomId,
+        'requestMessage': requestMessage,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final jsonBody = jsonDecode(utf8.decode(response.bodyBytes));
+      final data = jsonBody['data'];
+      print('사용자 메시지 전송 성공: $data');
+      return Message.fromJson(data);
+    } else {
+      throw Exception('사용자 메시지 전송 실패: ${response.statusCode}');
+    }
   }
 }

@@ -8,35 +8,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-class AIChat extends ConsumerWidget {
-  AIChat({super.key});
-
-  final List<Map<String, dynamic>> messages = [
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {
-      "text":
-          "조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!",
-      "isMe": true,
-      "time": "오후 3:13"
-    },
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
-  ];
+class AIChat extends ConsumerStatefulWidget {
+  const AIChat({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AIChat> createState() => _AIChatState();
+}
+
+class _AIChatState extends ConsumerState<AIChat> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void didUpdateWidget(covariant AIChat oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _scrollToBottom(); // 위젯 업데이트 시에도 스크롤
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0.0, // reverse: true라서 0.0이 bottom
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final chatState = ref.watch(assistantViewModelProvider);
     final viewModel = ref.read(assistantViewModelProvider.notifier);
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
+    // 새 메시지 오면 자동 스크롤
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
@@ -87,28 +100,6 @@ class AIChat extends ConsumerWidget {
             child: Column(
               children: [
                 // 메세지 표시 영역
-                // Expanded(
-                //   child: ListView.builder(
-                //     reverse: true,
-                //     padding: const EdgeInsets.symmetric(horizontal: 20),
-                //     itemCount: messages.length,
-                //     itemBuilder: (context, index) {
-                //       final reversedMessages = messages.reversed.toList();
-                //       final msg = reversedMessages[index];
-                //       return Padding(
-                //         padding: const EdgeInsets.only(top: 28),
-                //         child: msg["isMe"]
-                //             ? MyMessageBubble(
-                //                 message: msg["text"], time: msg["time"])
-                //             : OtherMessageBubble(
-                //                 message: msg["text"],
-                //                 time: msg["time"],
-                //                 assetUrl: 'assets/icons/message-smile.svg',
-                //               ),
-                //       );
-                //     },
-                //   ),
-                // ),
                 Expanded(
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (scroll) {
@@ -124,15 +115,24 @@ class AIChat extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: chatState.messages.length,
                       itemBuilder: (context, index) {
-                        final reversed = chatState.messages.reversed.toList();
-                        final msg = reversed[index];
+                        final msg = chatState.messages.toList()[index];
                         final isMe = msg.senderType == "USER";
+
+                        String formatSentAt(String isoString) {
+                          final dateTime = DateTime.parse(isoString);
+                          final datePart =
+                              DateFormat('yyyy.MM.dd').format(dateTime);
+                          final timePart = DateFormat('a h:mm', 'ko')
+                              .format(dateTime); // 'a'는 오전/오후
+                          return '$timePart';
+                        }
 
                         return Padding(
                           padding: const EdgeInsets.only(top: 28),
                           child: isMe
                               ? MyMessageBubble(
-                                  message: msg.content, time: msg.sentAt)
+                                  message: msg.content,
+                                  time: formatSentAt(msg.sentAt))
                               : OtherMessageBubble(
                                   message: msg.content,
                                   time: msg.sentAt,
@@ -149,13 +149,13 @@ class AIChat extends ConsumerWidget {
                   height: 70,
                   child: Row(
                     children: [
-                      Expanded(child: CareConnectTextFormField()),
+                      Expanded(child: CareConnectTextFormField(isAI: true)),
                       SizedBox(
                         width: 8,
                       ),
                       InkWell(
                         onTap: () {
-                          context.go('/ai/enroll');
+                          context.push('/ai/enroll');
                         },
                         child: Container(
                           width: 42,

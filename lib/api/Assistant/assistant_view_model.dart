@@ -66,4 +66,27 @@ class AssistantViewModel extends StateNotifier<AssistantChatState> {
       print('메시지 불러오기 실패: $e');
     }
   }
+
+  /// 사용자 메시지 저장
+  Future<void> sendMessage(String messageContent) async {
+    if (_roomId == null) return;
+
+    try {
+      final repo = ref.read(assistantRepositoryProvider);
+      final userMessage = await repo.sendUserMessage(
+        roomId: _roomId!,
+        requestMessage: messageContent,
+      );
+
+      state = AssistantChatState(
+        messages: [userMessage, ...state.messages],
+        hasNext: state.hasNext,
+        lastMessageId: userMessage.messageId,
+      );
+
+      // 여기에 assistant 응답 기다리기 로직이 들어갈 수도 있음
+    } catch (e) {
+      print('메시지 전송 실패: $e');
+    }
+  }
 }
