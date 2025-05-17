@@ -1,3 +1,4 @@
+import 'package:client/api/Assistant/assistant_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTextFormField.dart';
 import 'package:client/designs/CareConnectTypo.dart';
