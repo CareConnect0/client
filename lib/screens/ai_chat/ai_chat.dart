@@ -34,6 +34,8 @@ class AIChat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final chatState = ref.watch(assistantViewModelProvider);
+    final viewModel = ref.read(assistantViewModelProvider.notifier);
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
@@ -85,26 +87,60 @@ class AIChat extends ConsumerWidget {
             child: Column(
               children: [
                 // 메세지 표시 영역
+                // Expanded(
+                //   child: ListView.builder(
+                //     reverse: true,
+                //     padding: const EdgeInsets.symmetric(horizontal: 20),
+                //     itemCount: messages.length,
+                //     itemBuilder: (context, index) {
+                //       final reversedMessages = messages.reversed.toList();
+                //       final msg = reversedMessages[index];
+                //       return Padding(
+                //         padding: const EdgeInsets.only(top: 28),
+                //         child: msg["isMe"]
+                //             ? MyMessageBubble(
+                //                 message: msg["text"], time: msg["time"])
+                //             : OtherMessageBubble(
+                //                 message: msg["text"],
+                //                 time: msg["time"],
+                //                 assetUrl: 'assets/icons/message-smile.svg',
+                //               ),
+                //       );
+                //     },
+                //   ),
+                // ),
                 Expanded(
-                  child: ListView.builder(
-                    reverse: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final reversedMessages = messages.reversed.toList();
-                      final msg = reversedMessages[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 28),
-                        child: msg["isMe"]
-                            ? MyMessageBubble(
-                                message: msg["text"], time: msg["time"])
-                            : OtherMessageBubble(
-                                message: msg["text"],
-                                time: msg["time"],
-                                assetUrl: 'assets/icons/message-smile.svg',
-                              ),
-                      );
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (scroll) {
+                      if (scroll.metrics.pixels ==
+                              scroll.metrics.maxScrollExtent &&
+                          chatState.hasNext) {
+                        viewModel.loadMoreMessages();
+                      }
+                      return false;
                     },
+                    child: ListView.builder(
+                      reverse: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: chatState.messages.length,
+                      itemBuilder: (context, index) {
+                        final reversed = chatState.messages.reversed.toList();
+                        final msg = reversed[index];
+                        final isMe = msg.senderType == "USER";
+
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 28),
+                          child: isMe
+                              ? MyMessageBubble(
+                                  message: msg.content, time: msg.sentAt)
+                              : OtherMessageBubble(
+                                  message: msg.content,
+                                  time: msg.sentAt,
+                                  assetUrl: 'assets/icons/message-smile.svg',
+                                ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 // 메세지 입력 영역
