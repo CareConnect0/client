@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:client/api/STT/stt_repository.dart';
 import 'package:client/screens/record/model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -39,12 +40,27 @@ class RecorderViewModel extends Notifier<RecorderModel> {
       final path = await _recorder.stopRecorder();
       controller.reset();
 
-      state = state.copyWith(
-        isRecording: false,
-        statusText: "",
-        recordedFilePath: path,
-        readyForNavigation: true,
-      );
+      // ✅ STT 서버에 파일 전송 및 응답 텍스트 가져오기
+      try {
+        final recognizedText = await STTRepository().uploadAudioForSTT(path!);
+        print('📝 인식된 텍스트: $recognizedText');
+
+        state = state.copyWith(
+          isRecording: false,
+          statusText: recognizedText, // ✅ 상태 텍스트로 보여주기
+          recordedFilePath: path,
+          readyForNavigation: true,
+        );
+      } catch (e) {
+        print('❌ STT 오류: $e');
+        state = state.copyWith(
+          isRecording: false,
+          statusText: "음성 인식 실패 😢",
+          recordedFilePath: path,
+          readyForNavigation: true,
+        );
+      }
+
       ref.read(recorderVolumeProvider.notifier).state = 0.0;
     } else {
       final dir = await getTemporaryDirectory();
