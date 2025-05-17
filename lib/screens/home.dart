@@ -1,3 +1,4 @@
+import 'package:client/api/Assistant/assistant_view_model.dart';
 import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
@@ -31,6 +32,8 @@ class _HomeState extends ConsumerState<Home> {
       await ref.read(userViewModelProvider.notifier).getMine();
       if (ref.read(userTypeProvider) != "DEPENDENT")
         ref.read(userViewModelProvider.notifier).getDependents();
+
+      ref.read(assistantViewModelProvider.notifier).getRooms();
     });
   }
 
