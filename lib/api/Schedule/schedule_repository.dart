@@ -2,20 +2,18 @@ import 'dart:convert';
 
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/scheduleInfo.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class ScheduleRepository {
-  final String _baseUrl = 'http://3.38.183.170:8080/api';
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://3.38.183.170:8080'));
+  final String _baseUrl = 'http://3.38.183.170:8080/api/schedules';
 
   /// 일정 등록(피보호자)
   Future<void> enrollSchedule(ScheduleInfo info) async {
     final accessToken = await AuthStorage.getAccessToken();
     final refreshToken = await AuthStorage.getRefreshToken();
 
-    final url = Uri.parse('$_baseUrl/schedules');
+    final url = Uri.parse('$_baseUrl');
     final response = await http.post(
       url,
       headers: {
@@ -49,7 +47,7 @@ class ScheduleRepository {
     final refreshToken = await AuthStorage.getRefreshToken();
 
     final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-    final url = Uri.parse('$_baseUrl/schedules?date=$formattedDate');
+    final url = Uri.parse('$_baseUrl?date=$formattedDate');
 
     final response = await http.get(
       url,
@@ -78,7 +76,7 @@ class ScheduleRepository {
       throw Exception('수정할 일정의 ID가 없습니다.');
     }
 
-    final url = Uri.parse('$_baseUrl/schedules/${info.scheduleId}');
+    final url = Uri.parse('$_baseUrl/${info.scheduleId}');
     final response = await http.patch(
       url,
       headers: {
@@ -109,7 +107,7 @@ class ScheduleRepository {
     final accessToken = await AuthStorage.getAccessToken();
     final refreshToken = await AuthStorage.getRefreshToken();
 
-    final url = Uri.parse('$_baseUrl/schedules/$scheduleId');
+    final url = Uri.parse('$_baseUrl/$scheduleId');
 
     final response = await http.delete(
       url,
