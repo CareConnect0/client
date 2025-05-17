@@ -64,7 +64,7 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       final names = dependents.map((e) => e.name).toList(); // 이름만 반환
       ref.read(dependentNamesProvider.notifier).state = names;
       final dependentIds = dependents.map((e) => e.dependentId).toList(); // id
-      ref.read(dependentIdProvider.notifier).state = dependentIds;
+      ref.read(dependentIdListProvider.notifier).state = dependentIds;
     } catch (e) {
       print('❌ 에러: $e');
     }

@@ -15,6 +15,7 @@ final scheduleViewModelProvider =
 /// 월별 일정 조회(피보호자)
 final scheduleMonthProvider =
     FutureProvider.family<List<DateTime>, YearMonth>((ref, ym) async {
+  ref.keepAlive();
   final repo = ref.read(scheduleRepositoryProvider);
   final dateList = await repo.getScheduleMonthList(ym.year, ym.month);
   return dateList;

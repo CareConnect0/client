@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:client/api/Schedule/guardian_view_model.dart';
 import 'package:client/api/Schedule/schedule_view_model.dart';
 import 'package:client/designs/CareConnectButton.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/YearMonth.dart';
+import 'package:client/screens/home.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -134,17 +136,28 @@ class MonthCalendar extends ConsumerStatefulWidget {
 
 class _MonthCalendarState extends ConsumerState<MonthCalendar> {
   YearMonth? _lastFetchedYM;
+  YearMonthGuardian? _lastFetchedGYM;
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     final ym = YearMonth(now.year, now.month);
+    final dym = YearMonthGuardian(
+        dependentId: ref.read(dependentSelectedIdProvider),
+        year: now.year,
+        month: now.month);
     _lastFetchedYM = ym;
+    _lastFetchedGYM = dym;
 
     // 초기 데이터를 미리 fetch하도록 프리로드
     Future.microtask(() {
-      ref.read(scheduleMonthProvider(ym));
+      if (ref.read(userTypeProvider) == "DEPENDENT") {
+        ref.read(scheduleMonthProvider(ym));
+      } else {
+        print(ref.read(dependentSelectedIdProvider));
+        ref.read(scheduleMonthGuardianProvider(dym));
+      }
     });
   }
 
@@ -153,18 +166,18 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
     final calendarFormat = ref.watch(calendarFormatProvider);
     final focusedDay = ref.watch(focusedDayProvider);
     final selectedDay = ref.watch(selectedDayProvider);
+    final dependentId = ref.watch(dependentSelectedIdProvider);
+    final userType = ref.watch(userTypeProvider);
 
     final currentYM = YearMonth(focusedDay.year, focusedDay.month);
+    final currentGYM = YearMonthGuardian(
+        dependentId: dependentId,
+        year: focusedDay.year,
+        month: focusedDay.month);
 
-    // 이전 YM과 다르면 새로 fetch하고 _lastFetchedYM 업데이트
-    if (_lastFetchedYM != currentYM) {
-      _lastFetchedYM = currentYM;
-      ref.read(scheduleMonthProvider(currentYM)); // 새로 불러오기
-    }
-
-// 이제는 항상 마지막으로 가져온 month로 표시
-    final monthlyScheduleAsync =
-        ref.watch(scheduleMonthProvider(_lastFetchedYM!));
+    final monthlyScheduleAsync = userType == "DEPENDENT"
+        ? ref.watch(scheduleMonthProvider(currentYM))
+        : ref.watch(scheduleMonthGuardianProvider(currentGYM));
 
     return monthlyScheduleAsync.when(
       data: (dateList) {

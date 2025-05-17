@@ -19,7 +19,8 @@ final scheduleProvider =
   (ref) => ScheduleNotifier(),
 );
 
-final dependentIdProvider = StateProvider<List<int>>((ref) => [0]);
+final dependentIdListProvider = StateProvider<List<int>>((ref) => [0]);
+final dependentSelectedIdProvider = StateProvider<int>((ref) => 0);
 
 class ScheduleNotifier extends StateNotifier<Map<String, List<ScheduleInfo>>> {
   ScheduleNotifier() : super({});
@@ -90,7 +91,7 @@ class _TimeTableState extends ConsumerState<TimeTable> {
       } else {
         // 일정 조회 API 호출 (보호자)
         final selectedIndex = ref.watch(selectProvider); // 현재 선택된 인덱스
-        final dependentIds = ref.watch(dependentIdProvider); // ID 리스트
+        final dependentIds = ref.watch(dependentIdListProvider); // ID 리스트
         if (dependentIds.isNotEmpty && selectedIndex < dependentIds.length) {
           final selectedDependentId = dependentIds[selectedIndex];
 
@@ -107,7 +108,7 @@ class _TimeTableState extends ConsumerState<TimeTable> {
     final schedule = ref.watch(scheduleProvider);
 
     final selectedIndex = ref.watch(selectProvider); // 현재 선택된 인덱스
-    final dependentIds = ref.watch(dependentIdProvider); // ID 리스트
+    final dependentIds = ref.watch(dependentIdListProvider); // ID 리스트
     final selectedDependentId = dependentIds[selectedIndex];
 
     return Scaffold(
@@ -124,8 +125,16 @@ class _TimeTableState extends ConsumerState<TimeTable> {
         leading: InkWell(
           onTap: () {
             // 해당 월 일정 새로고침
-            final ym = YearMonth(widget.selected.year, widget.selected.month);
-            ref.invalidate(scheduleMonthProvider(ym));
+            if (ref.read(userTypeProvider) == "DEPENDENT") {
+              final ym = YearMonth(widget.selected.year, widget.selected.month);
+              ref.invalidate(scheduleMonthProvider(ym));
+            } else {
+              final dym = YearMonthGuardian(
+                  dependentId: ref.read(dependentSelectedIdProvider),
+                  year: widget.selected.year,
+                  month: widget.selected.month);
+              ref.invalidate(scheduleMonthGuardianProvider(dym));
+            }
             context.go('/calendar');
           },
           child: Row(

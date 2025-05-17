@@ -2,6 +2,7 @@ import 'package:client/api/Assistant/assistant_view_model.dart';
 import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,8 +31,15 @@ class _HomeState extends ConsumerState<Home> {
     // API 요청은 여기서 실행
     Future.microtask(() async {
       await ref.read(userViewModelProvider.notifier).getMine();
-      if (ref.read(userTypeProvider) != "DEPENDENT")
-        ref.read(userViewModelProvider.notifier).getDependents();
+      if (ref.read(userTypeProvider) != "DEPENDENT") {
+        await ref.read(userViewModelProvider.notifier).getDependents();
+
+        final selectedIndex = ref.watch(selectProvider); // 현재 선택된 인덱스
+        final dependentIds = ref.watch(dependentIdListProvider); // ID 리스트
+        final selectedDependentId = dependentIds[selectedIndex];
+        ref.watch(dependentSelectedIdProvider.notifier).state =
+            selectedDependentId;
+      }
     });
   }
 
@@ -319,6 +327,14 @@ class _HomeState extends ConsumerState<Home> {
                 return InkWell(
                   onTap: () {
                     ref.read(selectProvider.notifier).state = index;
+
+                    final selectedIndex =
+                        ref.watch(selectProvider); // 현재 선택된 인덱스
+                    final dependentIds =
+                        ref.watch(dependentIdListProvider); // ID 리스트
+                    final selectedDependentId = dependentIds[selectedIndex];
+                    ref.watch(dependentSelectedIdProvider.notifier).state =
+                        selectedDependentId;
                     context.pop();
                   },
                   child: Container(
