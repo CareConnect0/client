@@ -13,21 +13,24 @@ class Home extends ConsumerStatefulWidget {
   ConsumerState<Home> createState() => _HomeState();
 }
 
-final typeProvider = StateProvider<List<bool>>((ref) => [false, true]);
 final selectProvider = StateProvider<int>((ref) => 0);
 final calendarNotificationProvider = StateProvider<bool>((ref) => true);
 final messengerNotificationProvider = StateProvider<bool>((ref) => true);
 final AINotificationProvider = StateProvider<bool>((ref) => true);
 final emergencyNotificationProvider = StateProvider<bool>((ref) => true);
 final dependentNamesProvider = StateProvider<List<String>>((ref) => []);
+final userNameProvider = StateProvider<String>((ref) => '');
+final userTypeProvider = StateProvider<String>((ref) => '');
 
 class _HomeState extends ConsumerState<Home> {
   @override
   void initState() {
     super.initState();
     // API 요청은 여기서 실행
-    Future.microtask(() {
-      ref.read(userViewModelProvider.notifier).getDependents();
+    Future.microtask(() async {
+      await ref.read(userViewModelProvider.notifier).getMine();
+      if (ref.read(userTypeProvider) != "DEPENDENT")
+        ref.read(userViewModelProvider.notifier).getDependents();
     });
   }
 
@@ -37,7 +40,7 @@ class _HomeState extends ConsumerState<Home> {
     final hasMessengerNotification = ref.watch(messengerNotificationProvider);
     final hasAINotification = ref.watch(AINotificationProvider);
     final hasEmergencyNotification = ref.watch(emergencyNotificationProvider);
-    final type = ref.watch(typeProvider);
+    final type = ref.watch(userTypeProvider);
 
     return Scaffold(
       appBar: AppbarWidget(context, ref),
@@ -91,7 +94,7 @@ class _HomeState extends ConsumerState<Home> {
                     width: 13,
                   ),
                   Expanded(
-                    child: type[1] == true
+                    child: type != "DEPENDENT"
                         ? MenuCard(
                             context,
                             '/emergency/family',
@@ -117,7 +120,7 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   PreferredSizeWidget AppbarWidget(BuildContext context, ref) {
-    final type = ref.watch(typeProvider);
+    final type = ref.watch(userTypeProvider);
     final selectedIndex = ref.watch(selectProvider);
     final names = ref.watch(dependentNamesProvider);
 
@@ -157,10 +160,10 @@ class _HomeState extends ConsumerState<Home> {
               ],
             ),
             Bold_26px(
-              text: "안녕하세요, 사용자님",
+              text: "안녕하세요, ${ref.watch(userNameProvider)}님",
               color: CareConnectColor.white,
             ),
-            type[0] == true
+            type == "DEPENDENT"
                 ? Medium_20px(
                     text: "오늘도 좋은 하루 되세요.",
                     color: CareConnectColor.white,

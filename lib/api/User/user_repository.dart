@@ -104,8 +104,9 @@ class UserRepository {
     );
 
     if (response.statusCode == 200) {
-      print('피보호자 목록 조회 성공: ${response.body}');
-      final jsonBody = jsonDecode(response.body);
+      // print('피보호자 목록 조회 성공: ${response.body}');
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
       final List<dynamic> data = jsonBody['data'];
       return data.map((e) => Dependent.fromJson(e)).toList();
     } else {
@@ -125,6 +126,30 @@ class UserRepository {
       return false;
     } else {
       throw Exception('일정 조회 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 회원 정보 조회
+  Future<Map<String, dynamic>> getMine() async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+    final url = Uri.parse('$_baseUrl/users/me');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+    if (response.statusCode == 200) {
+      // print('회원 정보 조회 성공: ${response.body}');
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      final data = jsonBody['data'];
+      return data;
+    } else {
+      print('회원 정보 조회 실패: ${response.body}');
+      throw Exception('회원 정보 조회 실패: ${response.statusCode}');
     }
   }
 }
