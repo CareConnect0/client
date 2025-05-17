@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class STTRepository {
-  final String _baseUrl = 'http://localhost:8000/api/ai/stt'; // 서버 주소 바꿔도 됨
+  final String _baseUrl = 'http://localhost:8000/api/ai/stt'; // TODO: 배포 후 수정
 
   Future<String> uploadAudioForSTT(String audioPath) async {
     final uri = Uri.parse(_baseUrl);
