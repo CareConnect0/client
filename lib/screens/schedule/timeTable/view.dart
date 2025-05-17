@@ -5,6 +5,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog.dart';
 import 'package:client/designs/TimePickerDialog.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/YearMonth.dart';
 import 'package:client/model/scheduleInfo.dart';
 import 'package:client/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +123,9 @@ class _TimeTableState extends ConsumerState<TimeTable> {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
+            // 해당 월 일정 새로고침
+            final ym = YearMonth(widget.selected.year, widget.selected.month);
+            ref.invalidate(scheduleMonthProvider(ym));
             context.go('/calendar');
           },
           child: Row(

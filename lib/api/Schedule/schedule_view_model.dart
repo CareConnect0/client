@@ -1,4 +1,5 @@
 import 'package:client/api/Schedule/schedule_repository.dart';
+import 'package:client/model/YearMonth.dart';
 import 'package:client/model/scheduleInfo.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,14 @@ final scheduleViewModelProvider =
     StateNotifierProvider<ScheduleViewModel, AsyncValue<void>>(
   (ref) => ScheduleViewModel(ref),
 );
+
+/// 월별 일정 조회(피보호자)
+final scheduleMonthProvider =
+    FutureProvider.family<List<DateTime>, YearMonth>((ref, ym) async {
+  final repo = ref.read(scheduleRepositoryProvider);
+  final dateList = await repo.getScheduleMonthList(ym.year, ym.month);
+  return dateList;
+});
 
 class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
   final Ref ref;

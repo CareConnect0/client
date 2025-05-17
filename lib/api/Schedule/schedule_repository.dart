@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/scheduleInfo.dart';
@@ -64,6 +65,33 @@ class ScheduleRepository {
       return data.map((e) => ScheduleInfo.fromJson(e)).toList();
     } else {
       throw Exception('일정 조회 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 월별 일정 조회(피보호자)
+  Future<List<DateTime>> getScheduleMonthList(int year, int month) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl/dates?year=$year&month=$month');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      final List<dynamic> dateList = jsonBody['data']['dateList'];
+      return dateList
+          .map<DateTime>((dateStr) => DateTime.parse(dateStr))
+          .toList();
+    } else {
+      throw Exception('월별 일정 조회 실패: ${response.statusCode}');
     }
   }
 

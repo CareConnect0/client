@@ -16,7 +16,7 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
 
   ScheduleViewModel(this.ref) : super(const AsyncData(null));
 
-  /// 일정 등록(피보호자)
+  /// 일정 등록(보호자)
   Future<void> enrollGuardianSchedule(ScheduleInfo info) async {
     try {
       final repo = ref.read(scheduleGuardianRepositoryProvider);
@@ -26,7 +26,7 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  /// 일정 조회(피보호자)
+  /// 일정 조회(보호자)
   Future<void> getGuardianSchedules(
       int dependentId, DateTime selectedDate) async {
     try {
@@ -39,7 +39,7 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  /// 일정 수정(피보호자)
+  /// 일정 수정(보호자)
   Future<void> modifyGuardianSchedule(ScheduleInfo info) async {
     try {
       final repo = ref.read(scheduleGuardianRepositoryProvider);
@@ -49,7 +49,7 @@ class ScheduleViewModel extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  /// 일정 삭제(피보호자)
+  /// 일정 삭제(보호자)
   Future<void> deleteGuardianSchedule(int scheduleId, int dependentId) async {
     try {
       final repo = ref.read(scheduleGuardianRepositoryProvider);
