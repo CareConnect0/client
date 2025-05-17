@@ -70,6 +70,38 @@ class ScheduleGuardianRepository {
     }
   }
 
+  /// 월별 일정 조회(보호자)
+  Future<List<DateTime>> getScheduleMonthList(
+      int dependentId, int year, int month) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse(
+        '$_baseUrl/dates?dependentId=$dependentId&year=$year&month=$month');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      final List<dynamic> dateList = jsonBody['data']['dateList'];
+      print(dateList
+          .map<DateTime>((dateStr) => DateTime.parse(dateStr))
+          .toList());
+      return dateList
+          .map<DateTime>((dateStr) => DateTime.parse(dateStr))
+          .toList();
+    } else {
+      throw Exception('월별 일정 조회 실패: ${response.statusCode}');
+    }
+  }
+
   /// 일정 수정(보호자)
   Future<void> modifyGuardianSchedule(ScheduleInfo info) async {
     final accessToken = await AuthStorage.getAccessToken();
