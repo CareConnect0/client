@@ -11,8 +11,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class Messenger extends ConsumerWidget {
-  final AvailableUser targetId;
-  Messenger(this.targetId, {super.key});
+  final AvailableUser user;
+  Messenger(this.user, {super.key});
 
   final List<Map<String, dynamic>> messages = [
     {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
@@ -98,7 +98,7 @@ class Messenger extends ConsumerWidget {
                         : OtherMessageBubble(
                             message: msg["text"],
                             time: msg["time"],
-                            name: "이름",
+                            name: user.name,
                             imageUrl: 'assets/images/example.png',
                           ),
                   );

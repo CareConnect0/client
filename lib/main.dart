@@ -116,8 +116,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/contact/messenger',
         name: 'Messenger',
         builder: (context, state) {
-          final targetId = state.extra! as AvailableUser;
-          return Messenger(targetId);
+          final user = state.extra! as AvailableUser;
+          return Messenger(user);
         },
       ),
       GoRoute(
