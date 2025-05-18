@@ -32,4 +32,35 @@ class ChattingRepository {
       throw Exception('채팅 상대 조회 실패: ${response.statusCode}');
     }
   }
+
+  /// 해당 상대와의 채팅방 조회
+  Future<int> getRoomId(int targetId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl/rooms');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+      body: jsonEncode({
+        'targetId': targetId,
+      }),
+    );
+    print('accessToken: $accessToken');
+    print('refreshToken: $refreshToken');
+    print('targetId: $targetId');
+
+    if (response.statusCode == 200) {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      final data = jsonBody['data']['roomId'];
+      return data;
+    } else {
+      throw Exception('해당 상대와의 채팅방 조회 실패: ${response.statusCode}');
+    }
+  }
 }

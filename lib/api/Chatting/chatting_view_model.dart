@@ -24,4 +24,15 @@ class ChattingViewModel extends StateNotifier<AsyncValue<List<AvailableUser>>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<int> getRoomId(int targetId) async {
+    try {
+      final repo = ref.read(chattingRepositoryProvider);
+      final roomId = await repo.getRoomId(targetId);
+      return roomId;
+    } catch (e) {
+      print('메시지 불러오기 실패: $e');
+      return 0;
+    }
+  }
 }
