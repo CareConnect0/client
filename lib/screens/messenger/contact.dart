@@ -168,7 +168,10 @@ class _ContactState extends ConsumerState<Contact> {
           const SizedBox(height: 36),
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
-          onTap: () {
+          onTap: () async {
+            await ref
+                .read(chattingViewModelProvider.notifier)
+                .getRoomId(users[index].userId);
             context.push('/contact/messenger',
                 extra: AvailableUser(
                     name: users[index].name, userId: users[index].userId));
