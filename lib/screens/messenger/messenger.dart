@@ -1,3 +1,4 @@
+import 'package:client/api/Chatting/chatting_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTextFormField.dart';
 import 'package:client/designs/CareConnectTypo.dart';
@@ -10,32 +11,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-class Messenger extends ConsumerWidget {
+class Messenger extends ConsumerStatefulWidget {
   final AvailableUser user;
-  Messenger(this.user, {super.key});
-
-  final List<Map<String, dynamic>> messages = [
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {
-      "text":
-          "조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!조금 늦을 것 같아요!",
-      "isMe": true,
-      "time": "오후 3:13"
-    },
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
-    {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
-    {"text": "안녕하세요~", "isMe": true, "time": "오후 3:11"},
-    {"text": "어디 계세요?", "isMe": false, "time": "오후 3:12"},
-    {"text": "조금 늦을 것 같아요!", "isMe": true, "time": "오후 3:13"},
-  ];
+  const Messenger(this.user, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Messenger> createState() => _MessengerState();
+}
+
+class _MessengerState extends ConsumerState<Messenger> {
+  late final ScrollController _scrollController;
+  int? roomId;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    initRoomAndMessages();
+  }
+
+  Future<void> initRoomAndMessages() async {
+    final id = await ref
+        .read(chattingViewModelProvider.notifier)
+        .getRoomId(widget.user.userId);
+    setState(() => roomId = id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (roomId == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final messagesState = ref.watch(messengerViewModelProvider(roomId!));
+    final vm = ref.read(messengerViewModelProvider(roomId!).notifier);
+
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
       appBar: AppBar(
@@ -78,79 +90,101 @@ class Messenger extends ConsumerWidget {
           ),
         ),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            // 메세지 표시 영역
-            Expanded(
-              child: ListView.builder(
-                reverse: true,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final reversedMessages = messages.reversed.toList();
-                  final msg = reversedMessages[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 28),
-                    child: msg["isMe"]
-                        ? MyMessageBubble(
-                            message: msg["text"], time: msg["time"])
-                        : OtherMessageBubble(
-                            message: msg["text"],
-                            time: msg["time"],
-                            name: user.name,
-                            imageUrl: 'assets/images/example.png',
-                          ),
-                  );
-                },
-              ),
-            ),
-            // 메세지 입력 영역
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              height: 70,
-              child: Row(
-                children: [
-                  Expanded(child: CareConnectTextFormField()),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      final info = MessengerInfo(person: 'example');
+      body: messagesState.when(
+        data: (messages) {
+          return Column(
+            children: [
+              // 메세지 표시 영역
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (scroll) {
+                    if (scroll.metrics.pixels ==
+                        scroll.metrics.maxScrollExtent) {
+                      vm.loadMoreMessages();
+                    }
+                    return false;
+                  },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final msg = messages[index];
+                      final isMe = msg.senderId != widget.user.userId;
 
-                      context.go('/contact/messenger/enroll', extra: info);
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 28),
+                        child: isMe
+                            ? MyMessageBubble(
+                                message: msg.content,
+                                time: formatTime(msg.sentAt),
+                              )
+                            : OtherMessageBubble(
+                                message: msg.content,
+                                time: formatTime(msg.sentAt),
+                                name: msg.senderName,
+                                imageUrl: 'assets/images/example.png',
+                              ),
+                      );
                     },
-                    child: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          width: 2,
-                          color: CareConnectColor.white,
-                        ),
-                      ),
+                  ),
+                ),
+              ),
+              // 메세지 입력 영역
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                height: 70,
+                child: Row(
+                  children: [
+                    Expanded(child: CareConnectTextFormField()),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        final info = MessengerInfo(person: 'example');
+
+                        context.go('/contact/messenger/enroll', extra: info);
+                      },
                       child: Container(
-                        width: 31,
-                        height: 31,
-                        margin: const EdgeInsets.all(3),
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: CareConnectColor.secondary[500],
+                          border: Border.all(
+                            width: 2,
+                            color: CareConnectColor.white,
+                          ),
+                        ),
+                        child: Container(
+                          width: 31,
+                          height: 31,
+                          margin: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: CareConnectColor.secondary[500],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 34,
-            ),
-          ],
-        ),
+              SizedBox(
+                height: 34,
+              ),
+            ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('에러: $e')),
       ),
     );
+  }
+
+  String formatTime(DateTime dt) {
+    final hour = dt.hour > 12 ? dt.hour - 12 : dt.hour;
+    final ampm = dt.hour >= 12 ? '오후' : '오전';
+    return '$ampm $hour:${dt.minute.toString().padLeft(2, '0')}';
   }
 }
