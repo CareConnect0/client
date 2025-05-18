@@ -1,16 +1,34 @@
+import 'package:client/api/Chatting/chatting_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/availableUser.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-class Contact extends ConsumerWidget {
+class Contact extends ConsumerStatefulWidget {
   const Contact({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Contact> createState() => _ContactState();
+}
+
+class _ContactState extends ConsumerState<Contact> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final users =
+          ref.read(chattingViewModelProvider.notifier).getAvailableUsers();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final usersAsync = ref.watch(chattingViewModelProvider);
+
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
       appBar: AppBar(
@@ -53,102 +71,107 @@ class Contact extends ConsumerWidget {
           ),
         ),
       ),
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: CareConnectColor.primary[900],
-                  ),
-                  child: Center(
-                    child: Bold_20px(
-                      text: "누구에게 연락할까요?",
-                      color: CareConnectColor.white,
+      body: usersAsync.when(
+        data: (users) => Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: CareConnectColor.primary[900],
+                    ),
+                    child: Center(
+                      child: Bold_20px(
+                        text: "누구에게 연락할까요?",
+                        color: CareConnectColor.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 28,
-                ),
-                Expanded(child: PersonCard(ref)),
-              ],
-            ),
-          ),
-          IgnorePointer(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  end: Alignment.topCenter,
-                  begin: Alignment.bottomCenter,
-                  colors: [
-                    CareConnectColor.neutral[700]!.withOpacity(1),
-                    CareConnectColor.neutral[700]!.withOpacity(0.3),
-                    CareConnectColor.neutral[700]!.withOpacity(0),
-                    CareConnectColor.neutral[700]!.withOpacity(0),
-                    CareConnectColor.neutral[700]!.withOpacity(0),
-                  ],
-                ),
+                  SizedBox(
+                    height: 28,
+                  ),
+                  Expanded(child: PersonCard(ref, users)),
+                ],
               ),
             ),
-          ),
-          Positioned(
-            bottom: 30,
-            child: InkWell(
-              onTap: () => context.go('/home'),
+            IgnorePointer(
               child: Container(
-                width: 90,
-                height: 90,
+                height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: CareConnectColor.primary[900],
-                  boxShadow: [
-                    BoxShadow(
-                      color: CareConnectColor.black.withOpacity(0.25),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/home.svg',
-                      color: CareConnectColor.white,
-                    ),
-                    Semibold_16px(
-                      text: "홈 화면",
-                      color: CareConnectColor.white,
-                    ),
-                  ],
+                  gradient: LinearGradient(
+                    end: Alignment.topCenter,
+                    begin: Alignment.bottomCenter,
+                    colors: [
+                      CareConnectColor.neutral[700]!.withOpacity(1),
+                      CareConnectColor.neutral[700]!.withOpacity(0.3),
+                      CareConnectColor.neutral[700]!.withOpacity(0),
+                      CareConnectColor.neutral[700]!.withOpacity(0),
+                      CareConnectColor.neutral[700]!.withOpacity(0),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 30,
+              child: InkWell(
+                onTap: () => context.go('/home'),
+                child: Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CareConnectColor.primary[900],
+                    boxShadow: [
+                      BoxShadow(
+                        color: CareConnectColor.black.withOpacity(0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/home.svg',
+                        color: CareConnectColor.white,
+                      ),
+                      Semibold_16px(
+                        text: "홈 화면",
+                        color: CareConnectColor.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(child: Text("에러 발생: $e")),
       ),
     );
   }
 
-  Widget PersonCard(WidgetRef ref) {
+  Widget PersonCard(WidgetRef ref, List<AvailableUser> users) {
     return ListView.separated(
-      itemCount: 3,
+      itemCount: users.length,
       separatorBuilder: (BuildContext context, int index) =>
           const SizedBox(height: 36),
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
           onTap: () {
             context.push('/contact/messenger',
-                extra: MessengerInfo(person: 'example'));
+                extra: AvailableUser(
+                    name: users[index].name, userId: users[index].userId));
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
@@ -200,7 +223,7 @@ class Contact extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Bold_20px(text: "이름"),
+                Bold_20px(text: users[index].name),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,

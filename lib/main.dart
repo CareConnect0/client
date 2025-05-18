@@ -1,4 +1,5 @@
 import 'package:client/designs/CareConnectColor.dart';
+import 'package:client/model/availableUser.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
@@ -115,8 +116,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/contact/messenger',
         name: 'Messenger',
         builder: (context, state) {
-          final selected = state.extra! as MessengerInfo;
-          return Messenger(selected);
+          final user = state.extra! as AvailableUser;
+          return Messenger(user);
         },
       ),
       GoRoute(

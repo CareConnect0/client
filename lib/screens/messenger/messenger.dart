@@ -3,6 +3,7 @@ import 'package:client/designs/CareConnectTextFormField.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/designs/MyMessageBubble.dart';
 import 'package:client/designs/OtherMessageBubble.dart';
+import 'package:client/model/availableUser.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,8 +11,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class Messenger extends ConsumerWidget {
-  final MessengerInfo selected;
-  Messenger(this.selected, {super.key});
+  final AvailableUser user;
+  Messenger(this.user, {super.key});
 
   final List<Map<String, dynamic>> messages = [
     {"text": "안녕하세요!", "isMe": false, "time": "오후 3:10"},
@@ -97,7 +98,7 @@ class Messenger extends ConsumerWidget {
                         : OtherMessageBubble(
                             message: msg["text"],
                             time: msg["time"],
-                            name: "이름",
+                            name: user.name,
                             imageUrl: 'assets/images/example.png',
                           ),
                   );
