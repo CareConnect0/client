@@ -38,16 +38,15 @@ class RecorderViewModel extends Notifier<RecorderModel> {
       _recorderSubscription = null;
 
       final path = await _recorder.stopRecorder();
-      controller.reset();
+      controller.stop();
 
-      // ✅ STT 서버에 파일 전송 및 응답 텍스트 가져오기
       try {
         final recognizedText = await STTRepository().uploadAudioForSTT(path!);
         print('📝 인식된 텍스트: $recognizedText');
 
         state = state.copyWith(
           isRecording: false,
-          statusText: recognizedText, // ✅ 상태 텍스트로 보여주기
+          statusText: recognizedText,
           recordedFilePath: path,
           readyForNavigation: true,
         );
@@ -55,7 +54,7 @@ class RecorderViewModel extends Notifier<RecorderModel> {
         print('❌ STT 오류: $e');
         state = state.copyWith(
           isRecording: false,
-          statusText: "음성 인식 실패 😢",
+          statusText: "음성 인식 실패",
           recordedFilePath: path,
           readyForNavigation: true,
         );
@@ -90,7 +89,16 @@ class RecorderViewModel extends Notifier<RecorderModel> {
     state = state.copyWith(readyForNavigation: false);
   }
 
-  void resetAll() {
+  void resetAll(RecorderController controller) {
+    // 기존 컨트롤러 상태 초기화
+    if (state.isRecording) {
+      _recorder.stopRecorder();
+      _recorderSubscription?.cancel();
+      _recorderSubscription = null;
+      controller.stop();
+    }
+
+    // 상태 초기화
     state = RecorderModel(
       isRecording: false,
       statusText: "버튼을 누르고\n가까이서 말해주세요",

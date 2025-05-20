@@ -2,6 +2,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:client/model/scheduleInfo.dart';
+import 'package:client/screens/record/controller.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ class ConfirmMessage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final info = GoRouterState.of(context).extra as MessengerInfo;
+    final recorderController = ref.read(recorderControllerProvider);
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
@@ -55,7 +57,9 @@ class ConfirmMessage extends ConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      ref.read(recorderViewModelProvider.notifier).resetAll();
+                      ref
+                          .read(recorderViewModelProvider.notifier)
+                          .resetAll(recorderController);
                       context.go('/contact/messenger/enroll', extra: info);
                     },
                     child: Container(

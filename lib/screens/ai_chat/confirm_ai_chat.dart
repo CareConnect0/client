@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/screens/record/controller.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ class ConfirmAiChat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final recorderController = ref.read(recorderControllerProvider);
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
       body: Column(
@@ -50,7 +52,9 @@ class ConfirmAiChat extends ConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      ref.read(recorderViewModelProvider.notifier).resetAll();
+                      ref
+                          .read(recorderViewModelProvider.notifier)
+                          .resetAll(recorderController);
                       context.go('/ai/enroll');
                     },
                     child: Container(
