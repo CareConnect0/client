@@ -64,7 +64,7 @@ class _AIChatState extends ConsumerState<AIChat> {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
-            context.pop();
+            context.go('/home');
           },
           child: Row(
             children: [
