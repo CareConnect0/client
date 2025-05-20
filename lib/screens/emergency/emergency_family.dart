@@ -24,7 +24,7 @@ class EmergencyFamily extends ConsumerWidget {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
-            context.pop();
+            context.go('/home');
           },
           child: Row(
             children: [

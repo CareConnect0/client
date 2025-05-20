@@ -42,7 +42,7 @@ class _ContactState extends ConsumerState<Contact> {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
-            context.pop();
+            context.go('/home');
           },
           child: Row(
             children: [

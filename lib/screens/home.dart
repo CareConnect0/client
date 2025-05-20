@@ -1,5 +1,6 @@
 import 'package:client/api/Assistant/assistant_view_model.dart';
 import 'package:client/api/User/user_view_model.dart';
+import 'package:client/api/emergency/emergency_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
@@ -61,24 +62,24 @@ class _HomeState extends ConsumerState<Home> {
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(
-                        context,
-                        '/calendar',
-                        CareConnectColor.primary[900],
-                        "달력",
-                        "assets/icons/calendar.svg",
+                    child: MenuCard(context, onTap: () {
+                      context.go('/calendar');
+                    },
+                        color: CareConnectColor.primary[900]!,
+                        text: "달력",
+                        assetName: "assets/icons/calendar.svg",
                         hasNotification: hasCalendarNotification),
                   ),
                   SizedBox(
                     width: 13,
                   ),
                   Expanded(
-                    child: MenuCard(
-                        context,
-                        '/contact',
-                        CareConnectColor.primary[400],
-                        "메신저",
-                        "assets/icons/mail.svg",
+                    child: MenuCard(context, onTap: () {
+                      context.go('/contact');
+                    },
+                        color: CareConnectColor.primary[400]!,
+                        text: "메신저",
+                        assetName: "assets/icons/mail.svg",
                         hasNotification: hasMessengerNotification),
                   ),
                 ],
@@ -91,12 +92,12 @@ class _HomeState extends ConsumerState<Home> {
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(
-                        context,
-                        '/ai',
-                        CareConnectColor.primary[200],
-                        "AI\n대화 도우미",
-                        "assets/icons/user.svg",
+                    child: MenuCard(context, onTap: () {
+                      context.go('/ai');
+                    },
+                        color: CareConnectColor.primary[200]!,
+                        text: "AI\n대화 도우미",
+                        assetName: "assets/icons/user.svg",
                         hasNotification: hasAINotification),
                   ),
                   SizedBox(
@@ -104,20 +105,25 @@ class _HomeState extends ConsumerState<Home> {
                   ),
                   Expanded(
                     child: type != "DEPENDENT"
-                        ? MenuCard(
-                            context,
-                            '/emergency/family',
-                            CareConnectColor.secondary[500],
-                            "비상 호출",
-                            "assets/icons/emergency-call.svg",
+                        ? MenuCard(context, onTap: () {
+                            context.go('/emergency/family');
+                          },
+                            color: CareConnectColor.secondary[500]!,
+                            text: "비상 호출",
+                            assetName: "assets/icons/emergency-call.svg",
                             hasNotification: hasEmergencyNotification)
-                        : MenuCard(
-                            context,
-                            '/emergency',
-                            CareConnectColor.secondary[500],
-                            "비상 호출",
-                            "assets/icons/emergency-call.svg",
-                            hasNotification: hasEmergencyNotification),
+                        : MenuCard(context,
+                            color: CareConnectColor.secondary[500]!,
+                            text: "비상 호출",
+                            assetName: "assets/icons/emergency-call.svg",
+                            onTap: () async {
+                            await ref
+                                .read(emergencyViewModelProvider.notifier)
+                                .enrollEmergency();
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(content: Text('비상 호출 버튼을 클릭하셨습니다.')),
+                            );
+                          }, hasNotification: hasEmergencyNotification),
                   ),
                 ],
               ),
@@ -235,15 +241,18 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   Widget MenuCard(
-      BuildContext context, link, color, String text, String assetName,
-      {bool hasNotification = false}) {
+    BuildContext context, {
+    required String text,
+    required String assetName,
+    required Color color,
+    required VoidCallback onTap,
+    bool hasNotification = false,
+  }) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         InkWell(
-          onTap: () {
-            context.push(link);
-          },
+          onTap: onTap,
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(vertical: 27),
