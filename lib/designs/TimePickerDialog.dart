@@ -16,9 +16,9 @@ class SelectedTimeState {
   final int minute;
 
   SelectedTimeState({
-    this.period = '오전',
-    this.hour = 9,
-    this.minute = 0,
+    required this.period,
+    required this.hour,
+    required this.minute,
   });
 
   SelectedTimeState copyWith({
@@ -36,7 +36,25 @@ class SelectedTimeState {
 
 // 시간 상태 관리 노티파이어
 class SelectedTimeNotifier extends StateNotifier<SelectedTimeState> {
-  SelectedTimeNotifier() : super(SelectedTimeState());
+  SelectedTimeNotifier() : super(_getCurrentTimeState());
+
+  // 현재 시간을 기반으로 초기 상태 생성
+  static SelectedTimeState _getCurrentTimeState() {
+    final now = DateTime.now();
+
+    // 오전/오후 결정
+    final period = now.hour < 12 ? '오전' : '오후';
+
+    // 12시간제로 변환
+    int hour = now.hour % 12;
+    if (hour == 0) hour = 12; // 0시는 12시로 표시
+
+    return SelectedTimeState(
+      period: period,
+      hour: hour,
+      minute: now.minute,
+    );
+  }
 
   void updatePeriod(String period) {
     state = state.copyWith(period: period);
@@ -149,6 +167,9 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                         child: SizedBox(
                           width: double.infinity,
                           child: ListWheelScrollView.useDelegate(
+                            controller: FixedExtentScrollController(
+                              initialItem: selectedPeriodIndex,
+                            ),
                             itemExtent: itemExtent,
                             diameterRatio: 10.0, // 매우 큰 값으로 설정하여 곡률 최소화
                             physics: FixedExtentScrollPhysics(),
@@ -192,6 +213,9 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                         child: SizedBox(
                           width: double.infinity,
                           child: ListWheelScrollView.useDelegate(
+                            controller: FixedExtentScrollController(
+                              initialItem: selectedHourIndex,
+                            ),
                             itemExtent: itemExtent,
                             diameterRatio: 10.0,
                             physics: FixedExtentScrollPhysics(),
@@ -235,6 +259,9 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                         child: SizedBox(
                           width: double.infinity,
                           child: ListWheelScrollView.useDelegate(
+                            controller: FixedExtentScrollController(
+                              initialItem: selectedMinuteIndex,
+                            ),
                             itemExtent: itemExtent,
                             diameterRatio: 10.0,
                             physics: FixedExtentScrollPhysics(),
