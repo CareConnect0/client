@@ -4,6 +4,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/scheduleInfo.dart';
 import 'package:client/screens/home.dart';
+import 'package:client/screens/record/controller.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ class ConfirmSchedule extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final info = GoRouterState.of(context).extra as ScheduleInfo;
+    final recorderController = ref.read(recorderControllerProvider);
 
     Text('선택한 날짜: ${DateFormat('yyyy-MM-dd').format(info.dateTime)}');
 
@@ -74,7 +76,9 @@ class ConfirmSchedule extends ConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      ref.read(recorderViewModelProvider.notifier).resetAll();
+                      ref
+                          .read(recorderViewModelProvider.notifier)
+                          .resetAll(recorderController);
                       context.go('/calendar/enroll', extra: info);
                     },
                     child: Container(

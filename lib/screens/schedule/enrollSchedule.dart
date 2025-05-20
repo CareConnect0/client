@@ -75,7 +75,7 @@ class _EnrollScheduleState extends ConsumerState<EnrollSchedule> {
             const SizedBox(height: 50),
             GestureDetector(
               onTap: () =>
-                  viewModelNotifier.toggleRecording(recorderController),
+                  viewModelNotifier.toggleRecording(recorderController, true),
               child: Container(
                 width: 100,
                 height: 100,

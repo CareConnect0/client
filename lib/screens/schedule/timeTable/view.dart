@@ -409,7 +409,8 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                               content: "저녁 약 먹기",
                               dateTime: selectedDateTime,
                             );
-                            context.go('/calendar/enroll', extra: info);
+                            context.pop();
+                            context.push('/calendar/enroll', extra: info);
                           } else {
                             // 보호자
                             final infoGuardian = ScheduleInfo(
@@ -417,7 +418,9 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                               content: "저녁 약 먹기",
                               dateTime: selectedDateTime,
                             );
-                            context.go('/calendar/enroll', extra: infoGuardian);
+                            context.pop();
+                            context.push('/calendar/enroll',
+                                extra: infoGuardian);
                           }
                         },
                         onPressed: () {},
