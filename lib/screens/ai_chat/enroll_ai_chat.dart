@@ -73,7 +73,7 @@ class _EnrollScheduleState extends ConsumerState<EnrollAiChat> {
             const SizedBox(height: 50),
             GestureDetector(
               onTap: () =>
-                  viewModelNotifier.toggleRecording(recorderController),
+                  viewModelNotifier.toggleRecording(recorderController, false),
               child: Container(
                 width: 100,
                 height: 100,

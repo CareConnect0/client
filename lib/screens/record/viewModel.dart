@@ -32,7 +32,8 @@ class RecorderViewModel extends Notifier<RecorderModel> {
     await _recorder.setSubscriptionDuration(const Duration(milliseconds: 100));
   }
 
-  Future<void> toggleRecording(RecorderController controller) async {
+  Future<void> toggleRecording(
+      RecorderController controller, bool isSchedule) async {
     if (state.isRecording) {
       _recorderSubscription?.cancel();
       _recorderSubscription = null;
@@ -41,7 +42,9 @@ class RecorderViewModel extends Notifier<RecorderModel> {
       controller.stop();
 
       try {
-        final recognizedText = await STTRepository().uploadAudioForSTT(path!);
+        final recognizedText = isSchedule
+            ? await STTRepository().uploadAudioForSTT(path!, true)
+            : await STTRepository().uploadAudioForSTT(path!, false);
         print('📝 인식된 텍스트: $recognizedText');
 
         state = state.copyWith(
