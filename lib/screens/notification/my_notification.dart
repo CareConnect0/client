@@ -1,24 +1,25 @@
+import 'package:client/api/Notification/notification_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/notificationItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class MyNotification extends ConsumerWidget {
   MyNotification({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final notifications = ref.watch(notificationViewModelProvider);
     return Scaffold(
       backgroundColor: CareConnectColor.white,
       appBar: AppBar(
         backgroundColor: CareConnectColor.white,
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "알림 확인",
-          color: CareConnectColor.black,
-        ),
+        title: Bold_22px(text: "알림 확인", color: CareConnectColor.black),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -27,9 +28,7 @@ class MyNotification extends ConsumerWidget {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
@@ -38,21 +37,13 @@ class MyNotification extends ConsumerWidget {
                   color: CareConnectColor.neutral[700],
                 ),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.neutral[700],
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.neutral[700]),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: Column(
@@ -85,12 +76,11 @@ class MyNotification extends ConsumerWidget {
             ),
           ),
           Expanded(
-            // 👈 스크롤 가능한 리스트 만들기
             child: ListView.builder(
-              itemCount: 3,
+              itemCount: notifications.length,
               itemBuilder: (context, index) {
-                return NotificationCard(
-                    context, CareConnectColor.secondary[200]);
+                final notification = notifications[index];
+                return NotificationCard(context, notification);
               },
             ),
           ),
@@ -99,9 +89,14 @@ class MyNotification extends ConsumerWidget {
     );
   }
 
-  Widget NotificationCard(BuildContext context, color) {
+  Widget NotificationCard(BuildContext context, NotificationItem item) {
+    final backgroundColor = getBackgroundColor(item.notificationType);
+    final formattedDate = DateFormat(
+      'yyyy년 MM월 dd일\nHH시 mm분',
+    ).format(item.createdAt);
+
     return InkWell(
-      onTap: () => context.push('/notification/emergency'),
+      onTap: () => context.push(getRoute(item.notificationType)),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
@@ -113,30 +108,63 @@ class MyNotification extends ConsumerWidget {
               blurRadius: 2,
               offset: Offset(0, 0),
             ),
+            BoxShadow(
+              color: CareConnectColor.white,
+              blurRadius: 0,
+              offset: Offset(0, 0),
+            ),
           ],
-          color: color,
+          color: backgroundColor,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Semibold_18px(text: "00님이\n[]일정을 등록했습니다!"),
-                SizedBox(
-                  height: 16,
-                ),
-                Medium_16px(
-                  text: "2025.03.01",
-                  color: CareConnectColor.neutral[600],
-                ),
-              ],
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Semibold_18px(text: item.title),
+                  SizedBox(height: 16),
+                  Medium_16px(
+                    text: formattedDate,
+                    color: CareConnectColor.neutral[600],
+                  ),
+                ],
+              ),
             ),
-            Spacer(),
             SvgPicture.asset("assets/icons/x-close.svg"),
           ],
         ),
       ),
     );
+  }
+
+  Color getBackgroundColor(String type) {
+    switch (type) {
+      case 'SCHEDULE_CREATE':
+      case 'SCHEDULE_CREATE_BY_GUARDIAN':
+        return CareConnectColor.primary[200]!.withOpacity(0.6);
+      case 'CHAT':
+        return CareConnectColor.primary[100]!;
+      case 'EMERGENCY':
+        return CareConnectColor.secondary[500]!.withOpacity(0.5);
+      default:
+        return CareConnectColor.neutral[100]!;
+    }
+  }
+
+  String getRoute(String type) {
+    switch (type) {
+      case 'SCHEDULE_CREATE':
+      case 'SCHEDULE_CREATE_BY_GUARDIAN':
+        return '/calendar';
+      case 'CHAT':
+        return '/contact';
+      case 'EMERGENCY':
+        return '/emergency/family';
+      default:
+        return '/notification';
+    }
   }
 }
