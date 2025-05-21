@@ -3,22 +3,19 @@ import 'package:intl/intl.dart';
 class ScheduleInfo {
   final int? dependentId;
   final int? scheduleId;
-  final String content;
+  String? content;
   final DateTime dateTime;
 
   ScheduleInfo({
     this.dependentId,
     this.scheduleId,
-    required this.content,
+    this.content,
     required this.dateTime,
   });
 
   /// 서버에 보낼 JSON 형태로 변환
   Map<String, dynamic> toJson() {
-    return {
-      'content': content,
-      'startTime': startTime,
-    };
+    return {'content': content, 'startTime': startTime};
   }
 
   /// 서버에서 받은 JSON으로부터 ScheduleInfo 생성

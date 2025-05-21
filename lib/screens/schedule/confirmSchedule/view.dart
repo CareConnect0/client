@@ -28,12 +28,10 @@ class ConfirmSchedule extends ConsumerWidget {
         children: [
           Bold_36px(
             text:
-                "${DateFormat('MM월 dd일').format(info.dateTime)}\n${info.formattedTime}에\n[  ]\n일정을 등록할까요?",
+                "${DateFormat('MM월 dd일').format(info.dateTime)}\n${info.formattedTime}에\n[${info.content}]\n일정을 등록할까요?",
             color: CareConnectColor.white,
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.25,
-          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
           Padding(
             padding: const EdgeInsets.all(32),
             child: Row(
@@ -70,9 +68,7 @@ class ConfirmSchedule extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 24,
-                ),
+                SizedBox(width: 24),
                 Expanded(
                   child: InkWell(
                     onTap: () {

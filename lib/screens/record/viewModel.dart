@@ -12,8 +12,8 @@ import 'package:taudio/taudio.dart';
 
 final recorderViewModelProvider =
     NotifierProvider<RecorderViewModel, RecorderModel>(
-  () => RecorderViewModel(),
-);
+      () => RecorderViewModel(),
+    );
 
 final recorderVolumeProvider = StateProvider<double>((ref) => 0.0);
 
@@ -35,7 +35,9 @@ class RecorderViewModel extends Notifier<RecorderModel> {
   }
 
   Future<void> toggleRecording(
-      RecorderController controller, bool isSchedule) async {
+    RecorderController controller,
+    bool isSchedule,
+  ) async {
     if (state.isRecording) {
       _recorderSubscription?.cancel();
       _recorderSubscription = null;
@@ -47,10 +49,10 @@ class RecorderViewModel extends Notifier<RecorderModel> {
         print('📁 파일 존재 여부: ${File(path!).existsSync()}');
         print('📁 파일 크기: ${File(path!).lengthSync()} bytes');
 
-        final recognizedText = isSchedule
-            ? await STTRepository().uploadAudioForSTT(path!, true)
-            : await STTRepository().uploadAudioForSTT(path!, false);
-        print('📝 인식된 텍스트: $recognizedText');
+        final recognizedText =
+            isSchedule
+                ? await STTRepository().uploadAudioForSTT(path!, true)
+                : await STTRepository().uploadAudioForSTT(path!, false);
 
         state = state.copyWith(
           isRecording: false,
@@ -82,9 +84,10 @@ class RecorderViewModel extends Notifier<RecorderModel> {
       });
 
       await _recorder.startRecorder(
-          toFile: path,
-          codec: Codec.pcm16WAV,
-          audioSource: AudioSource.microphone);
+        toFile: path,
+        codec: Codec.pcm16WAV,
+        audioSource: AudioSource.microphone,
+      );
       controller.record();
 
       state = state.copyWith(
