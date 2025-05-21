@@ -80,7 +80,7 @@ class MyNotification extends ConsumerWidget {
               itemCount: notifications.length,
               itemBuilder: (context, index) {
                 final notification = notifications[index];
-                return NotificationCard(context, notification);
+                return NotificationCard(context, ref, notification);
               },
             ),
           ),
@@ -89,7 +89,11 @@ class MyNotification extends ConsumerWidget {
     );
   }
 
-  Widget NotificationCard(BuildContext context, NotificationItem item) {
+  Widget NotificationCard(
+    BuildContext context,
+    WidgetRef ref,
+    NotificationItem item,
+  ) {
     final backgroundColor = getBackgroundColor(item.notificationType);
     final formattedDate = DateFormat(
       'yyyy년 MM월 dd일\nHH시 mm분',
@@ -133,7 +137,37 @@ class MyNotification extends ConsumerWidget {
                 ],
               ),
             ),
-            SvgPicture.asset("assets/icons/x-close.svg"),
+            InkWell(
+              onTap: () async {
+                try {
+                  await ref
+                      .read(notificationViewModelProvider.notifier)
+                      .deleteNotification(item.notificationId);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('알림이 삭제되었습니다.'),
+                      backgroundColor: Colors.black87,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('삭제 중 오류가 발생했어요.'),
+                      backgroundColor: Colors.redAccent,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              child: SvgPicture.asset(
+                "assets/icons/x-close.svg",
+                color: CareConnectColor.neutral[600],
+              ),
+            ),
           ],
         ),
       ),
