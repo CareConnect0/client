@@ -1,5 +1,6 @@
 class MessengerInfo {
   final String person;
+  String content;
 
-  MessengerInfo({required this.person});
+  MessengerInfo({this.content = '', required this.person});
 }

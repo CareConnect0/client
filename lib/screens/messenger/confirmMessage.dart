@@ -23,12 +23,10 @@ class ConfirmMessage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Bold_36px(
-            text: "[  ]라고\n전송할까요?",
+            text: "[${info.content}]라고\n전송할까요?",
             color: CareConnectColor.white,
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.25,
-          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
           Padding(
             padding: const EdgeInsets.all(32),
             child: Row(
@@ -51,9 +49,7 @@ class ConfirmMessage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 24,
-                ),
+                SizedBox(width: 24),
                 Expanded(
                   child: InkWell(
                     onTap: () {

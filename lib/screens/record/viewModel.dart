@@ -1,17 +1,19 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:client/api/STT/stt_repository.dart';
 import 'package:client/screens/record/model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:taudio/taudio.dart';
 
 final recorderViewModelProvider =
     NotifierProvider<RecorderViewModel, RecorderModel>(
-  () => RecorderViewModel(),
-);
+      () => RecorderViewModel(),
+    );
 
 final recorderVolumeProvider = StateProvider<double>((ref) => 0.0);
 
@@ -33,7 +35,9 @@ class RecorderViewModel extends Notifier<RecorderModel> {
   }
 
   Future<void> toggleRecording(
-      RecorderController controller, bool isSchedule) async {
+    RecorderController controller,
+    bool isSchedule,
+  ) async {
     if (state.isRecording) {
       _recorderSubscription?.cancel();
       _recorderSubscription = null;
@@ -42,10 +46,13 @@ class RecorderViewModel extends Notifier<RecorderModel> {
       controller.stop();
 
       try {
-        final recognizedText = isSchedule
-            ? await STTRepository().uploadAudioForSTT(path!, true)
-            : await STTRepository().uploadAudioForSTT(path!, false);
-        print('📝 인식된 텍스트: $recognizedText');
+        print('📁 파일 존재 여부: ${File(path!).existsSync()}');
+        print('📁 파일 크기: ${File(path!).lengthSync()} bytes');
+
+        final recognizedText =
+            isSchedule
+                ? await STTRepository().uploadAudioForSTT(path!, true)
+                : await STTRepository().uploadAudioForSTT(path!, false);
 
         state = state.copyWith(
           isRecording: false,
@@ -76,7 +83,11 @@ class RecorderViewModel extends Notifier<RecorderModel> {
         ref.read(recorderVolumeProvider.notifier).state = normalized;
       });
 
-      await _recorder.startRecorder(toFile: path, codec: Codec.pcm16WAV);
+      await _recorder.startRecorder(
+        toFile: path,
+        codec: Codec.pcm16WAV,
+        audioSource: AudioSource.microphone,
+      );
       controller.record();
 
       state = state.copyWith(

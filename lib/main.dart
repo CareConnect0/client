@@ -40,22 +40,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => Splash(),
-      ),
-      GoRoute(
-        path: '/sign',
-        builder: (context, state) => const SplashSign(),
-      ),
-      GoRoute(
-        path: '/signIn',
-        builder: (context, state) => SignIn(),
-      ),
-      GoRoute(
-        path: '/signUp',
-        builder: (context, state) => const SignUp(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => Splash()),
+      GoRoute(path: '/sign', builder: (context, state) => const SplashSign()),
+      GoRoute(path: '/signIn', builder: (context, state) => SignIn()),
+      GoRoute(path: '/signUp', builder: (context, state) => const SignUp()),
       GoRoute(
         path: '/signUp/enrollInfo',
         builder: (context, state) => EnrollInfo(),
@@ -84,14 +72,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/signUp/congratulation',
         builder: (context, state) => Congratulation(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => Home(),
-      ),
-      GoRoute(
-        path: '/calendar',
-        builder: (context, state) => Calendar(),
-      ),
+      GoRoute(path: '/home', builder: (context, state) => Home()),
+      GoRoute(path: '/calendar', builder: (context, state) => Calendar()),
       GoRoute(
         path: '/calendar/timetable',
         name: 'TimeTable',
@@ -108,10 +90,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/calendar/enroll/confirm',
         builder: (context, state) => ConfirmSchedule(),
       ),
-      GoRoute(
-        path: '/contact',
-        builder: (context, state) => Contact(),
-      ),
+      GoRoute(path: '/contact', builder: (context, state) => Contact()),
       GoRoute(
         path: '/contact/messenger',
         name: 'Messenger',
@@ -128,22 +107,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/contact/messenger/confirm',
         builder: (context, state) => ConfirmMessage(),
       ),
-      GoRoute(
-        path: '/ai',
-        builder: (context, state) => AIChat(),
-      ),
-      GoRoute(
-        path: '/ai/enroll',
-        builder: (context, state) => EnrollAiChat(),
-      ),
+      GoRoute(path: '/ai', builder: (context, state) => AIChat()),
+      GoRoute(path: '/ai/enroll', builder: (context, state) => EnrollAiChat()),
       GoRoute(
         path: '/ai/confirm',
         builder: (context, state) => ConfirmAiChat(),
       ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => Profile(),
-      ),
+      GoRoute(path: '/profile', builder: (context, state) => Profile()),
       GoRoute(
         path: '/profile/password',
         builder: (context, state) => ChangePassword(),
@@ -190,11 +160,11 @@ class CareConnect extends ConsumerWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: CareConnectColor.white),
         appBarTheme: AppBarTheme(
-            // systemOverlayStyle: SystemUiOverlayStyle(
-            //   statusBarColor: Colors.transparent,
-            //   statusBarIconBrightness: Brightness.light,
-            // ),
-            ),
+          // systemOverlayStyle: SystemUiOverlayStyle(
+          //   statusBarColor: Colors.transparent,
+          //   statusBarIconBrightness: Brightness.light,
+          // ),
+        ),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: CareConnectColor.neutral[700],
           selectionColor: CareConnectColor.neutral[700],
@@ -204,9 +174,7 @@ class CareConnect extends ConsumerWidget {
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       locale: const Locale('ko', 'KR'),
-      supportedLocales: const [
-        Locale('ko', 'KR'),
-      ],
+      supportedLocales: const [Locale('ko', 'KR')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

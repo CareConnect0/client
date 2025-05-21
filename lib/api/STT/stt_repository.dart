@@ -28,7 +28,7 @@ class STTRepository {
       final decoded = response.body;
       print('✅ 업로드 성공: $decoded');
       final decodedJson = jsonDecode(response.body);
-      final recognizedText = decodedJson;
+      final recognizedText = decodedJson['data'];
       print('📝 인식된 텍스트: $recognizedText');
       return recognizedText;
     } else {

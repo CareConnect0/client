@@ -16,8 +16,8 @@ import 'package:intl/intl.dart';
 
 final scheduleProvider =
     StateNotifierProvider<ScheduleNotifier, Map<String, List<ScheduleInfo>>>(
-  (ref) => ScheduleNotifier(),
-);
+      (ref) => ScheduleNotifier(),
+    );
 
 final dependentIdListProvider = StateProvider<List<int>>((ref) => [0]);
 final dependentSelectedIdProvider = StateProvider<int>((ref) => 0);
@@ -27,28 +27,23 @@ class ScheduleNotifier extends StateNotifier<Map<String, List<ScheduleInfo>>> {
 
   void modifySchedule(String time, ScheduleInfo oldEvent, String newContent) {
     final updated = [...state[time]!];
-    final index =
-        updated.indexWhere((e) => e.scheduleId == oldEvent.scheduleId);
+    final index = updated.indexWhere(
+      (e) => e.scheduleId == oldEvent.scheduleId,
+    );
     if (index != -1) {
       updated[index] = ScheduleInfo(
         scheduleId: oldEvent.scheduleId,
         content: newContent,
         dateTime: oldEvent.dateTime,
       );
-      state = {
-        ...state,
-        time: updated,
-      };
+      state = {...state, time: updated};
     }
   }
 
   void deleteSchedule(String time, ScheduleInfo event) {
     final updated = [...state[time]!];
     updated.removeWhere((e) => e.scheduleId == event.scheduleId);
-    state = {
-      ...state,
-      time: updated,
-    };
+    state = {...state, time: updated};
   }
 
   void setSchedulesFromAPI(List<ScheduleInfo> schedules) {
@@ -116,10 +111,7 @@ class _TimeTableState extends ConsumerState<TimeTable> {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "달력",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "달력", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -130,38 +122,29 @@ class _TimeTableState extends ConsumerState<TimeTable> {
               ref.invalidate(scheduleMonthProvider(ym));
             } else {
               final dym = YearMonthGuardian(
-                  dependentId: ref.read(dependentSelectedIdProvider),
-                  year: widget.selected.year,
-                  month: widget.selected.month);
+                dependentId: ref.read(dependentSelectedIdProvider),
+                year: widget.selected.year,
+                month: widget.selected.month,
+              );
               ref.invalidate(scheduleMonthGuardianProvider(dym));
             }
             context.go('/calendar');
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: Container(
@@ -189,8 +172,10 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                 ),
               ),
               child: Medium_18px(
-                text: DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR')
-                    .format(widget.selected),
+                text: DateFormat(
+                  'yyyy년 MM월 dd일 (E)',
+                  'ko_KR',
+                ).format(widget.selected),
               ),
             ),
 
@@ -204,7 +189,9 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                   final eventsAtTime = schedule[time]!;
                   return Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
@@ -229,139 +216,172 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: eventsAtTime.map((schedule) {
-                                final controller = TextEditingController(
-                                    text: schedule.content);
+                              children:
+                                  eventsAtTime.map((schedule) {
+                                    final controller = TextEditingController(
+                                      text: schedule.content,
+                                    );
 
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 9),
-                                  child: InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CareConnectDialog(
-                                            time: time,
-                                            scheduleText: schedule.content,
-                                            scheduleController: controller,
-                                            cancel: () {
-                                              controller.text =
-                                                  schedule.content;
-                                              context.pop();
-                                            },
-                                            modify: () async {
-                                              if (ref.read(userTypeProvider) ==
-                                                  "DEPENDENT") {
-                                                // 피보호자
-                                                final newInfo = ScheduleInfo(
-                                                  scheduleId:
-                                                      schedule.scheduleId,
-                                                  content: controller.text,
-                                                  dateTime: schedule.dateTime,
-                                                );
-                                                await ref
-                                                    .read(
-                                                        scheduleViewModelProvider
-                                                            .notifier)
-                                                    .modifySchedule(newInfo);
-                                                await ref
-                                                    .read(
-                                                        scheduleViewModelProvider
-                                                            .notifier)
-                                                    .getSchedules(
-                                                        widget.selected);
-                                              } else
-                                              // 보호자
-                                              {
-                                                final newInfoGuardian =
-                                                    ScheduleInfo(
-                                                  dependentId:
-                                                      selectedDependentId,
-                                                  scheduleId:
-                                                      schedule.scheduleId,
-                                                  content: controller.text,
-                                                  dateTime: schedule.dateTime,
-                                                );
-                                                await ref
-                                                    .read(
-                                                        scheduleGuardianViewModelProvider
-                                                            .notifier)
-                                                    .modifyGuardianSchedule(
-                                                        newInfoGuardian);
-                                                await ref
-                                                    .read(
-                                                        scheduleGuardianViewModelProvider
-                                                            .notifier)
-                                                    .getGuardianSchedules(
-                                                        selectedDependentId,
-                                                        widget.selected);
-                                              }
-                                              context.pop();
-                                            },
-                                            delete: () async {
-                                              if (ref.read(userTypeProvider) ==
-                                                  "DEPENDENT") {
-                                                // 피보호자
-                                                await ref
-                                                    .read(
-                                                        scheduleViewModelProvider
-                                                            .notifier)
-                                                    .deleteSchedule(
-                                                        schedule.scheduleId!);
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 9),
+                                      child: InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CareConnectDialog(
+                                                time: time,
+                                                scheduleText: schedule.content!,
+                                                scheduleController: controller,
+                                                cancel: () {
+                                                  controller.text =
+                                                      schedule.content!;
+                                                  context.pop();
+                                                },
+                                                modify: () async {
+                                                  if (ref.read(
+                                                        userTypeProvider,
+                                                      ) ==
+                                                      "DEPENDENT") {
+                                                    // 피보호자
+                                                    final newInfo =
+                                                        ScheduleInfo(
+                                                          scheduleId:
+                                                              schedule
+                                                                  .scheduleId,
+                                                          content:
+                                                              controller.text,
+                                                          dateTime:
+                                                              schedule.dateTime,
+                                                        );
+                                                    await ref
+                                                        .read(
+                                                          scheduleViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .modifySchedule(
+                                                          newInfo,
+                                                        );
+                                                    await ref
+                                                        .read(
+                                                          scheduleViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .getSchedules(
+                                                          widget.selected,
+                                                        );
+                                                  } else
+                                                  // 보호자
+                                                  {
+                                                    final newInfoGuardian =
+                                                        ScheduleInfo(
+                                                          dependentId:
+                                                              selectedDependentId,
+                                                          scheduleId:
+                                                              schedule
+                                                                  .scheduleId,
+                                                          content:
+                                                              controller.text,
+                                                          dateTime:
+                                                              schedule.dateTime,
+                                                        );
+                                                    await ref
+                                                        .read(
+                                                          scheduleGuardianViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .modifyGuardianSchedule(
+                                                          newInfoGuardian,
+                                                        );
+                                                    await ref
+                                                        .read(
+                                                          scheduleGuardianViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .getGuardianSchedules(
+                                                          selectedDependentId,
+                                                          widget.selected,
+                                                        );
+                                                  }
+                                                  context.pop();
+                                                },
+                                                delete: () async {
+                                                  if (ref.read(
+                                                        userTypeProvider,
+                                                      ) ==
+                                                      "DEPENDENT") {
+                                                    // 피보호자
+                                                    await ref
+                                                        .read(
+                                                          scheduleViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .deleteSchedule(
+                                                          schedule.scheduleId!,
+                                                        );
 
-                                                await ref
-                                                    .read(
-                                                        scheduleViewModelProvider
-                                                            .notifier)
-                                                    .getSchedules(
-                                                        widget.selected);
-                                              } else {
-                                                // 보호자
-                                                await ref
-                                                    .read(
-                                                        scheduleGuardianViewModelProvider
-                                                            .notifier)
-                                                    .deleteGuardianSchedule(
-                                                        schedule.scheduleId!,
-                                                        selectedDependentId);
+                                                    await ref
+                                                        .read(
+                                                          scheduleViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .getSchedules(
+                                                          widget.selected,
+                                                        );
+                                                  } else {
+                                                    // 보호자
+                                                    await ref
+                                                        .read(
+                                                          scheduleGuardianViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .deleteGuardianSchedule(
+                                                          schedule.scheduleId!,
+                                                          selectedDependentId,
+                                                        );
 
-                                                await ref
-                                                    .read(
-                                                        scheduleGuardianViewModelProvider
-                                                            .notifier)
-                                                    .getGuardianSchedules(
-                                                        selectedDependentId,
-                                                        widget.selected);
-                                              }
+                                                    await ref
+                                                        .read(
+                                                          scheduleGuardianViewModelProvider
+                                                              .notifier,
+                                                        )
+                                                        .getGuardianSchedules(
+                                                          selectedDependentId,
+                                                          widget.selected,
+                                                        );
+                                                  }
 
-                                              context.pop();
+                                                  context.pop();
+                                                },
+                                              );
                                             },
                                           );
                                         },
-                                      );
-                                    },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 22,
-                                          height: 22,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: SvgPicture.asset(
-                                              'assets/icons/person.svg'),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 22,
+                                              height: 22,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: SvgPicture.asset(
+                                                'assets/icons/person.svg',
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Medium_16px(
+                                                text: schedule.content!,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                            child: Medium_16px(
-                                                text: schedule.content)),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                                      ),
+                                    );
+                                  }).toList(),
                             ),
                           ),
                         ],
@@ -382,49 +402,50 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                       offset: Offset(0, 0),
                       blurRadius: 10,
                       color: CareConnectColor.black.withOpacity(0.3),
-                    )
+                    ),
                   ],
                 ),
                 child: CareConnectButton(
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => CareConnectTimePickerDialog(
-                        onTimeSelected: (period, hour, minute) {
-                          int hour24 =
-                              (period == '오전') ? hour : (hour % 12) + 12;
+                      builder:
+                          (context) => CareConnectTimePickerDialog(
+                            onTimeSelected: (period, hour, minute) {
+                              int hour24 =
+                                  (period == '오전') ? hour : (hour % 12) + 12;
 
-                          // 날짜 + 시간 조합
-                          final selectedDateTime = DateTime(
-                            widget.selected.year,
-                            widget.selected.month,
-                            widget.selected.day,
-                            hour24,
-                            minute,
-                          );
+                              // 날짜 + 시간 조합
+                              final selectedDateTime = DateTime(
+                                widget.selected.year,
+                                widget.selected.month,
+                                widget.selected.day,
+                                hour24,
+                                minute,
+                              );
 
-                          if (ref.read(userTypeProvider) == "DEPENDENT") {
-                            // 피보호자
-                            final info = ScheduleInfo(
-                              content: "저녁 약 먹기",
-                              dateTime: selectedDateTime,
-                            );
-                            context.pop();
-                            context.push('/calendar/enroll', extra: info);
-                          } else {
-                            // 보호자
-                            final infoGuardian = ScheduleInfo(
-                              dependentId: selectedDependentId,
-                              content: "저녁 약 먹기",
-                              dateTime: selectedDateTime,
-                            );
-                            context.pop();
-                            context.push('/calendar/enroll',
-                                extra: infoGuardian);
-                          }
-                        },
-                        onPressed: () {},
-                      ),
+                              if (ref.read(userTypeProvider) == "DEPENDENT") {
+                                // 피보호자
+                                final info = ScheduleInfo(
+                                  dateTime: selectedDateTime,
+                                );
+                                context.pop();
+                                context.push('/calendar/enroll', extra: info);
+                              } else {
+                                // 보호자
+                                final infoGuardian = ScheduleInfo(
+                                  dependentId: selectedDependentId,
+                                  dateTime: selectedDateTime,
+                                );
+                                context.pop();
+                                context.push(
+                                  '/calendar/enroll',
+                                  extra: infoGuardian,
+                                );
+                              }
+                            },
+                            onPressed: () {},
+                          ),
                     );
                   },
                   text: '일정 추가하기',
