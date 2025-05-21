@@ -1,10 +1,14 @@
+import 'package:client/api/emergency/emergency_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/emergencyItem.dart';
 import 'package:client/screens/emergency/controller.dart';
+import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class EmergencyFamily extends ConsumerWidget {
   EmergencyFamily({super.key});
@@ -16,10 +20,7 @@ class EmergencyFamily extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "비상 호출",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "비상 호출", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -28,9 +29,7 @@ class EmergencyFamily extends ConsumerWidget {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
@@ -39,21 +38,13 @@ class EmergencyFamily extends ConsumerWidget {
                   color: CareConnectColor.white,
                 ),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.white,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.white, width: 1),
         ),
       ),
       body: Column(
@@ -86,33 +77,46 @@ class EmergencyFamily extends ConsumerWidget {
               ],
             ),
           ),
-          EmergencyCard(context),
+          EmergencyCard(context, ref),
         ],
       ),
     );
   }
 
-  Widget EmergencyCard(BuildContext context) {
+  Widget EmergencyCard(BuildContext context, WidgetRef ref) {
+    final dependentId = ref.read(dependentSelectedIdProvider);
     return Expanded(
-      child: Consumer(
-        builder: (context, ref, _) {
-          final notifications = ref.watch(notificationProvider);
-
-          if (notifications.isEmpty) {
+      child: FutureBuilder<List<EmergencyItem>>(
+        future: ref
+            .read(emergencyViewModelProvider.notifier)
+            .getEmergencyList(dependentId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return EmptyEmergencyCard(context);
           }
 
+          final items = snapshot.data!;
           return ListView.builder(
-            itemCount: notifications.length,
+            itemCount: items.length,
             itemBuilder: (context, index) {
-              final item = notifications[index];
-              final color = item.isRead
-                  ? CareConnectColor.neutral[100]
-                  : CareConnectColor.secondary[200];
+              final item = items[index];
+              final isRead = item.checked;
+              final time = DateFormat(
+                'yyyy년 MM월 dd일\nHH시 mm분',
+              ).format(item.createdAt);
+              final voice =
+                  item.keyword!.isNotEmpty ? item.keyword!.join(', ') : '음성 없음';
+              final color =
+                  isRead
+                      ? CareConnectColor.neutral[100]
+                      : CareConnectColor.secondary[200];
 
               return InkWell(
                 onTap: () {
-                  ref.read(notificationProvider.notifier).markAsRead(item.id);
+                  // ref.read(notificationProvider.notifier).markAsRead(item.id);
                   context.push('/notification/emergency');
                 },
                 child: Container(
@@ -131,19 +135,21 @@ class EmergencyFamily extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      item.isRead
+                      isRead
                           ? SvgPicture.asset(
-                              "assets/icons/emergency-family-false.svg")
+                            "assets/icons/emergency-family-false.svg",
+                          )
                           : SvgPicture.asset(
-                              "assets/icons/emergency-family.svg"),
+                            "assets/icons/emergency-family.svg",
+                          ),
                       SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Semibold_18px(text: item.time),
+                          Semibold_18px(text: '$time의 알람'),
                           SizedBox(height: 8),
                           Medium_16px(
-                            text: "인식된 음성 : ${item.voice}",
+                            text: "인식된 음성 : $voice",
                             color: CareConnectColor.neutral[600],
                           ),
                         ],
@@ -174,9 +180,7 @@ class EmergencyFamily extends ConsumerWidget {
             "assets/icons/annotation-x.svg",
             color: CareConnectColor.neutral[400],
           ),
-          SizedBox(
-            height: 18,
-          ),
+          SizedBox(height: 18),
           Semibold_24px(
             text: "긴급 알림이 없습니다.",
             color: CareConnectColor.neutral[400],

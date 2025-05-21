@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:client/api/Auth/auth_storage.dart';
+import 'package:client/model/emergencyItem.dart';
 import 'package:http/http.dart' as http;
 
 class EmergencyRepository {
@@ -29,6 +30,34 @@ class EmergencyRepository {
       }
     } else {
       throw Exception('비상호출 실패 : ${response.statusCode}');
+    }
+  }
+
+  /// 비상 호출 조회
+  Future<List<EmergencyItem>> getEmergencyList(int dependentId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl?dependentId=$dependentId');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      if (jsonBody['success']) {
+        final List data = jsonBody['data'];
+        return data.map((e) => EmergencyItem.fromJson(e)).toList();
+      } else {
+        throw Exception('비상 호출 데이터 조회 실패: ${jsonBody['message']}');
+      }
+    } else {
+      throw Exception('서버 에러: ${response.statusCode}');
     }
   }
 }
