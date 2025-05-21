@@ -1,10 +1,10 @@
-class NotificationItem {
+class EmergencyNotificationItem {
   final String id;
   final String time;
   final String voice;
   bool isRead;
 
-  NotificationItem({
+  EmergencyNotificationItem({
     required this.id,
     required this.time,
     required this.voice,
