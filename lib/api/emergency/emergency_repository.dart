@@ -52,12 +52,41 @@ class EmergencyRepository {
       final jsonBody = jsonDecode(decodedResponse);
       if (jsonBody['success']) {
         final List data = jsonBody['data'];
+        print(data);
         return data.map((e) => EmergencyItem.fromJson(e)).toList();
       } else {
         throw Exception('비상 호출 데이터 조회 실패: ${jsonBody['message']}');
       }
     } else {
       throw Exception('서버 에러: ${response.statusCode}');
+    }
+  }
+
+  /// 단일 비상 호출 확인
+  Future<String> checkEmergency(int emergencyId) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl/$emergencyId');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      final jsonBody = jsonDecode(decodedResponse);
+      if (jsonBody['success']) {
+        return jsonBody['data']['dependentName'];
+      } else {
+        throw Exception('비상 호출 확인 실패: ${jsonBody['message']}');
+      }
+    } else {
+      throw Exception('비상 호출 확인 요청 실패: ${response.statusCode}');
     }
   }
 }

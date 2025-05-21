@@ -2,7 +2,6 @@ import 'package:client/api/emergency/emergency_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/emergencyItem.dart';
-import 'package:client/screens/emergency/controller.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,9 +114,18 @@ class EmergencyFamily extends ConsumerWidget {
                       : CareConnectColor.secondary[200];
 
               return InkWell(
-                onTap: () {
-                  // ref.read(notificationProvider.notifier).markAsRead(item.id);
-                  context.push('/notification/emergency');
+                onTap: () async {
+                  final dependentName = await ref
+                      .read(emergencyViewModelProvider.notifier)
+                      .checkEmergency(items[index].emergencyId);
+
+                  context.push(
+                    '/notification/emergency',
+                    extra: EmergencyDetailArgs(
+                      emergency: items[index],
+                      dependentName: dependentName!,
+                    ),
+                  );
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),

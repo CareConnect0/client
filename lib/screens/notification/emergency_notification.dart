@@ -1,13 +1,17 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
+import 'package:client/model/emergencyItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyNotification extends ConsumerWidget {
-  const EmergencyNotification({super.key});
+  final EmergencyItem emergency;
+  final String dependentName;
+  const EmergencyNotification(this.emergency, this.dependentName, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,10 +33,7 @@ class EmergencyNotification extends ConsumerWidget {
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
               const SizedBox(width: 8),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
@@ -41,27 +42,20 @@ class EmergencyNotification extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
           SvgPicture.asset("assets/icons/emergency-notification.svg"),
-          SizedBox(
-            height: 8,
-          ),
+          SizedBox(height: 8),
           Bold_22px(
-            text: "3월 24일\n07시 30분에\n아버지님이 긴급 호출 버튼을\n누르셨습니다.",
+            text:
+                '${DateFormat('MM월 dd일\nHH시 mm분').format(emergency.createdAt)}에\n$dependentName님이 긴급 호출 버튼을\n누르셨습니다.',
             color: CareConnectColor.white,
             textAlign: TextAlign.center,
           ),
-          SizedBox(
-            height: 36,
-          ),
+          SizedBox(height: 36),
+          Bold_20px(text: "현재 위치 : 위치 없음", color: CareConnectColor.white),
           Bold_20px(
-            text: "현재 위치 : OO",
-            color: CareConnectColor.white,
-          ),
-          Bold_20px(
-            text: "인식된 음성 : OO",
+            text:
+                "인식된 음성 : ${emergency.keyword!.isNotEmpty ? emergency.keyword!.join(', ') : '음성 없음'}",
             color: CareConnectColor.white,
           ),
           Spacer(),
@@ -89,9 +83,7 @@ class EmergencyNotification extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 24,
-                ),
+                SizedBox(width: 24),
                 Expanded(
                   child: InkWell(
                     onTap: () async {

@@ -20,3 +20,10 @@ class EmergencyItem {
     );
   }
 }
+
+class EmergencyDetailArgs {
+  final EmergencyItem emergency;
+  final String dependentName;
+
+  EmergencyDetailArgs({required this.emergency, required this.dependentName});
+}

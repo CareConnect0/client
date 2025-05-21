@@ -1,5 +1,6 @@
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/model/availableUser.dart';
+import 'package:client/model/emergencyItem.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/ai_chat/ai_chat.dart';
@@ -128,7 +129,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/notification/emergency',
-        builder: (context, state) => EmergencyNotification(),
+        name: 'Emergency',
+        builder: (context, state) {
+          final args = state.extra as EmergencyDetailArgs;
+          return EmergencyNotification(args.emergency, args.dependentName);
+        },
       ),
       GoRoute(
         path: '/emergency/family',
