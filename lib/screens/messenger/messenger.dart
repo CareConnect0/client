@@ -40,9 +40,7 @@ class _MessengerState extends ConsumerState<Messenger> {
   @override
   Widget build(BuildContext context) {
     if (roomId == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final messagesState = ref.watch(messengerViewModelProvider(roomId!));
@@ -53,10 +51,7 @@ class _MessengerState extends ConsumerState<Messenger> {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "메신저",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "메신저", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -65,29 +60,19 @@ class _MessengerState extends ConsumerState<Messenger> {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: messagesState.when(
@@ -114,17 +99,18 @@ class _MessengerState extends ConsumerState<Messenger> {
 
                       return Padding(
                         padding: const EdgeInsets.only(top: 28),
-                        child: isMe
-                            ? MyMessageBubble(
-                                message: msg.content,
-                                time: formatTime(msg.sentAt),
-                              )
-                            : OtherMessageBubble(
-                                message: msg.content,
-                                time: formatTime(msg.sentAt),
-                                name: msg.senderName,
-                                imageUrl: 'assets/images/example.png',
-                              ),
+                        child:
+                            isMe
+                                ? MyMessageBubble(
+                                  message: msg.content,
+                                  time: formatTime(msg.sentAt),
+                                )
+                                : OtherMessageBubble(
+                                  message: msg.content,
+                                  time: formatTime(msg.sentAt),
+                                  name: msg.senderName,
+                                  imageUrl: 'assets/images/example.png',
+                                ),
                       );
                     },
                   ),
@@ -137,9 +123,7 @@ class _MessengerState extends ConsumerState<Messenger> {
                 child: Row(
                   children: [
                     Expanded(child: CareConnectTextFormField()),
-                    SizedBox(
-                      width: 8,
-                    ),
+                    SizedBox(width: 8),
                     InkWell(
                       onTap: () {
                         final info = MessengerInfo(person: 'example');
@@ -170,9 +154,7 @@ class _MessengerState extends ConsumerState<Messenger> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 34,
-              ),
+              SizedBox(height: 34),
             ],
           );
         },
