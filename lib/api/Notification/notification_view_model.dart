@@ -39,4 +39,15 @@ class NotificationViewModel extends StateNotifier<List<NotificationItem>> {
       print('알림 삭제 오류: $e');
     }
   }
+
+  /// 알림 전체 삭제
+  Future<void> deleteAllNotification() async {
+    try {
+      final repo = ref.read(notificationRepositoryProvider);
+      await repo.deleteAllNotification();
+      state = [];
+    } catch (e) {
+      print('알림 전체 삭제 오류: $e');
+    }
+  }
 }

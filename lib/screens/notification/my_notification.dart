@@ -8,11 +8,27 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class MyNotification extends ConsumerWidget {
-  MyNotification({super.key});
+class MyNotification extends ConsumerStatefulWidget {
+  const MyNotification({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyNotification> createState() => _MyNotificationState();
+}
+
+class _MyNotificationState extends ConsumerState<MyNotification> {
+  @override
+  void initState() {
+    super.initState();
+    // API 요청은 여기서 실행
+    Future.microtask(() async {
+      await ref
+          .read(notificationViewModelProvider.notifier)
+          .fetchAllNotifications;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final notifications = ref.watch(notificationViewModelProvider);
     return Scaffold(
       backgroundColor: CareConnectColor.white,
@@ -62,14 +78,39 @@ class MyNotification extends ConsumerWidget {
                   ),
                 ),
                 Spacer(),
-                Text(
-                  "모두 삭제",
-                  style: TextStyle(
-                    color: CareConnectColor.neutral[400],
-                    fontFamily: 'Pretendard',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    decoration: TextDecoration.underline,
+                InkWell(
+                  onTap: () async {
+                    try {
+                      await ref
+                          .read(notificationViewModelProvider.notifier)
+                          .deleteAllNotification();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('모든 알림이 삭제되었습니다.'),
+                          backgroundColor: Colors.black87,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('전체 삭제 중 오류가 발생했어요.'),
+                          backgroundColor: Colors.redAccent,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    "모두 삭제",
+                    style: TextStyle(
+                      color: CareConnectColor.neutral[400],
+                      fontFamily: 'Pretendard',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
