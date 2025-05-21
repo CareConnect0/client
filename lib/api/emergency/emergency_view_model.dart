@@ -35,4 +35,15 @@ class EmergencyViewModel extends StateNotifier<AsyncValue<void>> {
       return [];
     }
   }
+
+  /// 단일 비상 호출 확인
+  Future<String?> checkEmergency(int emergencyId) async {
+    try {
+      final repo = ref.read(emergencyRepositoryProvider);
+      final detail = await repo.checkEmergency(emergencyId);
+      return detail;
+    } catch (e) {
+      print('비상 호출 상세 조회 에러: $e');
+    }
+  }
 }
