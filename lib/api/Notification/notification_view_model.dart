@@ -18,6 +18,7 @@ class NotificationViewModel extends StateNotifier<List<NotificationItem>> {
     fetchAllNotifications();
   }
 
+  /// 알림 전체 조회
   Future<void> fetchAllNotifications() async {
     try {
       final repo = ref.read(notificationRepositoryProvider);
@@ -25,6 +26,17 @@ class NotificationViewModel extends StateNotifier<List<NotificationItem>> {
       state = notifications;
     } catch (e) {
       print('알림 불러오기 오류: $e');
+    }
+  }
+
+  /// 알림 개별 삭제
+  Future<void> deleteNotification(int notificationId) async {
+    try {
+      final repo = ref.read(notificationRepositoryProvider);
+      await repo.deleteNotification(notificationId);
+      state = state.where((n) => n.notificationId != notificationId).toList();
+    } catch (e) {
+      print('알림 삭제 오류: $e');
     }
   }
 }
