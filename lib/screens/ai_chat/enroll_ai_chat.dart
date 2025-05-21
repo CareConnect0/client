@@ -19,8 +19,9 @@ class _EnrollScheduleState extends ConsumerState<EnrollAiChat> {
   @override
   Widget build(BuildContext context) {
     final recorderState = ref.watch(recorderViewModelProvider); // ViewModel 상태
-    final viewModelNotifier =
-        ref.read(recorderViewModelProvider.notifier); // 액션
+    final viewModelNotifier = ref.read(
+      recorderViewModelProvider.notifier,
+    ); // 액션
     final recorderController = ref.read(recorderControllerProvider); // 파형 컨트롤러
 
     // 녹음이 끝나면 자동 이동
@@ -34,32 +35,35 @@ class _EnrollScheduleState extends ConsumerState<EnrollAiChat> {
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
-      appBar: recorderState.isRecording
-          ? null
-          : AppBar(
-              backgroundColor: CareConnectColor.neutral[700],
-              surfaceTintColor: Colors.transparent,
-              centerTitle: true,
-              leadingWidth: 97,
-              leading: InkWell(
-                onTap: () => context.pop(),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 20),
-                    SizedBox(
-                      width: 6,
-                      height: 12,
-                      child: SvgPicture.asset('assets/icons/chevron-left.svg'),
-                    ),
-                    const SizedBox(width: 8),
-                    Semibold_16px(
-                      text: "뒤로가기",
-                      color: CareConnectColor.white,
-                    )
-                  ],
+      appBar:
+          recorderState.isRecording
+              ? null
+              : AppBar(
+                backgroundColor: CareConnectColor.neutral[700],
+                surfaceTintColor: Colors.transparent,
+                centerTitle: true,
+                leadingWidth: 97,
+                leading: InkWell(
+                  onTap: () => context.pop(),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 20),
+                      SizedBox(
+                        width: 6,
+                        height: 12,
+                        child: SvgPicture.asset(
+                          'assets/icons/chevron-left.svg',
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Semibold_16px(
+                        text: "뒤로가기",
+                        color: CareConnectColor.white,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -72,37 +76,38 @@ class _EnrollScheduleState extends ConsumerState<EnrollAiChat> {
             ),
             const SizedBox(height: 50),
             GestureDetector(
-              onTap: () =>
-                  viewModelNotifier.toggleRecording(recorderController, false),
+              onTap:
+                  () => viewModelNotifier.toggleRecording(
+                    recorderController,
+                    false,
+                  ),
               child: Container(
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 5,
-                    color: CareConnectColor.white,
-                  ),
+                  border: Border.all(width: 5, color: CareConnectColor.white),
                 ),
-                child: recorderState.isRecording
-                    ? Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.all(27),
-                        decoration: BoxDecoration(
-                          color: CareConnectColor.secondary[500],
-                          borderRadius: BorderRadius.circular(6),
+                child:
+                    recorderState.isRecording
+                        ? Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.all(27),
+                          decoration: BoxDecoration(
+                            color: CareConnectColor.secondary[500],
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        )
+                        : Container(
+                          width: 70,
+                          height: 70,
+                          margin: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: CareConnectColor.secondary[500],
+                          ),
                         ),
-                      )
-                    : Container(
-                        width: 70,
-                        height: 70,
-                        margin: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: CareConnectColor.secondary[500],
-                        ),
-                      ),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.1),
