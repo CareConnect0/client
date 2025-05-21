@@ -49,4 +49,24 @@ class NotificationRepository {
       throw Exception('알림 삭제 실패: ${response.statusCode}');
     }
   }
+
+  /// 알림 전체 삭제
+  Future<void> deleteAllNotification() async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final url = Uri.parse('$_baseUrl/all');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('알림 전체 삭제 실패: ${response.statusCode}');
+    }
+  }
 }
