@@ -127,13 +127,19 @@ class _MessengerState extends ConsumerState<Messenger> {
                 height: 70,
                 child: Row(
                   children: [
-                    Expanded(child: CareConnectTextFormField()),
+                    Expanded(child: CareConnectTextFormField(roomId: roomId!)),
                     SizedBox(width: 8),
                     InkWell(
                       onTap: () {
-                        final info = MessengerInfo(person: 'example');
+                        final messengerInfo = MessengerInfo(
+                          roomId: roomId!,
+                          person: widget.user.name,
+                        );
 
-                        context.go('/contact/messenger/enroll', extra: info);
+                        context.push(
+                          '/contact/messenger/enroll',
+                          extra: messengerInfo,
+                        );
                       },
                       child: Container(
                         width: 42,

@@ -1,4 +1,5 @@
 import 'package:client/api/Assistant/assistant_view_model.dart';
+import 'package:client/api/Chatting/chatting_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +7,12 @@ import 'package:flutter_svg/svg.dart';
 
 class CareConnectTextFormField extends ConsumerStatefulWidget {
   final bool isAI;
-  const CareConnectTextFormField({super.key, this.isAI = false});
+  final int roomId;
+  const CareConnectTextFormField({
+    super.key,
+    this.isAI = false,
+    this.roomId = 0,
+  });
 
   @override
   ConsumerState<CareConnectTextFormField> createState() =>
@@ -21,9 +27,10 @@ class _CareConnectTextFormFieldState
     return TextFormField(
       controller: _controller,
       style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: CareConnectColor.black),
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: CareConnectColor.black,
+      ),
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
@@ -48,14 +55,21 @@ class _CareConnectTextFormFieldState
           padding: const EdgeInsets.only(right: 12.0),
           child: InkWell(
             onTap: () {
-              if (widget.isAI) {
-                final text = _controller.text.trim();
-                if (text.isNotEmpty) {
-                  final viewModel =
-                      ref.read(assistantViewModelProvider.notifier);
+              final text = _controller.text.trim();
+              if (text.isNotEmpty) {
+                if (widget.isAI) {
+                  // AI assistatnt
+                  final viewModel = ref.read(
+                    assistantViewModelProvider.notifier,
+                  );
                   viewModel.sendMessage(text);
-                  _controller.clear(); // 입력창 초기화
+                } else {
+                  // chatting
+                  ref
+                      .read(chattingRepositoryProvider)
+                      .sendMessage(widget.roomId, text);
                 }
+                _controller.clear(); // 입력창 초기화
               }
             },
             child: Container(

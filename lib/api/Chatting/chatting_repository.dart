@@ -148,4 +148,16 @@ class ChattingRepository {
 
     print('🟢 채팅방 $roomId 구독 요청 완료');
   }
+
+  /// 메시지 전송
+  void sendMessage(int roomId, String content) {
+    final destination = '/pub/chats/rooms/$roomId/messages';
+
+    stompClient.send(
+      destination: destination,
+      body: jsonEncode({'content': content}),
+    );
+
+    print('📤 메시지 전송: $content');
+  }
 }
