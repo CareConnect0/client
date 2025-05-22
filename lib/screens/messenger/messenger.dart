@@ -61,7 +61,6 @@ class _MessengerState extends ConsumerState<Messenger> {
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
-            ref.read(chattingRepositoryProvider).disconnectSocket();
             context.pop();
           },
           child: Row(
