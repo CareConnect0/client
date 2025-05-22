@@ -36,7 +36,7 @@ class _EnrollScheduleState extends ConsumerState<EnrollMessage> {
         info.content = recognizedText;
         viewModelNotifier.resetNavigation();
 
-        context.go('/contact/messenger/confirm', extra: info);
+        context.push('/contact/messenger/confirm', extra: info);
       });
     }
 

@@ -1,13 +1,12 @@
+import 'package:client/api/Chatting/chatting_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/model/messengerInfo.dart';
-import 'package:client/model/scheduleInfo.dart';
 import 'package:client/screens/record/controller.dart';
 import 'package:client/screens/record/viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class ConfirmMessage extends ConsumerWidget {
   const ConfirmMessage({super.key});
@@ -33,7 +32,14 @@ class ConfirmMessage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () => context.go('/contact/messenger', extra: info),
+                    onTap: () {
+                      ref
+                          .read(chattingRepositoryProvider)
+                          .sendMessage(info.roomId, info.content);
+                      // context.go('/contact/messenger');
+                      context.pop();
+                      context.pop();
+                    },
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(

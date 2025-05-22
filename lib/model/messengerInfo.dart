@@ -1,6 +1,7 @@
 class MessengerInfo {
-  final String person;
+  late final String person;
   String content;
+  int roomId;
 
-  MessengerInfo({this.content = '', required this.person});
+  MessengerInfo({this.content = '', this.roomId = 0, required this.person});
 }
