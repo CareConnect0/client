@@ -31,6 +31,8 @@ import 'package:client/screens/signIn/view.dart';
 import 'package:client/screens/signUp/sign_up.dart';
 import 'package:client/screens/splash.dart';
 import 'package:client/screens/schedule/timeTable/view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -150,6 +152,14 @@ final routerProvider = Provider<GoRouter>((ref) {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
+  await Firebase.initializeApp();
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // 알림 권한 요청 (iOS 필수)
+  await messaging.requestPermission(alert: true, badge: true, sound: true);
+  // 포그라운드 메시지 수신
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Foreground 알림 수신: ${message.notification?.title}');
+  });
   runApp(const ProviderScope(child: CareConnect()));
 }
 
