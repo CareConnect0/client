@@ -19,9 +19,12 @@ class _ContactState extends ConsumerState<Contact> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final users =
           ref.read(chattingViewModelProvider.notifier).getAvailableUsers();
+
+      final repo = ref.read(chattingRepositoryProvider);
+      await repo.connectSocket();
     });
   }
 
@@ -34,10 +37,7 @@ class _ContactState extends ConsumerState<Contact> {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "메신저",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "메신저", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -46,115 +46,104 @@ class _ContactState extends ConsumerState<Contact> {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: usersAsync.when(
-        data: (users) => Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: CareConnectColor.primary[900],
-                    ),
-                    child: Center(
-                      child: Bold_20px(
-                        text: "누구에게 연락할까요?",
-                        color: CareConnectColor.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 28,
-                  ),
-                  Expanded(child: PersonCard(ref, users)),
-                ],
-              ),
-            ),
-            IgnorePointer(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    end: Alignment.topCenter,
-                    begin: Alignment.bottomCenter,
-                    colors: [
-                      CareConnectColor.neutral[700]!.withOpacity(1),
-                      CareConnectColor.neutral[700]!.withOpacity(0.3),
-                      CareConnectColor.neutral[700]!.withOpacity(0),
-                      CareConnectColor.neutral[700]!.withOpacity(0),
-                      CareConnectColor.neutral[700]!.withOpacity(0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 30,
-              child: InkWell(
-                onTap: () => context.go('/home'),
-                child: Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: CareConnectColor.primary[900],
-                    boxShadow: [
-                      BoxShadow(
-                        color: CareConnectColor.black.withOpacity(0.25),
-                        blurRadius: 10,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
+        data:
+            (users) => Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/home.svg',
-                        color: CareConnectColor.white,
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: CareConnectColor.primary[900],
+                        ),
+                        child: Center(
+                          child: Bold_20px(
+                            text: "누구에게 연락할까요?",
+                            color: CareConnectColor.white,
+                          ),
+                        ),
                       ),
-                      Semibold_16px(
-                        text: "홈 화면",
-                        color: CareConnectColor.white,
-                      ),
+                      SizedBox(height: 28),
+                      Expanded(child: PersonCard(ref, users)),
                     ],
                   ),
                 ),
-              ),
+                IgnorePointer(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        end: Alignment.topCenter,
+                        begin: Alignment.bottomCenter,
+                        colors: [
+                          CareConnectColor.neutral[700]!.withOpacity(1),
+                          CareConnectColor.neutral[700]!.withOpacity(0.3),
+                          CareConnectColor.neutral[700]!.withOpacity(0),
+                          CareConnectColor.neutral[700]!.withOpacity(0),
+                          CareConnectColor.neutral[700]!.withOpacity(0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 30,
+                  child: InkWell(
+                    onTap: () => context.go('/home'),
+                    child: Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CareConnectColor.primary[900],
+                        boxShadow: [
+                          BoxShadow(
+                            color: CareConnectColor.black.withOpacity(0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/home.svg',
+                            color: CareConnectColor.white,
+                          ),
+                          Semibold_16px(
+                            text: "홈 화면",
+                            color: CareConnectColor.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text("에러 발생: $e")),
       ),
@@ -164,17 +153,21 @@ class _ContactState extends ConsumerState<Contact> {
   Widget PersonCard(WidgetRef ref, List<AvailableUser> users) {
     return ListView.separated(
       itemCount: users.length,
-      separatorBuilder: (BuildContext context, int index) =>
-          const SizedBox(height: 36),
+      separatorBuilder:
+          (BuildContext context, int index) => const SizedBox(height: 36),
       itemBuilder: (BuildContext context, int index) {
         return InkWell(
           onTap: () async {
             await ref
                 .read(chattingViewModelProvider.notifier)
                 .getRoomId(users[index].userId);
-            context.push('/contact/messenger',
-                extra: AvailableUser(
-                    name: users[index].name, userId: users[index].userId));
+            context.push(
+              '/contact/messenger',
+              extra: AvailableUser(
+                name: users[index].name,
+                userId: users[index].userId,
+              ),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
@@ -212,17 +205,18 @@ class _ContactState extends ConsumerState<Contact> {
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: CareConnectColor.secondary[300],
-                            boxShadow: [
-                              BoxShadow(
-                                color: CareConnectColor.black.withOpacity(0.25),
-                                blurRadius: 4,
-                                offset: const Offset(0, 0),
-                              ),
-                            ]),
+                          shape: BoxShape.circle,
+                          color: CareConnectColor.secondary[300],
+                          boxShadow: [
+                            BoxShadow(
+                              color: CareConnectColor.black.withOpacity(0.25),
+                              blurRadius: 4,
+                              offset: const Offset(0, 0),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -235,7 +229,9 @@ class _ContactState extends ConsumerState<Contact> {
                     color: CareConnectColor.primary[200],
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
-                        color: CareConnectColor.primary[900]!, width: 1),
+                      color: CareConnectColor.primary[900]!,
+                      width: 1,
+                    ),
                   ),
                   child: Center(
                     child: Medium_16px(
