@@ -160,4 +160,9 @@ class ChattingRepository {
 
     print('📤 메시지 전송: $content');
   }
+
+  void disconnectSocket() {
+    stompClient.deactivate();
+    print('🔌 STOMP 연결 종료');
+  }
 }
