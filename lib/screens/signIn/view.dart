@@ -1,3 +1,4 @@
+import 'package:client/api/Firebase/FCM_token.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/api/Auth/auth_view_model.dart';
@@ -28,10 +29,13 @@ class SignIn extends ConsumerWidget {
         padding: EdgeInsets.symmetric(horizontal: 28, vertical: 50),
         decoration: BoxDecoration(
           image: DecorationImage(
-              colorFilter: ColorFilter.mode(
-                  CareConnectColor.black.withOpacity(0.65), BlendMode.srcOver),
-              image: AssetImage("assets/images/background.png"),
-              fit: BoxFit.cover),
+            colorFilter: ColorFilter.mode(
+              CareConnectColor.black.withOpacity(0.65),
+              BlendMode.srcOver,
+            ),
+            image: AssetImage("assets/images/background.png"),
+            fit: BoxFit.cover,
+          ),
         ),
         child: Column(
           children: [
@@ -46,67 +50,61 @@ class SignIn extends ConsumerWidget {
               ),
             ),
             Spacer(),
-            Bold_26px(
-              text: '로그인',
-              color: CareConnectColor.white,
-            ),
-            SizedBox(
-              height: 130,
-            ),
+            Bold_26px(text: '로그인', color: CareConnectColor.white),
+            SizedBox(height: 130),
             IdTextField(ref),
-            SizedBox(
-              height: 27,
-            ),
+            SizedBox(height: 27),
             PasswordTextField(ref),
-            SizedBox(
-              height: 16,
-            ),
-            Medium_16px(
-              text: '비밀번호를 잊으셨나요?',
-              color: CareConnectColor.white,
-            ),
-            SizedBox(
-              height: 120,
-            ),
+            SizedBox(height: 16),
+            Medium_16px(text: '비밀번호를 잊으셨나요?', color: CareConnectColor.white),
+            SizedBox(height: 120),
           ],
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid
-            ? () async {
-                final username = ref.read(idProvider);
-                final password = ref.read(passwordProvider);
-                final authViewModel = ref.read(authViewModelProvider.notifier);
-
-                await authViewModel.login(username, password);
-
-                final loginState = ref.read(authViewModelProvider);
-                if (loginState is AsyncData) {
-                  context.go('/home');
-                } else if (loginState is AsyncError) {
-                  // 에러 처리
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('로그인 실패: ${loginState.error}')),
+        onTap:
+            isAllValid
+                ? () async {
+                  final username = ref.read(idProvider);
+                  final password = ref.read(passwordProvider);
+                  final authViewModel = ref.read(
+                    authViewModelProvider.notifier,
                   );
+
+                  await authViewModel.login(username, password);
+
+                  final loginState = ref.read(authViewModelProvider);
+                  if (loginState is AsyncData) {
+                    // 로그인 성공했을 때만 FCM 토큰 등록
+                    await registerFcmToken();
+
+                    context.go('/home');
+                  } else if (loginState is AsyncError) {
+                    // 에러 처리
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('로그인 실패: ${loginState.error}')),
+                    );
+                  }
                 }
-              }
-            : null,
+                : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "로그인",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -119,19 +117,15 @@ class SignIn extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semibold_20px(
-          text: '아이디',
-          color: CareConnectColor.white,
-        ),
-        SizedBox(
-          height: 6,
-        ),
+        Semibold_20px(text: '아이디', color: CareConnectColor.white),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) => ref.read(idProvider.notifier).state = value,
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -166,18 +160,15 @@ class SignIn extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semibold_20px(
-          text: '비밀번호',
-          color: CareConnectColor.white,
-        ),
+        Semibold_20px(text: '비밀번호', color: CareConnectColor.white),
         SizedBox(height: 6),
         Focus(
           onFocusChange: (hasFocus) {
             ref.read(isPasswordFocusedProvider.notifier).state = hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(passwordProvider.notifier).state = value,
+            onChanged:
+                (value) => ref.read(passwordProvider.notifier).state = value,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -206,23 +197,26 @@ class SignIn extends ConsumerWidget {
               ),
 
               // ✅ focused거나 password가 비어있지 않으면 eye 아이콘 보이기
-              suffixIcon: (isFocused || password.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureProvider.notifier).state =
-                            !ref.read(obscureProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || password.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureProvider.notifier).state =
+                              !ref.read(obscureProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
