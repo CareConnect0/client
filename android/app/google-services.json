@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "661506697982",
+    "project_id": "heartcall-c0e63",
+    "storage_bucket": "heartcall-c0e63.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661506697982:android:dfd8e0909801ef4f0093af",
+        "android_client_info": {
+          "package_name": "com.example.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU8Wp8JBExKzPJ4E653M_7nHdLsVIDgHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
