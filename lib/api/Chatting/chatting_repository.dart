@@ -127,4 +127,25 @@ class ChattingRepository {
   void onConnectCallback(StompFrame frame) {
     print('✅ STOMP 연결 완료');
   }
+
+  /// 특정 채팅방 소켓 구독
+  void subscribeToRoom(
+    int roomId,
+    void Function(Map<String, dynamic>) onMessage,
+  ) {
+    final destination = '/sub/chats/rooms/$roomId';
+
+    stompClient.subscribe(
+      destination: destination,
+      callback: (frame) {
+        if (frame.body != null) {
+          final message = jsonDecode(frame.body!);
+          print('📥 수신 메시지: $message');
+          onMessage(message);
+        }
+      },
+    );
+
+    print('🟢 채팅방 $roomId 구독 요청 완료');
+  }
 }

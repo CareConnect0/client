@@ -35,6 +35,11 @@ class _MessengerState extends ConsumerState<Messenger> {
         .read(chattingViewModelProvider.notifier)
         .getRoomId(widget.user.userId);
     setState(() => roomId = id);
+
+    // 특정 채팅방 소켓 구독
+    ref.read(chattingRepositoryProvider).subscribeToRoom(id, (msg) {
+      print('실시간 메시지: ${msg['content']}');
+    });
   }
 
   @override
