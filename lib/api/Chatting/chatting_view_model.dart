@@ -6,10 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final chattingRepositoryProvider = Provider((ref) => ChattingRepository());
 
 final chattingViewModelProvider =
-    StateNotifierProvider<ChattingViewModel, AsyncValue<List<AvailableUser>>>(
-        (ref) {
-  return ChattingViewModel(ref)..getAvailableUsers();
-});
+    StateNotifierProvider<ChattingViewModel, AsyncValue<List<AvailableUser>>>((
+      ref,
+    ) {
+      return ChattingViewModel(ref)..getAvailableUsers();
+    });
 
 class ChattingViewModel extends StateNotifier<AsyncValue<List<AvailableUser>>> {
   final Ref ref;
@@ -59,10 +60,12 @@ class ChattingViewModel extends StateNotifier<AsyncValue<List<AvailableUser>>> {
 }
 
 final messengerViewModelProvider = StateNotifierProvider.autoDispose
-    .family<MessengerViewModel, AsyncValue<List<ChatMessage>>, int>(
-        (ref, roomId) {
-  return MessengerViewModel(ref, roomId);
-});
+    .family<MessengerViewModel, AsyncValue<List<ChatMessage>>, int>((
+      ref,
+      roomId,
+    ) {
+      return MessengerViewModel(ref, roomId);
+    });
 
 class MessengerViewModel extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   final Ref ref;
@@ -73,6 +76,11 @@ class MessengerViewModel extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
   MessengerViewModel(this.ref, this.roomId) : super(const AsyncLoading()) {
     loadInitialMessages();
+  }
+
+  void addMessage(ChatMessage newMessage) {
+    _messages.insert(0, newMessage); // 최신 메시지가 위로 가도록
+    state = AsyncValue.data([..._messages]);
   }
 
   Future<void> loadInitialMessages() async {

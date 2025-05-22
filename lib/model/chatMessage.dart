@@ -18,8 +18,8 @@ class ChatMessage {
       messageId: json['messageId'],
       senderId: json['senderId'],
       senderName: json['senderName'],
-      content: json['content'],
-      sentAt: DateTime.parse(json['sentAt']),
+      content: json['content'] ?? '',
+      sentAt: DateTime.parse(json['sentAt'] ?? json['createdAt']),
     );
   }
 }
@@ -28,10 +28,7 @@ class ChatMessagesResponse {
   final List<ChatMessage> messages;
   final bool hasNext;
 
-  ChatMessagesResponse({
-    required this.messages,
-    required this.hasNext,
-  });
+  ChatMessagesResponse({required this.messages, required this.hasNext});
 
   factory ChatMessagesResponse.fromJson(Map<String, dynamic> json) {
     final list = json['responseDtoList'] as List;

@@ -5,6 +5,7 @@ import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/designs/MyMessageBubble.dart';
 import 'package:client/designs/OtherMessageBubble.dart';
 import 'package:client/model/availableUser.dart';
+import 'package:client/model/chatMessage.dart';
 import 'package:client/model/messengerInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,10 @@ class _MessengerState extends ConsumerState<Messenger> {
     // 특정 채팅방 소켓 구독
     ref.read(chattingRepositoryProvider).subscribeToRoom(id, (msg) {
       print('실시간 메시지: ${msg['content']}');
+      print('msg: $msg');
+
+      final message = ChatMessage.fromJson(msg);
+      ref.read(messengerViewModelProvider(id).notifier).addMessage(message);
     });
   }
 
