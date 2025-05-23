@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final assistantViewModelProvider =
     StateNotifierProvider<AssistantViewModel, AssistantChatState>(
-  (ref) => AssistantViewModel(ref),
-);
+      (ref) => AssistantViewModel(ref),
+    );
 
 final assistantRepositoryProvider = Provider((ref) => AssistantRepository());
 
@@ -21,9 +21,9 @@ class AssistantChatState {
   });
 
   AssistantChatState.initial()
-      : messages = [],
-        hasNext = true,
-        lastMessageId = null;
+    : messages = [],
+      hasNext = true,
+      lastMessageId = null;
 }
 
 class AssistantViewModel extends StateNotifier<AssistantChatState> {
@@ -31,14 +31,57 @@ class AssistantViewModel extends StateNotifier<AssistantChatState> {
   int? _roomId;
 
   AssistantViewModel(this.ref) : super(AssistantChatState.initial()) {
-    loadInitialMessages();
+    _init();
+  }
+
+  bool _isConnected = false;
+
+  Future<void> _init() async {
+    final repo = ref.read(assistantRepositoryProvider);
+
+    await repo.connectSocket(
+      onConnected: () async {
+        _isConnected = true;
+
+        try {
+          _roomId = await repo.getRoomId();
+          await loadMoreMessages();
+
+          repo.subscribeToRoom(_roomId!, (msg) {
+            final message = Message.fromJson(msg);
+            print('msg :$msg');
+            state = AssistantChatState(
+              messages: [message, ...state.messages],
+              hasNext: state.hasNext,
+              lastMessageId: message.messageId,
+            );
+          });
+        } catch (e) {
+          print('초기 메시지 로딩 에러: $e');
+        }
+      },
+    );
   }
 
   Future<void> loadInitialMessages() async {
+    if (!_isConnected) {
+      print('⛔ 소켓 연결 전이라 초기 메시지 로딩 생략');
+      return;
+    }
+
     try {
       final repo = ref.read(assistantRepositoryProvider);
       _roomId = await repo.getRoomId();
       await loadMoreMessages();
+
+      repo.subscribeToRoom(_roomId!, (msg) {
+        final message = Message.fromJson(msg);
+        state = AssistantChatState(
+          messages: [message, ...state.messages],
+          hasNext: state.hasNext,
+          lastMessageId: message.messageId,
+        );
+      });
     } catch (e) {
       print('초기 메시지 로딩 에러: $e');
     }

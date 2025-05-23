@@ -21,15 +21,6 @@ class _AIChatState extends ConsumerState<AIChat> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final repo = ref.read(assistantRepositoryProvider);
-      await repo.connectSocket();
-    });
-  }
-
-  @override
   void didUpdateWidget(covariant AIChat oldWidget) {
     super.didUpdateWidget(oldWidget);
     _scrollToBottom(); // 위젯 업데이트 시에도 스크롤
