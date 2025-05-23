@@ -154,7 +154,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
-  await Firebase.initializeApp();
+  // ✅ 중복 초기화 방지
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  }
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   // 알림 권한 요청 (iOS 필수)
   await messaging.requestPermission(alert: true, badge: true, sound: true);
