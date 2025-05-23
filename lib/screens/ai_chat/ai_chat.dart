@@ -21,6 +21,15 @@ class _AIChatState extends ConsumerState<AIChat> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final repo = ref.read(assistantRepositoryProvider);
+      await repo.connectSocket();
+    });
+  }
+
+  @override
   void didUpdateWidget(covariant AIChat oldWidget) {
     super.didUpdateWidget(oldWidget);
     _scrollToBottom(); // 위젯 업데이트 시에도 스크롤
@@ -56,41 +65,29 @@ class _AIChatState extends ConsumerState<AIChat> {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "AI 대화 도우미",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "AI 대화 도우미", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
           onTap: () {
+            ref.read(assistantRepositoryProvider).disconnectSocket();
             context.go('/home');
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: Stack(
@@ -120,24 +117,29 @@ class _AIChatState extends ConsumerState<AIChat> {
 
                         String formatSentAt(String isoString) {
                           final dateTime = DateTime.parse(isoString);
-                          final datePart =
-                              DateFormat('yyyy.MM.dd').format(dateTime);
-                          final timePart = DateFormat('a h:mm', 'ko')
-                              .format(dateTime); // 'a'는 오전/오후
+                          final datePart = DateFormat(
+                            'yyyy.MM.dd',
+                          ).format(dateTime);
+                          final timePart = DateFormat(
+                            'a h:mm',
+                            'ko',
+                          ).format(dateTime); // 'a'는 오전/오후
                           return '$timePart';
                         }
 
                         return Padding(
                           padding: const EdgeInsets.only(top: 28),
-                          child: isMe
-                              ? MyMessageBubble(
-                                  message: msg.content,
-                                  time: formatSentAt(msg.sentAt))
-                              : OtherMessageBubble(
-                                  message: msg.content,
-                                  time: msg.sentAt,
-                                  assetUrl: 'assets/icons/message-smile.svg',
-                                ),
+                          child:
+                              isMe
+                                  ? MyMessageBubble(
+                                    message: msg.content,
+                                    time: formatSentAt(msg.sentAt),
+                                  )
+                                  : OtherMessageBubble(
+                                    message: msg.content,
+                                    time: msg.sentAt,
+                                    assetUrl: 'assets/icons/message-smile.svg',
+                                  ),
                         );
                       },
                     ),
@@ -150,9 +152,7 @@ class _AIChatState extends ConsumerState<AIChat> {
                   child: Row(
                     children: [
                       Expanded(child: CareConnectTextFormField(isAI: true)),
-                      SizedBox(
-                        width: 8,
-                      ),
+                      SizedBox(width: 8),
                       InkWell(
                         onTap: () {
                           context.push('/ai/enroll');
@@ -181,9 +181,7 @@ class _AIChatState extends ConsumerState<AIChat> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 34,
-                ),
+                SizedBox(height: 34),
               ],
             ),
           ),
@@ -191,7 +189,10 @@ class _AIChatState extends ConsumerState<AIChat> {
             Positioned(
               bottom: 120,
               child: InkWell(
-                onTap: () => context.go('/home'),
+                onTap: () {
+                  ref.read(assistantRepositoryProvider).disconnectSocket();
+                  context.go('/home');
+                },
                 child: Container(
                   width: 90,
                   height: 90,
