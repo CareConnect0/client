@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/message.dart';
 import 'package:http/http.dart' as http;
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class AssistantRepository {
   final String _baseUrl = 'http://3.38.183.170:8080/api/assistant';
@@ -63,9 +64,7 @@ class AssistantRepository {
     }
   }
 
-  Future<bool> hasNextMessages({
-    required Map<String, dynamic> data,
-  }) async {
+  Future<bool> hasNextMessages({required Map<String, dynamic> data}) async {
     return data['hasNext'];
   }
 
@@ -85,10 +84,7 @@ class AssistantRepository {
         'Refreshtoken': refreshToken ?? '',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'roomId': roomId,
-        'requestMessage': requestMessage,
-      }),
+      body: jsonEncode({'roomId': roomId, 'requestMessage': requestMessage}),
     );
 
     if (response.statusCode == 201) {
@@ -99,5 +95,40 @@ class AssistantRepository {
     } else {
       throw Exception('사용자 메시지 전송 실패: ${response.statusCode}');
     }
+  }
+
+  late StompClient stompClient;
+
+  /// 소켓 연결
+  Future<void> connectSocket() async {
+    final accessToken = await AuthStorage.getAccessToken();
+
+    stompClient = StompClient(
+      config: StompConfig(
+        url: 'ws://3.38.183.170:8080/ws',
+        onConnect: onConnectCallback,
+        beforeConnect: () async {
+          print('📡 웹소켓 연결 준비 중...');
+          await Future.delayed(Duration(milliseconds: 200));
+        },
+        onWebSocketError: (dynamic error) => print('❌ 웹소켓 에러: $error'),
+        stompConnectHeaders: {'Authorization': accessToken ?? ''},
+        webSocketConnectHeaders: {'Authorization': accessToken ?? ''},
+        onDisconnect: (frame) => print('🔌 연결 종료'),
+        // Optional
+        onDebugMessage: (msg) => print('🐞 STOMP 디버그: $msg'),
+      ),
+    );
+
+    stompClient.activate();
+  }
+
+  void onConnectCallback(StompFrame frame) {
+    print('✅ STOMP 연결 완료');
+  }
+
+  void disconnectSocket() {
+    stompClient.deactivate();
+    print('🔌 STOMP 연결 종료');
   }
 }
