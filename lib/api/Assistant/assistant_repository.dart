@@ -100,23 +100,24 @@ class AssistantRepository {
   late StompClient stompClient;
 
   /// 소켓 연결
-  Future<void> connectSocket() async {
+  Future<void> connectSocket({required void Function() onConnected}) async {
     final accessToken = await AuthStorage.getAccessToken();
 
     stompClient = StompClient(
       config: StompConfig(
         url: 'ws://3.38.183.170:8080/ws',
-        onConnect: onConnectCallback,
+        onConnect: (frame) {
+          print('✅ STOMP 연결 완료');
+          onConnected(); // 소켓 연결 완료 후 콜백 실행
+        },
         beforeConnect: () async {
           print('📡 웹소켓 연결 준비 중...');
           await Future.delayed(Duration(milliseconds: 200));
         },
-        onWebSocketError: (dynamic error) => print('❌ 웹소켓 에러: $error'),
         stompConnectHeaders: {'Authorization': accessToken ?? ''},
         webSocketConnectHeaders: {'Authorization': accessToken ?? ''},
+        onWebSocketError: (dynamic error) => print('❌ 웹소켓 에러: $error'),
         onDisconnect: (frame) => print('🔌 연결 종료'),
-        // Optional
-        onDebugMessage: (msg) => print('🐞 STOMP 디버그: $msg'),
       ),
     );
 
@@ -130,5 +131,26 @@ class AssistantRepository {
   void disconnectSocket() {
     stompClient.deactivate();
     print('🔌 STOMP 연결 종료');
+  }
+
+  /// 특정 채팅방 소켓 구독
+  void subscribeToRoom(
+    int roomId,
+    void Function(Map<String, dynamic>) onMessage,
+  ) {
+    final destination = '/sub/assistant/rooms/$roomId';
+
+    stompClient.subscribe(
+      destination: destination,
+      callback: (frame) {
+        if (frame.body != null) {
+          final message = jsonDecode(frame.body!);
+          print('📥 수신 메시지: $message');
+          onMessage(message);
+        }
+      },
+    );
+
+    print('🟢 채팅방 $roomId 구독 요청 완료');
   }
 }
