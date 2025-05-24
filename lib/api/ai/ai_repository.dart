@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:client/api/emergency/emergency_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -35,15 +36,19 @@ class AIRepository {
       print('📝 인식된 텍스트: $recognizedText');
 
       // 긴급상황 감지 호출
-      if (!isSchedule)
+      if (!isSchedule) {
         try {
           final isEmergency = await uploadAudioForEmergency(audioPath);
           if (isEmergency == true) {
+            final url = await EmergencyRepository().uploadAudioForEmergencyCall(
+              audioPath,
+            );
             print("⚠️ 긴급상황 발생!");
           }
         } catch (e) {
           print("❌ 긴급상황 감지 중 오류 발생: $e");
         }
+      }
       return recognizedText;
     } else {
       print('❌ 업로드 실패: ${response.statusCode}');

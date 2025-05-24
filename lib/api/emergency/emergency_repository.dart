@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/emergencyItem.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class EmergencyRepository {
   final String _baseUrl = 'http://3.38.183.170:8080/api/emergency';
@@ -87,6 +88,45 @@ class EmergencyRepository {
       }
     } else {
       throw Exception('비상 호출 확인 요청 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 비상 호출 음성 업로드
+  Future<String> uploadAudioForEmergencyCall(String audioPath) async {
+    final uri = Uri.parse('$_baseUrl/audio');
+
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final request =
+        http.MultipartRequest('POST', uri)
+          ..headers.addAll({
+            'Authorization': accessToken ?? '',
+            'Refreshtoken': refreshToken ?? '',
+          })
+          ..files.add(
+            await http.MultipartFile.fromPath(
+              'audioFile',
+              audioPath,
+              contentType: MediaType('audio', 'wav'),
+            ),
+          );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      final decoded = response.body;
+      print('✅ 비상 호출 음성 업로드 성공: $decoded');
+      final decodedJson = jsonDecode(response.body);
+      final url = decodedJson['data']['url'];
+      print('📝 비상 호출 음성 업로드: $url');
+      return url;
+    } else {
+      print('❌ 비상 호출 음성 업로드 실패: ${response.statusCode}');
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      print(decodedResponse);
+      throw Exception('비상 호출 음성 업로드 실패');
     }
   }
 }
