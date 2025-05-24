@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog2.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 final withdrawalPasswordProvider = StateProvider<String>((ref) => '');
 
@@ -82,6 +85,8 @@ class Profile extends ConsumerWidget {
   }
 
   Widget Myprofile(WidgetRef ref) {
+    final _imageFile = ref.watch(profileImageFileProvider);
+
     return Container(
       color: CareConnectColor.primary[50],
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -102,32 +107,43 @@ class Profile extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 112,
-              height: 112,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage("assets/images/example.png"),
+            GestureDetector(
+              onTap: () async {
+                final picker = ImagePicker();
+                final XFile? picked = await picker.pickImage(
+                  source: ImageSource.gallery,
+                );
+
+                if (picked != null) {
+                  final file = File(picked.path);
+
+                  // ① 서버 업로드
+                  await ref
+                      .read(userRepositoryProvider)
+                      .uploadProfileImage(file);
+
+                  // ② Riverpod 상태 갱신
+                  ref.read(profileImageFileProvider.notifier).state = file;
+                }
+              },
+              child: Container(
+                width: 112,
+                height: 112,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image:
+                        _imageFile != null
+                            ? FileImage(_imageFile)
+                            : AssetImage("assets/images/example.png")
+                                as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 20),
             Bold_24px(text: "${ref.watch(userNameProvider)}님"),
-            SizedBox(height: 18),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: CareConnectColor.primary[200],
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: CareConnectColor.primary[900]!,
-                  width: 1,
-                ),
-              ),
-              child: Center(child: Medium_18px(text: "프로필 수정")),
-            ),
           ],
         ),
       ),

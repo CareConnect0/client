@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/dependent.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/singUp.dart';
+import 'package:http_parser/http_parser.dart';
 
 class UserRepository {
   final String _baseUrl = 'http://3.38.183.170:8080/api/users';
@@ -186,6 +188,41 @@ class UserRepository {
       // UI 쪽에서 이 메시지를 catch해서 보여주기
       print('에러: $e');
       rethrow;
+    }
+  }
+
+  /// 프로필 사진 변경
+  Future<void> uploadProfileImage([File? imageFile]) async {
+    final uri = Uri.parse('$_baseUrl/profile');
+    final request = http.MultipartRequest('PATCH', uri);
+
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    request.headers['Authorization'] = accessToken ?? '';
+    request.headers['Refreshtoken'] = refreshToken ?? '';
+
+    if (imageFile != null) {
+      final fileName = imageFile.path.split('/').last;
+      final fileExtension = fileName.split('.').last;
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'imageFile',
+          imageFile.path,
+          contentType: MediaType('image', fileExtension),
+        ),
+      );
+    }
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("✅ 프로필 사진 변경 성공");
+    } else {
+      print("❌ 프로필 사진 변경 실패: ${response.statusCode}");
+      final responseBody = await response.stream.bytesToString();
+      print("응답 내용: $responseBody");
     }
   }
 }

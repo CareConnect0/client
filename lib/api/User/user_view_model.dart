@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:client/api/User/user_repository.dart';
 import 'package:client/model/singUp.dart';
 import 'package:client/screens/home.dart';
@@ -6,6 +8,7 @@ import 'package:client/screens/signUp/enroll_info/view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final userRepositoryProvider = Provider((ref) => UserRepository());
+final profileImageFileProvider = StateProvider<File?>((ref) => null);
 
 final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<void>>(
