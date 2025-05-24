@@ -50,6 +50,9 @@ class ConfirmSchedule extends ConsumerWidget {
                         .read(scheduleGuardianViewModelProvider.notifier)
                         .enrollGuardianSchedule(info);
                   }
+                  ref
+                      .read(recorderViewModelProvider.notifier)
+                      .resetAll(recorderController);
                   // 등록 후 이동
                   context.go('/calendar/timetable', extra: info.dateTime);
                 },
@@ -72,7 +75,7 @@ class ConfirmSchedule extends ConsumerWidget {
                   ref
                       .read(recorderViewModelProvider.notifier)
                       .resetAll(recorderController);
-                  context.go('/calendar/enroll', extra: info);
+                  context.push('/calendar/enroll', extra: info);
                 },
                 child: Container(
                   height: 150,
