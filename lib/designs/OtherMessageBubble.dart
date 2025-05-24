@@ -1,3 +1,4 @@
+import 'package:client/api/ai/ai_repository.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,14 @@ class OtherMessageBubble extends ConsumerWidget {
   final String name;
   final String imageUrl;
   final String assetUrl;
-  const OtherMessageBubble(
-      {required this.message,
-      required this.time,
-      this.name = '',
-      this.assetUrl = '',
-      this.imageUrl = '',
-      super.key});
+  const OtherMessageBubble({
+    required this.message,
+    required this.time,
+    this.name = '',
+    this.assetUrl = '',
+    this.imageUrl = '',
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,73 +31,67 @@ class OtherMessageBubble extends ConsumerWidget {
             Container(
               width: 48,
               height: 48,
-              decoration: imageUrl.isNotEmpty
-                  ? BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
+              decoration:
+                  imageUrl.isNotEmpty
+                      ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage(imageUrl),
+                          fit: BoxFit.cover,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: CareConnectColor.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+                      )
+                      : BoxDecoration(
+                        color: CareConnectColor.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: CareConnectColor.black.withOpacity(0.1),
+                            blurRadius: 6,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: CareConnectColor.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
-                    )
-                  : BoxDecoration(
-                      color: CareConnectColor.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: CareConnectColor.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
-                    ),
-              child: assetUrl.isNotEmpty
-                  ? Center(child: SvgPicture.asset(assetUrl))
-                  : null,
+              child:
+                  assetUrl.isNotEmpty
+                      ? Center(child: SvgPicture.asset(assetUrl))
+                      : null,
             ),
-            SizedBox(
-              width: 12,
-            ),
+            SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 name.isNotEmpty
-                    ? Semibold_16px(
-                        text: name,
-                        color: CareConnectColor.white,
-                      )
+                    ? Semibold_16px(text: name, color: CareConnectColor.white)
                     : SizedBox(),
-                name.isNotEmpty
-                    ? SizedBox(
-                        height: 8,
-                      )
-                    : SizedBox(),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: CareConnectColor.primary[400],
+                name.isNotEmpty ? SizedBox(height: 8) : SizedBox(),
+                InkWell(
+                  onTap: () async {
+                    final tts = AIRepository();
+                    await tts.playTTS(message);
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: CareConnectColor.primary[400],
+                    ),
+                    child: Medium_16px(text: message),
                   ),
-                  child: Medium_16px(text: message),
                 ),
               ],
             ),
           ],
         ),
-        SizedBox(
-          width: 8,
-        ),
-        Semibold_11px(
-          text: time,
-          color: CareConnectColor.white,
-        ),
+        SizedBox(width: 8),
+        Semibold_11px(text: time, color: CareConnectColor.white),
       ],
     );
   }

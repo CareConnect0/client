@@ -1,3 +1,4 @@
+import 'package:client/api/ai/ai_repository.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
@@ -18,30 +19,41 @@ class MyMessageBubble extends ConsumerWidget {
       children: [
         Semibold_11px(text: time, color: CareConnectColor.white),
         const SizedBox(width: 8),
-        Stack(
-          alignment: Alignment.topRight,
-          children: [
-            Container(
-              margin: EdgeInsets.only(right: 15),
-              padding: const EdgeInsets.only(
-                  top: 20, bottom: 20, left: 20, right: 32),
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.6),
-              decoration: BoxDecoration(
-                color: CareConnectColor.neutral[600],
-                borderRadius: BorderRadius.circular(8),
+        InkWell(
+          onTap: () async {
+            final tts = AIRepository();
+            await tts.playTTS(message);
+          },
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 15),
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 20,
+                  left: 20,
+                  right: 32,
+                ),
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.6,
+                ),
+                decoration: BoxDecoration(
+                  color: CareConnectColor.neutral[600],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Medium_16px(
+                  text: message,
+                  color: CareConnectColor.white,
+                ),
               ),
-              child: Medium_16px(
-                text: message,
-                color: CareConnectColor.white,
-              ),
-            ),
-            Positioned(
+              Positioned(
                 top: 20,
-                child:
-                    SvgPicture.asset("assets/icons/chat-bubble-polygon.svg")),
-          ],
-        )
+                child: SvgPicture.asset("assets/icons/chat-bubble-polygon.svg"),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
