@@ -9,8 +9,8 @@ final userRepositoryProvider = Provider((ref) => UserRepository());
 
 final userViewModelProvider =
     StateNotifierProvider<UserViewModel, AsyncValue<void>>(
-  (ref) => UserViewModel(ref),
-);
+      (ref) => UserViewModel(ref),
+    );
 
 class UserViewModel extends StateNotifier<AsyncValue<void>> {
   final Ref ref;
@@ -88,6 +88,18 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       final myInfo = await repo.getMine();
       ref.read(userNameProvider.notifier).state = myInfo['name'];
       ref.read(userTypeProvider.notifier).state = myInfo['userType'];
+    } catch (e) {
+      print('연결 실패: $e');
+    }
+  }
+
+  Future<void> getChangePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final repo = ref.read(userRepositoryProvider);
+      await repo.getChangePassword(currentPassword, newPassword);
     } catch (e) {
       print('연결 실패: $e');
     }

@@ -3,6 +3,7 @@ import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectDialog2.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:client/api/Auth/auth_repository.dart';
+import 'package:client/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,7 +48,7 @@ class Profile extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Myprofile(),
+            Myprofile(ref),
             OptionCard1(context, "비밀번호 변경", '/profile/password'),
             OptionCard1(context, "이용약관", '/profile/terms'),
             OptionCard2(
@@ -80,7 +81,7 @@ class Profile extends ConsumerWidget {
     );
   }
 
-  Widget Myprofile() {
+  Widget Myprofile(WidgetRef ref) {
     return Container(
       color: CareConnectColor.primary[50],
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -112,7 +113,7 @@ class Profile extends ConsumerWidget {
               ),
             ),
             SizedBox(height: 20),
-            Bold_24px(text: "사용자님"),
+            Bold_24px(text: "${ref.watch(userNameProvider)}님"),
             SizedBox(height: 18),
             Container(
               width: double.infinity,

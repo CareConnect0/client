@@ -7,12 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:client/model/singUp.dart';
 
 class UserRepository {
-  final String _baseUrl = 'http://3.38.183.170:8080/api';
+  final String _baseUrl = 'http://3.38.183.170:8080/api/users';
   final Dio _dio = Dio(BaseOptions(baseUrl: 'http://3.38.183.170:8080'));
 
   /// 회원가입
   Future<void> signup(SignupData data) async {
-    final url = Uri.parse('$_baseUrl/users/signup');
+    final url = Uri.parse('$_baseUrl/signup');
 
     print('📦 보내는 데이터: ${jsonEncode(data.toJson())}');
 
@@ -39,11 +39,7 @@ class UserRepository {
       final response = await _dio.patch(
         '/api/users/withdrawal',
         data: {'password': password},
-        options: Options(
-          headers: {
-            'Authorization': accessToken,
-          },
-        ),
+        options: Options(headers: {'Authorization': accessToken}),
       );
       print('✅ 회원탈퇴 성공: ${response.data}');
     } catch (e) {
@@ -61,7 +57,7 @@ class UserRepository {
     print('보내는 토큰: $accessToken');
     print('보내는 데이터: $guardianUsername, $guardianName');
 
-    final url = Uri.parse('$_baseUrl/users/link');
+    final url = Uri.parse('$_baseUrl/link');
     final response = await http.post(
       url,
       headers: {
@@ -69,12 +65,10 @@ class UserRepository {
         'Authorization': accessToken ?? '',
         'Refreshtoken': refreshToken ?? '',
       },
-      body: jsonEncode(
-        {
-          'guardianUsername': guardianUsername,
-          'guardianName': guardianName,
-        },
-      ),
+      body: jsonEncode({
+        'guardianUsername': guardianUsername,
+        'guardianName': guardianName,
+      }),
     );
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
@@ -94,7 +88,7 @@ class UserRepository {
     final refreshToken = await AuthStorage.getRefreshToken();
 
     print('보내는 토큰: $accessToken');
-    final url = Uri.parse('$_baseUrl/users/dependent-list');
+    final url = Uri.parse('$_baseUrl/dependent-list');
     final response = await http.get(
       url,
       headers: {
@@ -117,7 +111,7 @@ class UserRepository {
 
   /// 아이디 중복 확인
   Future<bool> checkUsername(String username) async {
-    final url = Uri.parse('$_baseUrl/users/check-username?username=$username');
+    final url = Uri.parse('$_baseUrl/check-username?username=$username');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -133,7 +127,7 @@ class UserRepository {
   Future<Map<String, dynamic>> getMine() async {
     final accessToken = await AuthStorage.getAccessToken();
     final refreshToken = await AuthStorage.getRefreshToken();
-    final url = Uri.parse('$_baseUrl/users/me');
+    final url = Uri.parse('$_baseUrl/me');
     final response = await http.get(
       url,
       headers: {
@@ -150,6 +144,48 @@ class UserRepository {
     } else {
       print('회원 정보 조회 실패: ${response.body}');
       throw Exception('회원 정보 조회 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 비밀번호 변경
+  Future<void> getChangePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+    final url = Uri.parse('$_baseUrl/password');
+    try {
+      final response = await http.patch(
+        url,
+        headers: {
+          'Authorization': accessToken ?? '',
+          'Refreshtoken': refreshToken ?? '',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "currentPassword": currentPassword,
+          "newPassword": newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // 성공 처리
+        return;
+      } else {
+        final jsonBody = jsonDecode(response.body);
+        final messageStr = jsonBody['message'];
+        final messageJson = jsonDecode(messageStr); // <- 두 번째 파싱
+
+        // 여기서 newPassword 필드가 있는지 확인
+        final errorMsg = messageJson['newPassword'] ?? '알 수 없는 오류가 발생했습니다.';
+
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      // UI 쪽에서 이 메시지를 catch해서 보여주기
+      print('에러: $e');
+      rethrow;
     }
   }
 }
