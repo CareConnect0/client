@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 선택된 시간 정보를 저장하는 상태 프로바이더
 final selectedTimeProvider =
     StateNotifierProvider<SelectedTimeNotifier, SelectedTimeState>((ref) {
-  return SelectedTimeNotifier();
-});
+      return SelectedTimeNotifier();
+    });
 
 // 시간 상태 클래스
 class SelectedTimeState {
@@ -21,11 +21,7 @@ class SelectedTimeState {
     required this.minute,
   });
 
-  SelectedTimeState copyWith({
-    String? period,
-    int? hour,
-    int? minute,
-  }) {
+  SelectedTimeState copyWith({String? period, int? hour, int? minute}) {
     return SelectedTimeState(
       period: period ?? this.period,
       hour: hour ?? this.hour,
@@ -49,11 +45,7 @@ class SelectedTimeNotifier extends StateNotifier<SelectedTimeState> {
     int hour = now.hour % 12;
     if (hour == 0) hour = 12; // 0시는 12시로 표시
 
-    return SelectedTimeState(
-      period: period,
-      hour: hour,
-      minute: now.minute,
-    );
+    return SelectedTimeState(period: period, hour: hour, minute: now.minute);
   }
 
   void updatePeriod(String period) {
@@ -69,11 +61,7 @@ class SelectedTimeNotifier extends StateNotifier<SelectedTimeState> {
   }
 
   void updateTime(String period, int hour, int minute) {
-    state = SelectedTimeState(
-      period: period,
-      hour: hour,
-      minute: minute,
-    );
+    state = SelectedTimeState(period: period, hour: hour, minute: minute);
   }
 }
 
@@ -88,7 +76,7 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
   final VoidCallback? onPressed;
 
   CareConnectTimePickerDialog({Key? key, this.onTimeSelected, this.onPressed})
-      : super(key: key);
+    : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -105,9 +93,7 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
     return AlertDialog(
       backgroundColor: CareConnectColor.neutral[700],
       contentPadding: EdgeInsets.all(20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Column(
@@ -130,7 +116,10 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                   onTap: () {
                     if (onTimeSelected != null) {
                       onTimeSelected!(
-                          timeState.period, timeState.hour, timeState.minute);
+                        timeState.period,
+                        timeState.hour,
+                        timeState.minute,
+                      );
                     }
                     // Navigator.of(context).pop(timeState);
                     onPressed?.call();
@@ -185,16 +174,22 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                                 return Container(
                                   alignment: Alignment.center,
                                   child: Text(
+                                    softWrap: false,
+                                    overflow: TextOverflow.visible,
                                     periods[index],
                                     style: TextStyle(
                                       fontSize: 22,
-                                      color: isSelected
-                                          ? CareConnectColor.white
-                                          : CareConnectColor.white.withOpacity(
-                                              isSelected ? 1.0 : 0.3),
-                                      fontWeight: isSelected
-                                          ? FontWeight.w500
-                                          : FontWeight.normal,
+                                      color:
+                                          isSelected
+                                              ? CareConnectColor.white
+                                              : CareConnectColor.white
+                                                  .withOpacity(
+                                                    isSelected ? 1.0 : 0.3,
+                                                  ),
+                                      fontWeight:
+                                          isSelected
+                                              ? FontWeight.w500
+                                              : FontWeight.normal,
                                     ),
                                   ),
                                 );
@@ -204,9 +199,7 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                         ),
                       ),
 
-                      SizedBox(
-                        width: 40,
-                      ),
+                      SizedBox(width: 40),
 
                       // 시간 선택 스피너
                       Expanded(
@@ -234,13 +227,17 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                                     hours[index].toString(),
                                     style: TextStyle(
                                       fontSize: 22,
-                                      color: isSelected
-                                          ? CareConnectColor.white
-                                          : CareConnectColor.white.withOpacity(
-                                              isSelected ? 1.0 : 0.3),
-                                      fontWeight: isSelected
-                                          ? FontWeight.w500
-                                          : FontWeight.normal,
+                                      color:
+                                          isSelected
+                                              ? CareConnectColor.white
+                                              : CareConnectColor.white
+                                                  .withOpacity(
+                                                    isSelected ? 1.0 : 0.3,
+                                                  ),
+                                      fontWeight:
+                                          isSelected
+                                              ? FontWeight.w500
+                                              : FontWeight.normal,
                                     ),
                                   ),
                                 );
@@ -250,9 +247,7 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                         ),
                       ),
 
-                      SizedBox(
-                        width: 12,
-                      ),
+                      SizedBox(width: 12),
 
                       // 분 선택 스피너
                       Expanded(
@@ -280,13 +275,17 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                                     minutes[index].toString().padLeft(2, '0'),
                                     style: TextStyle(
                                       fontSize: 22,
-                                      color: isSelected
-                                          ? CareConnectColor.white
-                                          : CareConnectColor.white.withOpacity(
-                                              isSelected ? 1.0 : 0.3),
-                                      fontWeight: isSelected
-                                          ? FontWeight.w500
-                                          : FontWeight.normal,
+                                      color:
+                                          isSelected
+                                              ? CareConnectColor.white
+                                              : CareConnectColor.white
+                                                  .withOpacity(
+                                                    isSelected ? 1.0 : 0.3,
+                                                  ),
+                                      fontWeight:
+                                          isSelected
+                                              ? FontWeight.w500
+                                              : FontWeight.normal,
                                     ),
                                   ),
                                 );
@@ -339,9 +338,7 @@ class CareConnectTimePickerDialog extends ConsumerWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: 16),
           ],
         ),
       ),
