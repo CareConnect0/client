@@ -129,4 +129,34 @@ class EmergencyRepository {
       throw Exception('비상 호출 음성 업로드 실패');
     }
   }
+
+  /// 비상 호출 생성 (음성 트리거)
+  Future<void> createEmergencyFromAudioTrigger({
+    required String audioUrl,
+    required List<String> keywords,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/audio-trigger');
+
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"audioUrl": audioUrl, "keyword": keywords}),
+    );
+
+    if (response.statusCode == 200) {
+      print("✅ 비상 호출 생성 성공");
+      print("응답: ${response.body}");
+    } else {
+      print("❌ 비상 호출 생성 실패: ${response.statusCode}");
+      print("응답: ${response.body}");
+      throw Exception('비상 호출 생성 실패');
+    }
+  }
 }

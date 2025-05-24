@@ -38,10 +38,16 @@ class AIRepository {
       // 긴급상황 감지 호출
       if (!isSchedule) {
         try {
-          final isEmergency = await uploadAudioForEmergency(audioPath);
+          final emergencyData = await uploadAudioForEmergency(audioPath);
+          final isEmergency = emergencyData['is_emergency'];
+          final keywords = emergencyData['keywords'];
+
           if (isEmergency == true) {
-            final url = await EmergencyRepository().uploadAudioForEmergencyCall(
-              audioPath,
+            final audioUrl = await EmergencyRepository()
+                .uploadAudioForEmergencyCall(audioPath);
+            await EmergencyRepository().createEmergencyFromAudioTrigger(
+              audioUrl: audioUrl,
+              keywords: keywords,
             );
             print("⚠️ 긴급상황 발생!");
           }
@@ -82,7 +88,7 @@ class AIRepository {
   }
 
   /// 음성 긴급상황 감지
-  Future<bool> uploadAudioForEmergency(String audioPath) async {
+  Future<Map<String, dynamic>> uploadAudioForEmergency(String audioPath) async {
     final uri = Uri.parse('$_baseUrl/emergency');
 
     final request = http.MultipartRequest('POST', uri)
@@ -102,8 +108,8 @@ class AIRepository {
       print('✅ 긴급상황 감지 성공: $decoded');
       final decodedJson = jsonDecode(response.body);
       final isEmergency = decodedJson['data']['is_emergency'];
-      print('📝 긴급상황: $isEmergency');
-      return isEmergency;
+      final keywords = (decodedJson['data']['keywords'] as List).cast<String>();
+      return {'is_emergency': isEmergency, 'keywords': keywords};
     } else {
       print('❌ 긴급상황 감지 실패: ${response.statusCode}');
       final decodedResponse = utf8.decode(response.bodyBytes);
