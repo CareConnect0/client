@@ -270,6 +270,8 @@ class IdVerification extends ConsumerWidget {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
                               .state = true;
+                          timer?.cancel();
+                          ref.read(timerProvider.notifier).state = 300;
                         } catch (_) {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
