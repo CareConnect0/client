@@ -54,6 +54,9 @@ dependencies:
   audio_waveforms: ^1.3.0
   taudio: ^10.0.0
 
+  # tts
+  audioplayers: ^6.4.0
+
   googleapis: ^14.0.0
   googleapis_auth: ^2.0.0
   http: ^1.3.0

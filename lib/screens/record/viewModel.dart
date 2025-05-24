@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:client/api/STT/stt_repository.dart';
+import 'package:client/api/ai/ai_repository.dart';
 import 'package:client/screens/record/model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,8 +51,8 @@ class RecorderViewModel extends Notifier<RecorderModel> {
 
         final recognizedText =
             isSchedule
-                ? await STTRepository().uploadAudioForSTT(path!, true)
-                : await STTRepository().uploadAudioForSTT(path!, false);
+                ? await AIRepository().uploadAudioForSTT(path!, true)
+                : await AIRepository().uploadAudioForSTT(path!, false);
 
         state = state.copyWith(
           isRecording: false,
