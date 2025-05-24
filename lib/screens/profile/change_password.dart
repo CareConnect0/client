@@ -1,3 +1,4 @@
+import 'package:client/api/User/user_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
 import 'package:client/designs/CareConnectTypo.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,10 @@ class ChangePassword extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final password = ref.watch(passwordProvider);
+    final newPassword = ref.watch(newPasswordProvider);
+    final checkNewPassword = ref.watch(checkNewPasswordProvider);
     final isAllValidProvider = Provider<bool>((ref) {
-      final password = ref.watch(passwordProvider);
-      final newPassword = ref.watch(newPasswordProvider);
-      final checkNewPassword = ref.watch(checkNewPasswordProvider);
       return password.isNotEmpty &&
           newPassword.isNotEmpty &&
           checkNewPassword.isNotEmpty &&
@@ -82,8 +83,25 @@ class ChangePassword extends ConsumerWidget {
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: () {
-          context.go('/profile');
+        onTap: () async {
+          try {
+            await ref
+                .read(userViewModelProvider.notifier)
+                .getChangePassword(password, newPassword);
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('비밀번호가 성공적으로 변경되었습니다.')));
+              context.pop();
+            }
+          } catch (e) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(e.toString())));
+            }
+          }
         },
         child: Container(
           width: double.maxFinite,
