@@ -39,61 +39,69 @@ class IdVerification extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: CareConnectColor.white,
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Bold_24px(text: "본인 인증"),
-            SizedBox(height: 11),
-            Medium_16px(text: "본인인증을 위해 필요한 정보를 입력해 주세요."),
-            SizedBox(height: 40),
-            nameTextField(ref),
-            Spacer(),
-            numberTextField(ref, context),
-            SizedBox(
-              height: 11,
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Bold_24px(text: "본인 인증"),
+                    SizedBox(height: 11),
+                    Medium_16px(text: "본인인증을 위해 필요한 정보를 입력해 주세요."),
+                    SizedBox(height: 40),
+                    nameTextField(ref),
+                    SizedBox(height: 40),
+                    numberTextField(ref, context),
+                    SizedBox(height: 11),
+                    checkNumberTextField(ref),
+                    SizedBox(height: 32),
+                  ],
+                ),
+                Column(children: [PageIndicator(), SizedBox(height: 39)]),
+              ],
             ),
-            checkNumberTextField(ref),
-            SizedBox(
-              height: 32,
-            ),
-            PageIndicator(),
-            SizedBox(
-              height: 39,
-            ),
-          ],
+          ),
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid
-            ? () async {
-                final updatedData = signupData.copyWith(
-                  name: ref.read(nameProvider),
-                  phoneNumber: ref.read(numberProvider),
-                );
-                await ref
-                    .read(userViewModelProvider.notifier)
-                    .signUpWithFullData(updatedData);
-                context.go('/signUp/congratulation');
-              }
-            : null,
+        onTap:
+            isAllValid
+                ? () async {
+                  final updatedData = signupData.copyWith(
+                    name: ref.read(nameProvider),
+                    phoneNumber: ref.read(numberProvider),
+                  );
+                  await ref
+                      .read(userViewModelProvider.notifier)
+                      .signUpWithFullData(updatedData);
+                  context.go('/signUp/congratulation');
+                }
+                : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "다음",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -107,15 +115,14 @@ class IdVerification extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '이름'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) => ref.read(nameProvider.notifier).state = value,
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -147,9 +154,7 @@ class IdVerification extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '휴대전화 인증'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) => ref.read(numberProvider.notifier).state = value,
           style: TextStyle(
@@ -182,15 +187,18 @@ class IdVerification extends ConsumerWidget {
                   onTap: () {
                     startTimer(ref, context);
                     final viewModel = ref.read(authViewModelProvider.notifier);
-                    viewModel
-                        .sendPhoneVerificationCode(ref.read(numberProvider));
+                    viewModel.sendPhoneVerificationCode(
+                      ref.read(numberProvider),
+                    );
                   },
                   child: Container(
                     margin: EdgeInsets.only(top: 15, left: 8),
                     width: 73,
                     decoration: BoxDecoration(
-                      border:
-                          Border.all(color: CareConnectColor.black, width: 1),
+                      border: Border.all(
+                        color: CareConnectColor.black,
+                        width: 1,
+                      ),
                       borderRadius: BorderRadius.circular(90),
                     ),
                     child: Center(child: Medium_16px(text: '인증요청')),
@@ -210,8 +218,8 @@ class IdVerification extends ConsumerWidget {
     final minutes = (remain ~/ 60).toString().padLeft(2, '0');
     final seconds = (remain % 60).toString().padLeft(2, '0');
     return TextFormField(
-      onChanged: (value) =>
-          ref.read(checkNumberProvider.notifier).state = value,
+      onChanged:
+          (value) => ref.read(checkNumberProvider.notifier).state = value,
       style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
@@ -237,22 +245,23 @@ class IdVerification extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Medium_16px(
-                text: '$minutes:$seconds',
-                color: Colors.lightBlue,
-              ),
+              Medium_16px(text: '$minutes:$seconds', color: Colors.lightBlue),
               SizedBox(width: 4),
               Consumer(
                 builder: (context, ref, _) {
                   final isVerified = ref.watch(isVerificationSuccessProvider);
                   if (isVerified) {
-                    return Icon(Icons.check_circle,
-                        color: Colors.green, size: 24);
+                    return Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 24,
+                    );
                   } else {
                     return InkWell(
                       onTap: () async {
-                        final viewModel =
-                            ref.read(authViewModelProvider.notifier);
+                        final viewModel = ref.read(
+                          authViewModelProvider.notifier,
+                        );
                         try {
                           await viewModel.verifyPhoneVerificationCode(
                             ref.read(numberProvider),
@@ -269,8 +278,8 @@ class IdVerification extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('인증번호가 올바르지 않습니다.'),
-                              backgroundColor:
-                                  CareConnectColor.black.withOpacity(0.5),
+                              backgroundColor: CareConnectColor.black
+                                  .withOpacity(0.5),
                               duration: Duration(seconds: 1),
                             ),
                           );
@@ -280,7 +289,9 @@ class IdVerification extends ConsumerWidget {
                         width: 73,
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: CareConnectColor.black, width: 1),
+                            color: CareConnectColor.black,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(90),
                         ),
                         child: Center(child: Medium_16px(text: '확인')),
