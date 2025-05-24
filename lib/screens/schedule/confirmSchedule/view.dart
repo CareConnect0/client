@@ -23,79 +23,74 @@ class ConfirmSchedule extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Bold_36px(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Bold_36px(
             text:
                 "${DateFormat('MM월 dd일').format(info.dateTime)}\n${info.formattedTime}에\n[${info.content}]\n일정을 등록할까요?",
             color: CareConnectColor.white,
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      if (ref.read(userTypeProvider) == "DEPENDENT") {
-                        // 피보호자
-                        await ref
-                            .read(scheduleViewModelProvider.notifier)
-                            .enrollSchedule(info);
-                      } else {
-                        // 보호자
-                        await ref
-                            .read(scheduleGuardianViewModelProvider.notifier)
-                            .enrollGuardianSchedule(info);
-                      }
-                      // 등록 후 이동
-                      context.go('/calendar/timetable', extra: info.dateTime);
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[900],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "등록",
-                          color: CareConnectColor.white,
-                        ),
-                      ),
-                    ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () async {
+                  if (ref.read(userTypeProvider) == "DEPENDENT") {
+                    // 피보호자
+                    await ref
+                        .read(scheduleViewModelProvider.notifier)
+                        .enrollSchedule(info);
+                  } else {
+                    // 보호자
+                    await ref
+                        .read(scheduleGuardianViewModelProvider.notifier)
+                        .enrollGuardianSchedule(info);
+                  }
+                  // 등록 후 이동
+                  context.go('/calendar/timetable', extra: info.dateTime);
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: CareConnectColor.primary[900],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: Bold_26px(text: "등록", color: CareConnectColor.white),
                   ),
                 ),
-                SizedBox(width: 24),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      ref
-                          .read(recorderViewModelProvider.notifier)
-                          .resetAll(recorderController);
-                      context.go('/calendar/enroll', extra: info);
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[200],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "다시 녹음",
-                          color: CareConnectColor.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(width: 24),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  ref
+                      .read(recorderViewModelProvider.notifier)
+                      .resetAll(recorderController);
+                  context.go('/calendar/enroll', extra: info);
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: CareConnectColor.primary[200],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: Bold_26px(
+                      text: "다시 녹음",
+                      color: CareConnectColor.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
