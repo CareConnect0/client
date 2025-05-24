@@ -18,71 +18,68 @@ class ConfirmMessage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: CareConnectColor.neutral[700],
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Bold_36px(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Bold_36px(
             text: "[${info.content}]라고\n전송할까요?",
             color: CareConnectColor.white,
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      ref
-                          .read(chattingRepositoryProvider)
-                          .sendMessage(info.roomId, info.content);
-                      // context.go('/contact/messenger');
-                      context.pop();
-                      context.pop();
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[900],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "전송",
-                          color: CareConnectColor.white,
-                        ),
-                      ),
-                    ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  ref
+                      .read(chattingRepositoryProvider)
+                      .sendMessage(info.roomId, info.content);
+                  ref
+                      .read(recorderViewModelProvider.notifier)
+                      .resetAll(recorderController);
+                  context.pop();
+                  context.pop();
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: CareConnectColor.primary[900],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: Bold_26px(text: "전송", color: CareConnectColor.white),
                   ),
                 ),
-                SizedBox(width: 24),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      ref
-                          .read(recorderViewModelProvider.notifier)
-                          .resetAll(recorderController);
-                      context.go('/contact/messenger/enroll', extra: info);
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[200],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "다시 녹음",
-                          color: CareConnectColor.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(width: 24),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  ref
+                      .read(recorderViewModelProvider.notifier)
+                      .resetAll(recorderController);
+                  context.go('/contact/messenger/enroll', extra: info);
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: CareConnectColor.primary[200],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: Bold_26px(
+                      text: "다시 녹음",
+                      color: CareConnectColor.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
