@@ -36,10 +36,7 @@ class ChangePassword extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: CareConnectColor.white,
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "비밀번호 변경",
-          color: CareConnectColor.black,
-        ),
+        title: Bold_22px(text: "비밀번호 변경", color: CareConnectColor.black),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -48,9 +45,7 @@ class ChangePassword extends ConsumerWidget {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
@@ -59,37 +54,28 @@ class ChangePassword extends ConsumerWidget {
                   color: CareConnectColor.black,
                 ),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.black,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.black),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PasswordTextField(ref),
-              SizedBox(
-                height: 27,
-              ),
+              SizedBox(height: 27),
               NewPasswordTextField(ref),
-              SizedBox(
-                height: 27,
-              ),
+              SizedBox(height: 27),
               CheckNewPasswordTextField(ref),
             ],
           ),
@@ -105,16 +91,18 @@ class ChangePassword extends ConsumerWidget {
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "확인",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -138,8 +126,8 @@ class ChangePassword extends ConsumerWidget {
             ref.read(isPasswordFocusedProvider.notifier).state = hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(passwordProvider.notifier).state = value,
+            onChanged:
+                (value) => ref.read(passwordProvider.notifier).state = value,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -168,23 +156,26 @@ class ChangePassword extends ConsumerWidget {
               ),
 
               // ✅ focused거나 password가 비어있지 않으면 eye 아이콘 보이기
-              suffixIcon: (isFocused || password.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureProvider.notifier).state =
-                            !ref.read(obscureProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || password.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureProvider.notifier).state =
+                              !ref.read(obscureProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
@@ -207,8 +198,8 @@ class ChangePassword extends ConsumerWidget {
             ref.read(isNewPasswordFocusedProvider.notifier).state = hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(newPasswordProvider.notifier).state = value,
+            onChanged:
+                (value) => ref.read(newPasswordProvider.notifier).state = value,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -237,23 +228,26 @@ class ChangePassword extends ConsumerWidget {
               ),
 
               // ✅ focused거나 password가 비어있지 않으면 eye 아이콘 보이기
-              suffixIcon: (isFocused || newPassword.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureNewProvider.notifier).state =
-                            !ref.read(obscureNewProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || newPassword.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureNewProvider.notifier).state =
+                              !ref.read(obscureNewProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
@@ -277,8 +271,9 @@ class ChangePassword extends ConsumerWidget {
                 hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(checkNewPasswordProvider.notifier).state = value,
+            onChanged:
+                (value) =>
+                    ref.read(checkNewPasswordProvider.notifier).state = value,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -307,23 +302,26 @@ class ChangePassword extends ConsumerWidget {
               ),
 
               // 👇 focused 상태 또는 값이 있을 때만 아이콘 보이게
-              suffixIcon: (isFocused || checkNewPassword.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureCheckNewProvider.notifier).state =
-                            !ref.read(obscureCheckNewProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || checkNewPassword.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureCheckNewProvider.notifier).state =
+                              !ref.read(obscureCheckNewProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
