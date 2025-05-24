@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/model/emergencyItem.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class EmergencyRepository {
   final String _baseUrl = 'http://3.38.183.170:8080/api/emergency';
@@ -87,6 +88,75 @@ class EmergencyRepository {
       }
     } else {
       throw Exception('비상 호출 확인 요청 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 비상 호출 음성 업로드
+  Future<String> uploadAudioForEmergencyCall(String audioPath) async {
+    final uri = Uri.parse('$_baseUrl/audio');
+
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final request =
+        http.MultipartRequest('POST', uri)
+          ..headers.addAll({
+            'Authorization': accessToken ?? '',
+            'Refreshtoken': refreshToken ?? '',
+          })
+          ..files.add(
+            await http.MultipartFile.fromPath(
+              'audioFile',
+              audioPath,
+              contentType: MediaType('audio', 'wav'),
+            ),
+          );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      final decoded = response.body;
+      print('✅ 비상 호출 음성 업로드 성공: $decoded');
+      final decodedJson = jsonDecode(response.body);
+      final url = decodedJson['data']['url'];
+      print('📝 비상 호출 음성 업로드: $url');
+      return url;
+    } else {
+      print('❌ 비상 호출 음성 업로드 실패: ${response.statusCode}');
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      print(decodedResponse);
+      throw Exception('비상 호출 음성 업로드 실패');
+    }
+  }
+
+  /// 비상 호출 생성 (음성 트리거)
+  Future<void> createEmergencyFromAudioTrigger({
+    required String audioUrl,
+    required List<String> keywords,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/audio-trigger');
+
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"audioUrl": audioUrl, "keyword": keywords}),
+    );
+
+    if (response.statusCode == 200) {
+      print("✅ 비상 호출 생성 성공");
+      print("응답: ${response.body}");
+    } else {
+      print("❌ 비상 호출 생성 실패: ${response.statusCode}");
+      print("응답: ${response.body}");
+      throw Exception('비상 호출 생성 실패');
     }
   }
 }
