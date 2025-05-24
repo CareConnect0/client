@@ -61,7 +61,7 @@ class ConfirmMessage extends ConsumerWidget {
                   ref
                       .read(recorderViewModelProvider.notifier)
                       .resetAll(recorderController);
-                  context.go('/contact/messenger/enroll', extra: info);
+                  context.push('/contact/messenger/enroll', extra: info);
                 },
                 child: Container(
                   height: 150,

@@ -172,7 +172,6 @@ class _AIChatState extends ConsumerState<AIChat> {
                     ],
                   ),
                 ),
-                SizedBox(height: 34),
               ],
             ),
           ),
