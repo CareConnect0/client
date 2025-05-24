@@ -65,7 +65,7 @@ class _HomeState extends ConsumerState<Home> {
                     child: MenuCard(
                       context,
                       onTap: () {
-                        context.go('/calendar');
+                        context.push('/calendar');
                       },
                       color: CareConnectColor.primary[900]!,
                       text: "달력",
@@ -78,7 +78,7 @@ class _HomeState extends ConsumerState<Home> {
                     child: MenuCard(
                       context,
                       onTap: () {
-                        context.go('/contact');
+                        context.push('/contact');
                       },
                       color: CareConnectColor.primary[400]!,
                       text: "메신저",
@@ -97,7 +97,7 @@ class _HomeState extends ConsumerState<Home> {
                     child: MenuCard(
                       context,
                       onTap: () {
-                        context.go('/ai');
+                        context.push('/ai');
                       },
                       color: CareConnectColor.primary[200]!,
                       text: "AI\n대화 도우미",
@@ -112,7 +112,7 @@ class _HomeState extends ConsumerState<Home> {
                             ? MenuCard(
                               context,
                               onTap: () {
-                                context.go('/emergency/family');
+                                context.push('/emergency/family');
                               },
                               color: CareConnectColor.secondary[500]!,
                               text: "비상 호출",

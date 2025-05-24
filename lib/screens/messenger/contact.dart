@@ -43,7 +43,7 @@ class _ContactState extends ConsumerState<Contact> {
         leading: InkWell(
           onTap: () {
             ref.read(chattingRepositoryProvider).disconnectSocket();
-            context.go('/home');
+            context.pop();
           },
           child: Row(
             children: [
