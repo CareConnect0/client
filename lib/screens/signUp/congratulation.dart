@@ -14,42 +14,41 @@ class Congratulation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 100,
-            ),
-            Image.asset('assets/images/congratulation.png'),
-            SizedBox(
-              height: 39,
-            ),
-            Bold_26px(text: '만나서 반가워요!'),
-            SizedBox(
-              height: 27,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Bold_26px(
-                  text: '함께하루',
-                  color: CareConnectColor.primary[900],
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                    Image.asset('assets/images/congratulation.png'),
+                    SizedBox(height: 36),
+                    Bold_26px(text: '만나서 반가워요!'),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Bold_26px(
+                          text: '함께하루',
+                          color: CareConnectColor.primary[900],
+                        ),
+                        Bold_26px(text: '에서'),
+                      ],
+                    ),
+                    Bold_26px(text: '따뜻한 온기를 느껴보세요'),
+                  ],
                 ),
-                Bold_26px(text: '에서'),
+                Column(children: [PageIndicator(), SizedBox(height: 39)]),
               ],
             ),
-            Bold_26px(text: '따뜻한 온기를 느껴보세요'),
-            SizedBox(
-              height: 43,
-            ),
-            Spacer(),
-            PageIndicator(),
-            SizedBox(
-              height: 39,
-            ),
-          ],
+          ),
         ),
       ),
       bottomSheet: GestureDetector(
@@ -61,14 +60,9 @@ class Congratulation extends ConsumerWidget {
           color: CareConnectColor.white,
           child: Container(
             height: 72,
-            decoration: BoxDecoration(
-              color: CareConnectColor.primary[900],
-            ),
+            decoration: BoxDecoration(color: CareConnectColor.primary[900]),
             child: Center(
-              child: Semibold_24px(
-                text: "시작하기",
-                color: CareConnectColor.white,
-              ),
+              child: Semibold_24px(text: "시작하기", color: CareConnectColor.white),
             ),
           ),
         ),

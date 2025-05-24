@@ -170,7 +170,6 @@ class _MessengerState extends ConsumerState<Messenger> {
                   ],
                 ),
               ),
-              SizedBox(height: 34),
             ],
           );
         },

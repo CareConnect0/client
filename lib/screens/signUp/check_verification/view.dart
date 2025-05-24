@@ -37,71 +37,74 @@ class CheckVerification extends ConsumerWidget {
           verification == true;
     });
     final isAllValid = ref.watch(isAllValidProvider);
-
     return Scaffold(
       backgroundColor: CareConnectColor.white,
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Bold_24px(text: "피보호자 인증"),
-            SizedBox(height: 11),
-            Medium_16px(text: "피보호자 인증을 위해 필요한 정보를 입력해 주세요."),
-            SizedBox(height: 40),
-            nameTextField(ref),
-            SizedBox(
-              height: 24,
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Bold_24px(text: "피보호자 인증"),
+                    SizedBox(height: 11),
+                    Medium_16px(text: "피보호자 인증을 위해 필요한 정보를 입력해 주세요."),
+                    SizedBox(height: 40),
+                    nameTextField(ref),
+                    SizedBox(height: 24),
+                    numberTextField(ref, context),
+                    SizedBox(height: 8),
+                    checkNumberTextField(ref),
+                    SizedBox(height: 32),
+                  ],
+                ),
+                Column(children: [PageIndicator(), SizedBox(height: 39)]),
+              ],
             ),
-            numberTextField(ref, context),
-            SizedBox(
-              height: 8,
-            ),
-            checkNumberTextField(ref),
-            Spacer(),
-            SizedBox(
-              height: 32,
-            ),
-            PageIndicator(),
-            SizedBox(
-              height: 39,
-            ),
-          ],
+          ),
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid
-            ? () async {
-                final updatedData = signupData.copyWith(
-                  name: ref.read(nameProvider),
-                  phoneNumber: ref.read(numberProvider),
-                );
-                await ref
-                    .read(userViewModelProvider.notifier)
-                    .signUpWithFullData(updatedData);
-                await ref.read(authViewModelProvider.notifier).login(
-                      signupData.username,
-                      signupData.password,
-                    );
-                context.go('/signUp/checkVerification/connect');
-              }
-            : null,
+        onTap:
+            isAllValid
+                ? () async {
+                  final updatedData = signupData.copyWith(
+                    name: ref.read(nameProvider),
+                    phoneNumber: ref.read(numberProvider),
+                  );
+                  await ref
+                      .read(userViewModelProvider.notifier)
+                      .signUpWithFullData(updatedData);
+                  await ref
+                      .read(authViewModelProvider.notifier)
+                      .login(signupData.username, signupData.password);
+                  context.go('/signUp/checkVerification/connect');
+                }
+                : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "다음",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -115,15 +118,14 @@ class CheckVerification extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '이름'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) => ref.read(nameProvider.notifier).state = value,
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -155,9 +157,7 @@ class CheckVerification extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '휴대전화 인증'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) => ref.read(numberProvider.notifier).state = value,
           style: TextStyle(
@@ -190,15 +190,18 @@ class CheckVerification extends ConsumerWidget {
                   onTap: () {
                     startTimer(ref, context);
                     final viewModel = ref.read(authViewModelProvider.notifier);
-                    viewModel
-                        .sendPhoneVerificationCode(ref.read(numberProvider));
+                    viewModel.sendPhoneVerificationCode(
+                      ref.read(numberProvider),
+                    );
                   },
                   child: Container(
                     margin: EdgeInsets.only(top: 15, left: 8),
                     width: 73,
                     decoration: BoxDecoration(
-                      border:
-                          Border.all(color: CareConnectColor.black, width: 1),
+                      border: Border.all(
+                        color: CareConnectColor.black,
+                        width: 1,
+                      ),
                       borderRadius: BorderRadius.circular(90),
                     ),
                     child: Center(child: Medium_16px(text: '인증요청')),
@@ -218,8 +221,8 @@ class CheckVerification extends ConsumerWidget {
     final minutes = (remain ~/ 60).toString().padLeft(2, '0');
     final seconds = (remain % 60).toString().padLeft(2, '0');
     return TextFormField(
-      onChanged: (value) =>
-          ref.read(checkNumberProvider.notifier).state = value,
+      onChanged:
+          (value) => ref.read(checkNumberProvider.notifier).state = value,
       style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
@@ -245,24 +248,23 @@ class CheckVerification extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Medium_16px(
-                text: '$minutes:$seconds',
-                color: Colors.lightBlue,
-              ),
-              SizedBox(
-                width: 4,
-              ),
+              Medium_16px(text: '$minutes:$seconds', color: Colors.lightBlue),
+              SizedBox(width: 4),
               Consumer(
                 builder: (context, ref, _) {
                   final isVerified = ref.watch(isVerificationSuccessProvider);
                   if (isVerified) {
-                    return Icon(Icons.check_circle,
-                        color: Colors.green, size: 24);
+                    return Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 24,
+                    );
                   } else {
                     return InkWell(
                       onTap: () async {
-                        final viewModel =
-                            ref.read(authViewModelProvider.notifier);
+                        final viewModel = ref.read(
+                          authViewModelProvider.notifier,
+                        );
                         try {
                           await viewModel.verifyPhoneVerificationCode(
                             ref.read(numberProvider),
@@ -271,6 +273,8 @@ class CheckVerification extends ConsumerWidget {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
                               .state = true;
+                          timer?.cancel();
+                          ref.read(timerProvider.notifier).state = 300;
                         } catch (_) {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
@@ -279,8 +283,8 @@ class CheckVerification extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('인증번호가 올바르지 않습니다.'),
-                              backgroundColor:
-                                  CareConnectColor.black.withOpacity(0.5),
+                              backgroundColor: CareConnectColor.black
+                                  .withOpacity(0.5),
                               duration: Duration(seconds: 1),
                             ),
                           );
@@ -290,7 +294,9 @@ class CheckVerification extends ConsumerWidget {
                         width: 73,
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: CareConnectColor.black, width: 1),
+                            color: CareConnectColor.black,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(90),
                         ),
                         child: Center(child: Medium_16px(text: '확인')),

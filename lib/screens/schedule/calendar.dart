@@ -25,10 +25,7 @@ class Calendar extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: CareConnectColor.neutral[700],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "달력",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "달력", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -37,93 +34,88 @@ class Calendar extends ConsumerWidget {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 34),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: CareConnectColor.primary[900],
-                  ),
-                  child: Bold_20px(
-                    text: "날짜를 눌러 일정을 추가해보세요!",
-                    color: CareConnectColor.white,
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: MonthCalendar(),
-                ),
-                SizedBox(
-                  height: 18,
-                ),
-                Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 24, horizontal: 34),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                       color: CareConnectColor.primary[900],
-                      boxShadow: [
-                        BoxShadow(
-                          color: CareConnectColor.black.withOpacity(0.25),
-                          blurRadius: 10,
-                          offset: Offset(0, 0),
-                        )
-                      ]),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset('assets/icons/union.svg'),
-                      Semibold_16px(
-                        text: "홈 화면",
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Bold_20px(
+                        text: "날짜를 눌러 일정을 추가해보세요!",
                         color: CareConnectColor.white,
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  Container(width: double.infinity, child: MonthCalendar()),
+                  SizedBox(height: 18),
+                  InkWell(
+                    onTap: () => context.go('/home'),
+                    child: Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CareConnectColor.primary[900],
+                        boxShadow: [
+                          BoxShadow(
+                            color: CareConnectColor.black.withOpacity(0.25),
+                            blurRadius: 10,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset('assets/icons/union.svg'),
+                          Semibold_16px(
+                            text: "홈 화면",
+                            color: CareConnectColor.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-final calendarFormatProvider =
-    StateProvider<CalendarFormat>((ref) => CalendarFormat.month);
+final calendarFormatProvider = StateProvider<CalendarFormat>(
+  (ref) => CalendarFormat.month,
+);
 final focusedDayProvider = StateProvider<DateTime>((ref) => DateTime.now());
 final selectedDayProvider = StateProvider<DateTime?>((ref) => null);
 
@@ -144,9 +136,10 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
     final now = DateTime.now();
     final ym = YearMonth(now.year, now.month);
     final dym = YearMonthGuardian(
-        dependentId: ref.read(dependentSelectedIdProvider),
-        year: now.year,
-        month: now.month);
+      dependentId: ref.read(dependentSelectedIdProvider),
+      year: now.year,
+      month: now.month,
+    );
     _lastFetchedYM = ym;
     _lastFetchedGYM = dym;
 
@@ -171,13 +164,15 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
 
     final currentYM = YearMonth(focusedDay.year, focusedDay.month);
     final currentGYM = YearMonthGuardian(
-        dependentId: dependentId,
-        year: focusedDay.year,
-        month: focusedDay.month);
+      dependentId: dependentId,
+      year: focusedDay.year,
+      month: focusedDay.month,
+    );
 
-    final monthlyScheduleAsync = userType == "DEPENDENT"
-        ? ref.watch(scheduleMonthProvider(currentYM))
-        : ref.watch(scheduleMonthGuardianProvider(currentGYM));
+    final monthlyScheduleAsync =
+        userType == "DEPENDENT"
+            ? ref.watch(scheduleMonthProvider(currentYM))
+            : ref.watch(scheduleMonthGuardianProvider(currentGYM));
 
     return monthlyScheduleAsync.when(
       data: (dateList) {
@@ -197,8 +192,8 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      ref.read(focusedDayProvider.notifier).state =
-                          focusedDay.subtract(Duration(days: 30));
+                      ref.read(focusedDayProvider.notifier).state = focusedDay
+                          .subtract(Duration(days: 30));
                     },
                     child: SvgPicture.asset('assets/icons/circle-left.svg'),
                   ),
@@ -213,8 +208,8 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      ref.read(focusedDayProvider.notifier).state =
-                          focusedDay.add(Duration(days: 30));
+                      ref.read(focusedDayProvider.notifier).state = focusedDay
+                          .add(Duration(days: 30));
                     },
                     child: SvgPicture.asset('assets/icons/circle-right.svg'),
                   ),
@@ -224,14 +219,14 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
             // 달력 body
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(24),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
                 color: CareConnectColor.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: TableCalendar(
                 headerVisible: false,
-                daysOfWeekHeight: 60,
+                daysOfWeekHeight: 55,
                 // 요일
                 daysOfWeekStyle: DaysOfWeekStyle(
                   dowTextFormatter: (date, locale) {
@@ -285,10 +280,10 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
                       clipBehavior: Clip.none,
                       children: [
                         Positioned(
-                          top: -7,
+                          top: -5,
                           child: Container(
-                            width: 40,
-                            height: 40,
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: CareConnectColor.secondary[500],
@@ -319,10 +314,10 @@ class _MonthCalendarState extends ConsumerState<MonthCalendar> {
                       clipBehavior: Clip.none,
                       children: [
                         Positioned(
-                          top: -7,
+                          top: -5,
                           child: Container(
-                            width: 40,
-                            height: 40,
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: CareConnectColor.primary[100],

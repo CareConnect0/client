@@ -221,11 +221,11 @@ class _MyNotificationState extends ConsumerState<MyNotification> {
       case 'SCHEDULE_CREATE_BY_GUARDIAN':
         return CareConnectColor.primary[200]!.withOpacity(0.6);
       case 'CHAT':
-        return CareConnectColor.primary[100]!;
+        return CareConnectColor.primary[200]!.withOpacity(0.6);
       case 'EMERGENCY':
         return CareConnectColor.secondary[500]!.withOpacity(0.5);
       default:
-        return CareConnectColor.neutral[100]!;
+        return CareConnectColor.primary[200]!;
     }
   }
 

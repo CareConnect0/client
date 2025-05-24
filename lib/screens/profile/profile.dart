@@ -20,10 +20,7 @@ class Profile extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: CareConnectColor.primary[900],
         surfaceTintColor: Colors.transparent,
-        title: Bold_22px(
-          text: "마이페이지",
-          color: CareConnectColor.white,
-        ),
+        title: Bold_22px(text: "마이페이지", color: CareConnectColor.white),
         centerTitle: true,
         leadingWidth: 97,
         leading: InkWell(
@@ -32,61 +29,53 @@ class Profile extends ConsumerWidget {
           },
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               SizedBox(
                 width: 6,
                 height: 12,
                 child: SvgPicture.asset('assets/icons/chevron-left.svg'),
               ),
-              SizedBox(
-                width: 8,
-              ),
-              Semibold_16px(
-                text: "뒤로가기",
-                color: CareConnectColor.white,
-              )
+              SizedBox(width: 8),
+              Semibold_16px(text: "뒤로가기", color: CareConnectColor.white),
             ],
           ),
         ),
         shape: Border(
-          bottom: BorderSide(
-            color: CareConnectColor.neutral[200]!,
-            width: 1,
-          ),
+          bottom: BorderSide(color: CareConnectColor.neutral[200]!, width: 1),
         ),
       ),
-      body: Column(
-        children: [
-          Myprofile(),
-          OptionCard1(context, "비밀번호 변경", '/profile/password'),
-          OptionCard1(context, "이용약관", '/profile/terms'),
-          OptionCard2(
-            context,
-            "로그아웃",
-            "로그아웃하시겠습니까?",
-            "로그아웃해도 정보가 사라지지 않습니다.",
-            () async {
-              await AuthRepository().logout();
-              context.go('/');
-            },
-            false,
-          ),
-          OptionCard2(
-            context,
-            "회원탈퇴",
-            "회원을 탈퇴하시겠습니까?",
-            "회원탈퇴 시, 모든 정보가 사라집니다.",
-            () async {
-              final password = ref.read(withdrawalPasswordProvider);
-              final viewModel = ref.read(userViewModelProvider.notifier);
-              await viewModel.withdrawal(password);
-              context.go('/');
-            },
-            true,
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Myprofile(),
+            OptionCard1(context, "비밀번호 변경", '/profile/password'),
+            OptionCard1(context, "이용약관", '/profile/terms'),
+            OptionCard2(
+              context,
+              "로그아웃",
+              "로그아웃하시겠습니까?",
+              "로그아웃해도 정보가 사라지지 않습니다.",
+              () async {
+                await AuthRepository().logout();
+                context.go('/');
+              },
+              false,
+            ),
+            OptionCard2(
+              context,
+              "회원탈퇴",
+              "회원을 탈퇴하시겠습니까?",
+              "회원탈퇴 시, 모든 정보가 사라집니다.",
+              () async {
+                final password = ref.read(withdrawalPasswordProvider);
+                final viewModel = ref.read(userViewModelProvider.notifier);
+                await viewModel.withdrawal(password);
+                context.go('/');
+              },
+              true,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -122,21 +111,19 @@ class Profile extends ConsumerWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Bold_24px(text: "사용자님"),
-            SizedBox(
-              height: 18,
-            ),
+            SizedBox(height: 18),
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: CareConnectColor.primary[200],
                 borderRadius: BorderRadius.circular(10),
-                border:
-                    Border.all(color: CareConnectColor.primary[900]!, width: 1),
+                border: Border.all(
+                  color: CareConnectColor.primary[900]!,
+                  width: 1,
+                ),
               ),
               child: Center(child: Medium_18px(text: "프로필 수정")),
             ),
@@ -176,15 +163,16 @@ class Profile extends ConsumerWidget {
       onTap: () {
         showDialog(
           context: context,
-          builder: (context) => CareConnectDialog2(
-            titleText: titleText,
-            contentText: contentText,
-            done: () async {
-              context.pop();
-              await route();
-            },
-            hasTextField: textfield,
-          ),
+          builder:
+              (context) => CareConnectDialog2(
+                titleText: titleText,
+                contentText: contentText,
+                done: () async {
+                  context.pop();
+                  await route();
+                },
+                hasTextField: textfield,
+              ),
         );
       },
       child: Container(

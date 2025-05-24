@@ -25,42 +25,53 @@ class SignIn extends ConsumerWidget {
     final isAllValid = ref.watch(isAllValidProvider);
 
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 50),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            colorFilter: ColorFilter.mode(
-              CareConnectColor.black.withOpacity(0.65),
-              BlendMode.srcOver,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 50),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              colorFilter: ColorFilter.mode(
+                CareConnectColor.black.withOpacity(0.65),
+                BlendMode.srcOver,
+              ),
+              image: AssetImage("assets/images/background.png"),
+              fit: BoxFit.cover,
             ),
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  context.pop();
+                },
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  child: SvgPicture.asset('assets/icons/chevron-left.svg'),
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              Column(
+                children: [
+                  Bold_26px(text: '로그인', color: CareConnectColor.white),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                  IdTextField(ref),
+                  SizedBox(height: 28),
+                  PasswordTextField(ref),
+                  SizedBox(height: 16),
+                  Medium_16px(
+                    text: '비밀번호를 잊으셨나요?',
+                    color: CareConnectColor.white,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                ],
+              ),
+            ],
           ),
         ),
-        child: Column(
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                context.go('/');
-              },
-              child: Container(
-                alignment: Alignment.topLeft,
-                child: SvgPicture.asset('assets/icons/chevron-left.svg'),
-              ),
-            ),
-            Spacer(),
-            Bold_26px(text: '로그인', color: CareConnectColor.white),
-            SizedBox(height: 130),
-            IdTextField(ref),
-            SizedBox(height: 27),
-            PasswordTextField(ref),
-            SizedBox(height: 16),
-            Medium_16px(text: '비밀번호를 잊으셨나요?', color: CareConnectColor.white),
-            SizedBox(height: 120),
-          ],
-        ),
       ),
+      resizeToAvoidBottomInset: true,
       bottomSheet: GestureDetector(
         onTap:
             isAllValid
