@@ -25,64 +25,75 @@ class ConnectFamily extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: CareConnectColor.white,
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Bold_24px(text: "보호자 연결"),
-            SizedBox(height: 11),
-            Medium_16px(text: "보호자 연결을 위해 필요한 정보를 입력해 주세요."),
-            SizedBox(height: 40),
-            familyField(ref, context),
-            SizedBox(
-              height: 32,
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 70),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Bold_24px(text: "보호자 연결"),
+                    SizedBox(height: 11),
+                    Medium_16px(text: "보호자 연결을 위해 필요한 정보를 입력해 주세요."),
+                    SizedBox(height: 40),
+                    familyField(ref, context),
+                    SizedBox(height: 32),
+                  ],
+                ),
+                Column(children: [PageIndicator(), SizedBox(height: 39)]),
+              ],
             ),
-            Spacer(),
-            PageIndicator(),
-            SizedBox(
-              height: 39,
-            ),
-          ],
+          ),
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid
-            ? () async {
-                final viewModel = ref.read(userViewModelProvider.notifier);
-                final guardianUsername = ref.watch(familyIdProvider);
-                final guardianName = ref.watch(familyNameProvider);
-                print('$guardianUsername, $guardianName');
+        onTap:
+            isAllValid
+                ? () async {
+                  final viewModel = ref.read(userViewModelProvider.notifier);
+                  final guardianUsername = ref.watch(familyIdProvider);
+                  final guardianName = ref.watch(familyNameProvider);
+                  print('$guardianUsername, $guardianName');
 
-                final isSuccess =
-                    await viewModel.linkfamily(guardianUsername, guardianName);
-
-                if (isSuccess) {
-                  context.go('/signUp/congratulation');
-                } else {
-                  // 실패했을 경우 스낵바 등 처리
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('연결에 실패했습니다. 다시 시도해주세요.')),
+                  final isSuccess = await viewModel.linkfamily(
+                    guardianUsername,
+                    guardianName,
                   );
+
+                  if (isSuccess) {
+                    context.go('/signUp/congratulation');
+                  } else {
+                    // 실패했을 경우 스낵바 등 처리
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('연결에 실패했습니다. 다시 시도해주세요.')),
+                    );
+                  }
                 }
-              }
-            : null,
+                : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "다음",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -96,16 +107,15 @@ class ConnectFamily extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '보호자 인증'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
-          onChanged: (value) =>
-              ref.read(familyNameProvider.notifier).state = value,
+          onChanged:
+              (value) => ref.read(familyNameProvider.notifier).state = value,
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -128,16 +138,15 @@ class ConnectFamily extends ConsumerWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 19),
           ),
         ),
-        SizedBox(
-          height: 8,
-        ),
+        SizedBox(height: 8),
         TextFormField(
-          onChanged: (value) =>
-              ref.read(familyIdProvider.notifier).state = value,
+          onChanged:
+              (value) => ref.read(familyIdProvider.notifier).state = value,
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
