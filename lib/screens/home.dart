@@ -62,68 +62,78 @@ class _HomeState extends ConsumerState<Home> {
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(context, onTap: () {
-                      context.go('/calendar');
-                    },
-                        color: CareConnectColor.primary[900]!,
-                        text: "달력",
-                        assetName: "assets/icons/calendar.svg",
-                        hasNotification: hasCalendarNotification),
+                    child: MenuCard(
+                      context,
+                      onTap: () {
+                        context.go('/calendar');
+                      },
+                      color: CareConnectColor.primary[900]!,
+                      text: "달력",
+                      assetName: "assets/icons/calendar.svg",
+                      hasNotification: hasCalendarNotification,
+                    ),
                   ),
-                  SizedBox(
-                    width: 13,
-                  ),
+                  SizedBox(width: 13),
                   Expanded(
-                    child: MenuCard(context, onTap: () {
-                      context.go('/contact');
-                    },
-                        color: CareConnectColor.primary[400]!,
-                        text: "메신저",
-                        assetName: "assets/icons/mail.svg",
-                        hasNotification: hasMessengerNotification),
+                    child: MenuCard(
+                      context,
+                      onTap: () {
+                        context.go('/contact');
+                      },
+                      color: CareConnectColor.primary[400]!,
+                      text: "메신저",
+                      assetName: "assets/icons/mail.svg",
+                      hasNotification: hasMessengerNotification,
+                    ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 13,
-            ),
+            SizedBox(height: 13),
             Expanded(
               child: Row(
                 children: [
                   Expanded(
-                    child: MenuCard(context, onTap: () {
-                      context.go('/ai');
-                    },
-                        color: CareConnectColor.primary[200]!,
-                        text: "AI\n대화 도우미",
-                        assetName: "assets/icons/user.svg",
-                        hasNotification: hasAINotification),
+                    child: MenuCard(
+                      context,
+                      onTap: () {
+                        context.go('/ai');
+                      },
+                      color: CareConnectColor.primary[200]!,
+                      text: "AI\n대화 도우미",
+                      assetName: "assets/icons/user.svg",
+                      hasNotification: hasAINotification,
+                    ),
                   ),
-                  SizedBox(
-                    width: 13,
-                  ),
+                  SizedBox(width: 13),
                   Expanded(
-                    child: type != "DEPENDENT"
-                        ? MenuCard(context, onTap: () {
-                            context.go('/emergency/family');
-                          },
-                            color: CareConnectColor.secondary[500]!,
-                            text: "비상 호출",
-                            assetName: "assets/icons/emergency-call.svg",
-                            hasNotification: hasEmergencyNotification)
-                        : MenuCard(context,
-                            color: CareConnectColor.secondary[500]!,
-                            text: "비상 호출",
-                            assetName: "assets/icons/emergency-call.svg",
-                            onTap: () async {
-                            await ref
-                                .read(emergencyViewModelProvider.notifier)
-                                .enrollEmergency();
-                            ScaffoldMessenger.of(this.context).showSnackBar(
-                              SnackBar(content: Text('비상 호출 버튼을 클릭하셨습니다.')),
-                            );
-                          }, hasNotification: hasEmergencyNotification),
+                    child:
+                        type != "DEPENDENT"
+                            ? MenuCard(
+                              context,
+                              onTap: () {
+                                context.go('/emergency/family');
+                              },
+                              color: CareConnectColor.secondary[500]!,
+                              text: "비상 호출",
+                              assetName: "assets/icons/emergency-call.svg",
+                              hasNotification: hasEmergencyNotification,
+                            )
+                            : MenuCard(
+                              context,
+                              color: CareConnectColor.secondary[500]!,
+                              text: "비상 호출",
+                              assetName: "assets/icons/emergency-call.svg",
+                              onTap: () async {
+                                await ref
+                                    .read(emergencyViewModelProvider.notifier)
+                                    .enrollEmergency();
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                  SnackBar(content: Text('비상 호출 버튼을 클릭하셨습니다.')),
+                                );
+                              },
+                              hasNotification: hasEmergencyNotification,
+                            ),
                   ),
                 ],
               ),
@@ -142,11 +152,12 @@ class _HomeState extends ConsumerState<Home> {
     return PreferredSize(
       preferredSize: Size.fromHeight(160),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(16),
-              bottomRight: Radius.circular(16)),
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
           color: CareConnectColor.primary[900],
           boxShadow: [
             BoxShadow(
@@ -180,60 +191,61 @@ class _HomeState extends ConsumerState<Home> {
             ),
             type == "DEPENDENT"
                 ? Medium_20px(
-                    text: "오늘도 좋은 하루 되세요.",
-                    color: CareConnectColor.white,
-                  )
+                  text: "오늘도 좋은 하루 되세요.",
+                  color: CareConnectColor.white,
+                )
                 : Row(
-                    children: [
-                      Medium_20px(
-                        text: "현재 피보호자님은 ",
-                        color: CareConnectColor.white,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => SelectDialog(ref),
-                          );
-                        },
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFF6600),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            children: [
-                              (names.length == 0)
-                                  ? Medium_18px(
-                                      text: '없음',
-                                      color: CareConnectColor.white,
-                                    )
-                                  : Medium_18px(
-                                      text: names[selectedIndex],
-                                      color: CareConnectColor.white,
-                                    ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              SvgPicture.asset(
-                                "assets/icons/chevron-down.svg",
-                                color: CareConnectColor.white,
-                              ),
-                            ],
-                          ),
+                  children: [
+                    Medium_20px(
+                      text: "현재 피보호자님은 ",
+                      color: CareConnectColor.white,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => SelectDialog(ref),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 3,
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF6600),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            (names.length == 0)
+                                ? Medium_18px(
+                                  text: '없음',
+                                  color: CareConnectColor.white,
+                                )
+                                : Medium_18px(
+                                  text: names[selectedIndex],
+                                  color: CareConnectColor.white,
+                                ),
+                            SizedBox(width: 8),
+                            SvgPicture.asset(
+                              "assets/icons/chevron-down.svg",
+                              color: CareConnectColor.white,
+                            ),
+                          ],
                         ),
                       ),
-                      Medium_20px(
+                    ),
+                    Flexible(
+                      child: Medium_20px(
                         text: " 입니다.",
                         color: CareConnectColor.white,
-                      )
-                    ],
-                  ),
-            SizedBox(
-              height: 20,
-            )
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+            SizedBox(height: 20),
           ],
         ),
       ),
@@ -269,10 +281,7 @@ class _HomeState extends ConsumerState<Home> {
             ),
             child: Column(
               children: [
-                Semibold_22px(
-                  text: text,
-                  textAlign: TextAlign.center,
-                ),
+                Semibold_22px(text: text, textAlign: TextAlign.center),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 30),
@@ -326,9 +335,7 @@ class _HomeState extends ConsumerState<Home> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: 16),
             ListView.builder(
               shrinkWrap: true,
               itemCount: names.length,
@@ -337,10 +344,12 @@ class _HomeState extends ConsumerState<Home> {
                   onTap: () {
                     ref.read(selectProvider.notifier).state = index;
 
-                    final selectedIndex =
-                        ref.watch(selectProvider); // 현재 선택된 인덱스
-                    final dependentIds =
-                        ref.watch(dependentIdListProvider); // ID 리스트
+                    final selectedIndex = ref.watch(
+                      selectProvider,
+                    ); // 현재 선택된 인덱스
+                    final dependentIds = ref.watch(
+                      dependentIdListProvider,
+                    ); // ID 리스트
                     final selectedDependentId = dependentIds[selectedIndex];
                     ref.watch(dependentSelectedIdProvider.notifier).state =
                         selectedDependentId;
@@ -350,14 +359,16 @@ class _HomeState extends ConsumerState<Home> {
                     margin: EdgeInsets.only(bottom: 12),
                     padding: EdgeInsets.symmetric(vertical: 24, horizontal: 30),
                     decoration: BoxDecoration(
-                      color: selectedIndex == index
-                          ? CareConnectColor.primary[200]
-                          : CareConnectColor.white,
+                      color:
+                          selectedIndex == index
+                              ? CareConnectColor.primary[200]
+                              : CareConnectColor.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: selectedIndex == index
-                            ? CareConnectColor.primary[900]!
-                            : CareConnectColor.white,
+                        color:
+                            selectedIndex == index
+                                ? CareConnectColor.primary[900]!
+                                : CareConnectColor.white,
                         width: 1,
                       ),
                     ),
@@ -369,26 +380,24 @@ class _HomeState extends ConsumerState<Home> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                                image: AssetImage("assets/images/example.png")),
+                              image: AssetImage("assets/images/example.png"),
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          width: 8,
-                        ),
+                        SizedBox(width: 8),
                         Medium_20px(text: names[index]),
                         Spacer(),
                         selectedIndex == index
                             ? Container(
-                                width: 30,
-                                height: 30,
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: CareConnectColor.primary[900],
-                                ),
-                                child:
-                                    SvgPicture.asset("assets/icons/check.svg"),
-                              )
+                              width: 30,
+                              height: 30,
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: CareConnectColor.primary[900],
+                              ),
+                              child: SvgPicture.asset("assets/icons/check.svg"),
+                            )
                             : Container(),
                       ],
                     ),
