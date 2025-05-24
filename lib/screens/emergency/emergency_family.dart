@@ -97,7 +97,7 @@ class EmergencyFamily extends ConsumerWidget {
             return EmptyEmergencyCard(context);
           }
 
-          final items = snapshot.data!;
+          final items = snapshot.data!.reversed.toList();
           return ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, index) {
