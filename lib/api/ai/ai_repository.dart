@@ -33,6 +33,17 @@ class AIRepository {
       final decodedJson = jsonDecode(response.body);
       final recognizedText = decodedJson['data'];
       print('📝 인식된 텍스트: $recognizedText');
+
+      // 긴급상황 감지 호출
+      if (!isSchedule)
+        try {
+          final isEmergency = await uploadAudioForEmergency(audioPath);
+          if (isEmergency == true) {
+            print("⚠️ 긴급상황 발생!");
+          }
+        } catch (e) {
+          print("❌ 긴급상황 감지 중 오류 발생: $e");
+        }
       return recognizedText;
     } else {
       print('❌ 업로드 실패: ${response.statusCode}');
@@ -62,6 +73,37 @@ class AIRepository {
       print('❌ TTS 실패: ${response.statusCode}');
       print(utf8.decode(response.bodyBytes));
       throw Exception('TTS 실패');
+    }
+  }
+
+  /// 음성 긴급상황 감지
+  Future<bool> uploadAudioForEmergency(String audioPath) async {
+    final uri = Uri.parse('$_baseUrl/emergency');
+
+    final request = http.MultipartRequest('POST', uri)
+      ..files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          audioPath,
+          contentType: MediaType('audio', 'wav'),
+        ),
+      );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      final decoded = response.body;
+      print('✅ 긴급상황 감지 성공: $decoded');
+      final decodedJson = jsonDecode(response.body);
+      final isEmergency = decodedJson['data']['is_emergency'];
+      print('📝 긴급상황: $isEmergency');
+      return isEmergency;
+    } else {
+      print('❌ 긴급상황 감지 실패: ${response.statusCode}');
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      print(decodedResponse);
+      throw Exception('긴급상황 감지 실패');
     }
   }
 }
