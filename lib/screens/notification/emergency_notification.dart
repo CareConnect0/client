@@ -38,82 +38,87 @@ class EmergencyNotification extends ConsumerWidget {
           ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-          SvgPicture.asset("assets/icons/emergency-notification.svg"),
-          SizedBox(height: 8),
-          Bold_22px(
-            text:
-                '${DateFormat('MM월 dd일\nHH시 mm분').format(emergency.createdAt)}에\n$dependentName님이 긴급 호출 버튼을\n누르셨습니다.',
-            color: CareConnectColor.white,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 36),
-          Bold_20px(text: "현재 위치 : 위치 없음", color: CareConnectColor.white),
-          Bold_20px(
-            text:
-                "인식된 음성 : ${emergency.keyword!.isNotEmpty ? emergency.keyword!.join(', ') : '음성 없음'}",
-            color: CareConnectColor.white,
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context.push('/emergency/record');
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[900],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "녹음듣기",
-                          color: CareConnectColor.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 24),
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      final url = Uri.parse('tel:01012341234');
-                      print('tel:01012341234');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
-                      } else {
-                        throw 'Could not launch $url';
-                      }
-                    },
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: CareConnectColor.primary[200],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Bold_26px(
-                          text: "전화하기",
-                          color: CareConnectColor.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset("assets/icons/emergency-notification.svg"),
+            SizedBox(height: 8),
+            Bold_22px(
+              text:
+                  '${DateFormat('MM월 dd일\nHH시 mm분').format(emergency.createdAt)}에\n$dependentName님이 긴급 호출 버튼을\n누르셨습니다.',
+              color: CareConnectColor.white,
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            SizedBox(height: 36),
+            Bold_20px(text: "현재 위치 : 위치 없음", color: CareConnectColor.white),
+            Bold_20px(
+              text:
+                  "인식된 음성 : ${emergency.keyword!.isNotEmpty ? emergency.keyword!.join(', ') : '음성 없음'}",
+              color: CareConnectColor.white,
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        if (emergency.keyword!.isNotEmpty)
+                          context.push('/emergency/record');
+                      },
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color:
+                              emergency.keyword!.isNotEmpty
+                                  ? CareConnectColor.primary[900]
+                                  : CareConnectColor.neutral[400],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Bold_26px(
+                            text: "녹음듣기",
+                            color: CareConnectColor.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 24),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final url = Uri.parse('tel:01012341234');
+                        print('tel:01012341234');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: CareConnectColor.primary[200],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Bold_26px(
+                            text: "전화하기",
+                            color: CareConnectColor.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
