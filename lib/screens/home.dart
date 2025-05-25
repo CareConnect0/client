@@ -23,6 +23,7 @@ final selectProvider = StateProvider<int>((ref) => 0);
 final dependentNamesProvider = StateProvider<List<String>>((ref) => []);
 final userNameProvider = StateProvider<String>((ref) => '');
 final userTypeProvider = StateProvider<String>((ref) => '');
+final userProfileUrlProvider = StateProvider<String>((ref) => '');
 Timer? _notificationTimer;
 
 class _HomeState extends ConsumerState<Home> {

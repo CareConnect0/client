@@ -91,6 +91,8 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
       final myInfo = await repo.getMine();
       ref.read(userNameProvider.notifier).state = myInfo['name'];
       ref.read(userTypeProvider.notifier).state = myInfo['userType'];
+      ref.read(userProfileUrlProvider.notifier).state =
+          myInfo['profileUrl'] ?? "";
     } catch (e) {
       print('연결 실패: $e');
     }
