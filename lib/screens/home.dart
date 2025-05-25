@@ -20,7 +20,9 @@ class Home extends ConsumerStatefulWidget {
 }
 
 final selectProvider = StateProvider<int>((ref) => 0);
-final dependentNamesProvider = StateProvider<List<String>>((ref) => []);
+final dependentNameAndImageProvider = StateProvider<Map<String, String>>(
+  (ref) => {},
+);
 final userNameProvider = StateProvider<String>((ref) => '');
 final userTypeProvider = StateProvider<String>((ref) => '');
 final userProfileUrlProvider = StateProvider<String>((ref) => '');
@@ -165,7 +167,8 @@ class _HomeState extends ConsumerState<Home> {
   PreferredSizeWidget AppbarWidget(BuildContext context, ref) {
     final type = ref.watch(userTypeProvider);
     final selectedIndex = ref.watch(selectProvider);
-    final names = ref.watch(dependentNamesProvider);
+    final dependentNameAndImage = ref.watch(dependentNameAndImageProvider);
+    final names = dependentNameAndImage.keys.toList();
 
     return PreferredSize(
       preferredSize: Size.fromHeight(160),
@@ -329,7 +332,8 @@ class _HomeState extends ConsumerState<Home> {
 
   Widget SelectDialog(ref) {
     final selectedIndex = ref.watch(selectProvider);
-    final names = ref.watch(dependentNamesProvider);
+    final dependentNameAndImage = ref.watch(dependentNameAndImageProvider);
+    final names = dependentNameAndImage.keys.toList();
 
     return Dialog(
       backgroundColor: CareConnectColor.neutral[100],
@@ -398,7 +402,14 @@ class _HomeState extends ConsumerState<Home> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                              image: AssetImage("assets/images/example.png"),
+                              fit: BoxFit.cover,
+                              image:
+                                  dependentNameAndImage[names[index]]!
+                                          .isNotEmpty
+                                      ? NetworkImage(
+                                        dependentNameAndImage[names[index]]!,
+                                      )
+                                      : AssetImage("assets/images/example.png"),
                             ),
                           ),
                         ),

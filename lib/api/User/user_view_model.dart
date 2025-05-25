@@ -64,10 +64,17 @@ class UserViewModel extends StateNotifier<AsyncValue<void>> {
     try {
       final repo = ref.read(userRepositoryProvider);
       final dependents = await repo.getDependentList();
-      final names = dependents.map((e) => e.name).toList(); // 이름만 반환
-      ref.read(dependentNamesProvider.notifier).state = names;
-      final dependentIds = dependents.map((e) => e.dependentId).toList(); // id
+
+      // ID만 저장
+      final dependentIds = dependents.map((e) => e.dependentId).toList();
       ref.read(dependentIdListProvider.notifier).state = dependentIds;
+
+      // 이름과 프로필 URL을 매핑한 Map 저장
+      final Map<String, String> nameAndImage = {
+        for (var e in dependents) e.name: e.profileUrl ?? '',
+      };
+
+      ref.read(dependentNameAndImageProvider.notifier).state = nameAndImage;
     } catch (e) {
       print('❌ 에러: $e');
     }
