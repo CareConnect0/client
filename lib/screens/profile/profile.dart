@@ -132,11 +132,7 @@ class Profile extends ConsumerWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image:
-                        _imageFile != null
-                            ? FileImage(_imageFile)
-                            : AssetImage("assets/images/example.png")
-                                as ImageProvider,
+                    image: _buildProfileImage(ref),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -148,6 +144,19 @@ class Profile extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  ImageProvider _buildProfileImage(WidgetRef ref) {
+    final file = ref.watch(profileImageFileProvider);
+    final url = ref.watch(userProfileUrlProvider);
+
+    if (file != null) {
+      return FileImage(file);
+    } else if (url.isNotEmpty) {
+      return NetworkImage(url);
+    } else {
+      return const AssetImage("assets/images/example.png");
+    }
   }
 
   Widget OptionCard1(BuildContext context, text, done) {

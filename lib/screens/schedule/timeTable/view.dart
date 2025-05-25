@@ -361,14 +361,38 @@ class _TimeTableState extends ConsumerState<TimeTable> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            // Container(
+                                            //   width: 22,
+                                            //   height: 22,
+                                            //   decoration: const BoxDecoration(
+                                            //     shape: BoxShape.circle,
+                                            //   ),
+                                            //   child: SvgPicture.asset(
+                                            //     'assets/icons/person.svg',
+                                            //   ),
+                                            // ),
                                             Container(
                                               width: 22,
                                               height: 22,
-                                              decoration: const BoxDecoration(
+                                              decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                              ),
-                                              child: SvgPicture.asset(
-                                                'assets/icons/person.svg',
+                                                image: DecorationImage(
+                                                  image:
+                                                      ref
+                                                              .watch(
+                                                                userProfileUrlProvider,
+                                                              )
+                                                              .isNotEmpty
+                                                          ? NetworkImage(
+                                                            ref.watch(
+                                                              userProfileUrlProvider,
+                                                            ),
+                                                          )
+                                                          : AssetImage(
+                                                            "assets/images/example.png",
+                                                          ),
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
                                             const SizedBox(width: 8),
