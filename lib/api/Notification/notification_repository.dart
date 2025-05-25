@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client/model/hasNotification.dart';
 import 'package:client/model/notificationItem.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/api/Auth/auth_storage.dart';
@@ -67,6 +68,29 @@ class NotificationRepository {
 
     if (response.statusCode != 200) {
       throw Exception('알림 전체 삭제 실패: ${response.statusCode}');
+    }
+  }
+
+  /// 알림 여부 조회
+  Future<HasNotification> fetchUnreadNotifications() async {
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+    final url = Uri.parse('$_baseUrl/unread');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(utf8.decode(response.bodyBytes));
+      final data = body['data'];
+      return HasNotification.fromJson(data);
+    } else {
+      throw Exception('알림 조회 실패: ${response.statusCode}');
     }
   }
 }

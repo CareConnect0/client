@@ -100,6 +100,7 @@ class _MessengerState extends ConsumerState<Messenger> {
                     return false;
                   },
                   child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     controller: _scrollController,
                     reverse: true,
                     itemCount: messages.length,

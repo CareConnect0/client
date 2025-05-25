@@ -1,3 +1,4 @@
+import 'package:client/model/hasNotification.dart';
 import 'package:client/model/notificationItem.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/api/Notification/notification_repository.dart';
@@ -48,6 +49,29 @@ class NotificationViewModel extends StateNotifier<List<NotificationItem>> {
       state = [];
     } catch (e) {
       print('알림 전체 삭제 오류: $e');
+    }
+  }
+}
+
+final hasNotificationProvider =
+    StateNotifierProvider<HasNotificationViewModel, HasNotification?>(
+      (ref) => HasNotificationViewModel(ref),
+    );
+
+class HasNotificationViewModel extends StateNotifier<HasNotification?> {
+  final Ref ref;
+
+  HasNotificationViewModel(this.ref) : super(null) {
+    fetchUnreadStatus();
+  }
+
+  Future<void> fetchUnreadStatus() async {
+    try {
+      final repo = ref.read(notificationRepositoryProvider);
+      final result = await repo.fetchUnreadNotifications();
+      state = result;
+    } catch (e) {
+      print('알림 여부 조회 오류: $e');
     }
   }
 }
