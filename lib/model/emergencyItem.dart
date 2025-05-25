@@ -24,6 +24,11 @@ class EmergencyItem {
 class EmergencyDetailArgs {
   final EmergencyItem emergency;
   final String dependentName;
+  final String dependentPhoneNumber;
 
-  EmergencyDetailArgs({required this.emergency, required this.dependentName});
+  EmergencyDetailArgs({
+    required this.emergency,
+    required this.dependentName,
+    required this.dependentPhoneNumber,
+  });
 }

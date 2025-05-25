@@ -11,7 +11,13 @@ import 'package:url_launcher/url_launcher.dart';
 class EmergencyNotification extends ConsumerWidget {
   final EmergencyItem emergency;
   final String dependentName;
-  const EmergencyNotification(this.emergency, this.dependentName, {super.key});
+  final String dependentPhoneNumber;
+  const EmergencyNotification(
+    this.emergency,
+    this.dependentName,
+    this.dependentPhoneNumber, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,8 +97,7 @@ class EmergencyNotification extends ConsumerWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () async {
-                        final url = Uri.parse('tel:01012341234');
-                        print('tel:01012341234');
+                        final url = Uri.parse('tel:$dependentPhoneNumber');
                         if (await canLaunchUrl(url)) {
                           await launchUrl(url);
                         } else {

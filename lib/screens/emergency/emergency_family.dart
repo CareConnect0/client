@@ -115,7 +115,7 @@ class EmergencyFamily extends ConsumerWidget {
 
               return InkWell(
                 onTap: () async {
-                  final dependentName = await ref
+                  final dependent = await ref
                       .read(emergencyViewModelProvider.notifier)
                       .checkEmergency(items[index].emergencyId);
 
@@ -123,7 +123,8 @@ class EmergencyFamily extends ConsumerWidget {
                     '/notification/emergency',
                     extra: EmergencyDetailArgs(
                       emergency: items[index],
-                      dependentName: dependentName!,
+                      dependentName: dependent!["dependentName"],
+                      dependentPhoneNumber: dependent["dependentPhoneNumber"],
                     ),
                   );
                 },
