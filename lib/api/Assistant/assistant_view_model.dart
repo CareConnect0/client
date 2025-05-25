@@ -1,4 +1,5 @@
 import 'package:client/api/Assistant/assistant_repository.dart';
+import 'package:client/api/ai/ai_repository.dart';
 import 'package:client/model/message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -127,7 +128,17 @@ class AssistantViewModel extends StateNotifier<AssistantChatState> {
         lastMessageId: userMessage.messageId,
       );
 
-      // 여기에 assistant 응답 기다리기 로직이 들어갈 수도 있음
+      // 사용자 메시지 AI에게 전송
+      final tts = AIRepository();
+      final responseMessage = await tts.getAssistantAnswer(
+        _roomId!,
+        messageContent,
+      );
+      // AI 답변 메시지 전송
+      await repo.sendAIMessage(
+        roomId: _roomId!,
+        responseMessage: responseMessage,
+      );
     } catch (e) {
       print('메시지 전송 실패: $e');
     }

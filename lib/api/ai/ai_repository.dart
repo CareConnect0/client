@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:client/api/Auth/auth_storage.dart';
 import 'package:client/api/emergency/emergency_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -115,6 +116,32 @@ class AIRepository {
       final decodedResponse = utf8.decode(response.bodyBytes);
       print(decodedResponse);
       throw Exception('긴급상황 감지 실패');
+    }
+  }
+
+  /// AI 비서 답변
+  Future<String> getAssistantAnswer(int roomId, String userInput) async {
+    final uri = Uri.parse('$_baseUrl/assistant');
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'user_input': userInput, 'roomId': roomId}),
+    );
+
+    if (response.statusCode == 200) {
+      final decodedJson = jsonDecode(response.body);
+      return decodedJson['message'];
+    } else {
+      print('❌ AI 비서 답변 실패: ${response.statusCode}');
+      print(utf8.decode(response.bodyBytes));
+      throw Exception('AI 비서 답변 실패');
     }
   }
 }

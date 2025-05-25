@@ -128,7 +128,7 @@ class _AIChatState extends ConsumerState<AIChat> {
                                   )
                                   : OtherMessageBubble(
                                     message: msg.content,
-                                    time: msg.sentAt,
+                                    time: formatSentAt(msg.sentAt),
                                     assetUrl: 'assets/icons/message-smile.svg',
                                   ),
                         );
