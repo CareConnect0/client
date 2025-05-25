@@ -120,7 +120,7 @@ class _MessengerState extends ConsumerState<Messenger> {
                                   message: msg.content,
                                   time: formatTime(msg.sentAt),
                                   name: msg.senderName,
-                                  imageUrl: 'assets/images/example.png',
+                                  imageUrl: widget.user.profileUrl,
                                 ),
                       );
                     },
