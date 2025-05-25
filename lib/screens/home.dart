@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:client/api/Assistant/assistant_view_model.dart';
+import 'package:client/api/Notification/notification_view_model.dart';
 import 'package:client/api/User/user_view_model.dart';
 import 'package:client/api/emergency/emergency_view_model.dart';
 import 'package:client/designs/CareConnectColor.dart';
@@ -17,13 +20,10 @@ class Home extends ConsumerStatefulWidget {
 }
 
 final selectProvider = StateProvider<int>((ref) => 0);
-final calendarNotificationProvider = StateProvider<bool>((ref) => true);
-final messengerNotificationProvider = StateProvider<bool>((ref) => true);
-final AINotificationProvider = StateProvider<bool>((ref) => true);
-final emergencyNotificationProvider = StateProvider<bool>((ref) => true);
 final dependentNamesProvider = StateProvider<List<String>>((ref) => []);
 final userNameProvider = StateProvider<String>((ref) => '');
 final userTypeProvider = StateProvider<String>((ref) => '');
+Timer? _notificationTimer;
 
 class _HomeState extends ConsumerState<Home> {
   @override
@@ -41,15 +41,32 @@ class _HomeState extends ConsumerState<Home> {
         ref.watch(dependentSelectedIdProvider.notifier).state =
             selectedDependentId;
       }
+      // 알림 여부 조회
+      await ref.read(hasNotificationProvider.notifier).fetchUnreadStatus();
+
+      // 이후 주기적으로 알림 여부 갱신
+      _notificationTimer = Timer.periodic(const Duration(seconds: 60), (
+        _,
+      ) async {
+        await ref.read(hasNotificationProvider.notifier).fetchUnreadStatus();
+      });
     });
   }
 
   @override
+  void dispose() {
+    _notificationTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final hasCalendarNotification = ref.watch(calendarNotificationProvider);
-    final hasMessengerNotification = ref.watch(messengerNotificationProvider);
-    final hasAINotification = ref.watch(AINotificationProvider);
-    final hasEmergencyNotification = ref.watch(emergencyNotificationProvider);
+    // 알림 여부 조회
+    final hasNotification = ref.watch(hasNotificationProvider);
+    final hasCalendarNotification = hasNotification?.hasUnreadSchedule ?? false;
+    final hasMessengerNotification = hasNotification?.hasUnreadChat ?? false;
+    final hasEmergencyNotification =
+        hasNotification?.hasUnreadEmergency ?? false;
     final type = ref.watch(userTypeProvider);
 
     return Scaffold(
@@ -102,7 +119,7 @@ class _HomeState extends ConsumerState<Home> {
                       color: CareConnectColor.primary[200]!,
                       text: "AI\n대화 도우미",
                       assetName: "assets/icons/user.svg",
-                      hasNotification: hasAINotification,
+                      hasNotification: false,
                     ),
                   ),
                   SizedBox(width: 13),
