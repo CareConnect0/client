@@ -31,33 +31,23 @@ class OtherMessageBubble extends ConsumerWidget {
             Container(
               width: 48,
               height: 48,
-              decoration:
-                  imageUrl.isNotEmpty
-                      ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: CareConnectColor.black.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: Offset(0, 0),
-                          ),
-                        ],
-                      )
-                      : BoxDecoration(
-                        color: CareConnectColor.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: CareConnectColor.black.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: Offset(0, 0),
-                          ),
-                        ],
-                      ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image:
+                      imageUrl.isNotEmpty
+                          ? NetworkImage(imageUrl)
+                          : AssetImage('assets/images/example.png'),
+                  fit: BoxFit.cover,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: CareConnectColor.black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
               child:
                   assetUrl.isNotEmpty
                       ? Center(child: SvgPicture.asset(assetUrl))

@@ -167,6 +167,7 @@ class _ContactState extends ConsumerState<Contact> {
               extra: AvailableUser(
                 name: users[index].name,
                 userId: users[index].userId,
+                profileUrl: users[index].profileUrl,
               ),
             );
           },
@@ -186,8 +187,11 @@ class _ContactState extends ConsumerState<Contact> {
                       height: 114,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/example.png'),
+                        image: DecorationImage(
+                          image:
+                              users[index].profileUrl.isNotEmpty
+                                  ? NetworkImage(users[index].profileUrl)
+                                  : AssetImage('assets/images/example.png'),
                           fit: BoxFit.cover,
                         ),
                         boxShadow: [
