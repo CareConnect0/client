@@ -97,6 +97,35 @@ class AssistantRepository {
     }
   }
 
+  /// AI 메시지 저장
+  Future<Message> sendAIMessage({
+    required int roomId,
+    required String responseMessage,
+  }) async {
+    final url = Uri.parse('$_baseUrl/response');
+    final accessToken = await AuthStorage.getAccessToken();
+    final refreshToken = await AuthStorage.getRefreshToken();
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': accessToken ?? '',
+        'Refreshtoken': refreshToken ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'roomId': roomId, 'responseMessage': responseMessage}),
+    );
+
+    if (response.statusCode == 201) {
+      final jsonBody = jsonDecode(utf8.decode(response.bodyBytes));
+      final data = jsonBody['data'];
+      print('AI 메시지 저장 성공: $data');
+      return Message.fromJson(data);
+    } else {
+      throw Exception('AI 메시지 저장 실패: ${response.statusCode}');
+    }
+  }
+
   late StompClient stompClient;
 
   /// 소켓 연결

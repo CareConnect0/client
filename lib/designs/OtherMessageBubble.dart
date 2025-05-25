@@ -33,13 +33,17 @@ class OtherMessageBubble extends ConsumerWidget {
               height: 48,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image:
-                      imageUrl.isNotEmpty
-                          ? NetworkImage(imageUrl)
-                          : AssetImage('assets/images/example.png'),
-                  fit: BoxFit.cover,
-                ),
+                color: CareConnectColor.white,
+                image:
+                    assetUrl.isEmpty
+                        ? DecorationImage(
+                          image:
+                              imageUrl.isNotEmpty
+                                  ? NetworkImage(imageUrl)
+                                  : AssetImage('assets/images/example.png'),
+                          fit: BoxFit.cover,
+                        )
+                        : null,
                 boxShadow: [
                   BoxShadow(
                     color: CareConnectColor.black.withOpacity(0.1),
