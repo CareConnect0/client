@@ -37,7 +37,7 @@ class EmergencyViewModel extends StateNotifier<AsyncValue<void>> {
   }
 
   /// 단일 비상 호출 확인
-  Future<String?> checkEmergency(int emergencyId) async {
+  Future<Map<String, dynamic>?> checkEmergency(int emergencyId) async {
     try {
       final repo = ref.read(emergencyRepositoryProvider);
       final detail = await repo.checkEmergency(emergencyId);

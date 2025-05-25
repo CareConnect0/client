@@ -64,7 +64,7 @@ class EmergencyRepository {
   }
 
   /// 단일 비상 호출 확인
-  Future<String> checkEmergency(int emergencyId) async {
+  Future<Map<String, dynamic>> checkEmergency(int emergencyId) async {
     final accessToken = await AuthStorage.getAccessToken();
     final refreshToken = await AuthStorage.getRefreshToken();
 
@@ -82,7 +82,7 @@ class EmergencyRepository {
       final decodedResponse = utf8.decode(response.bodyBytes);
       final jsonBody = jsonDecode(decodedResponse);
       if (jsonBody['success']) {
-        return jsonBody['data']['dependentName'];
+        return jsonBody['data'];
       } else {
         throw Exception('비상 호출 확인 실패: ${jsonBody['message']}');
       }

@@ -134,7 +134,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'Emergency',
         builder: (context, state) {
           final args = state.extra as EmergencyDetailArgs;
-          return EmergencyNotification(args.emergency, args.dependentName);
+          return EmergencyNotification(
+            args.emergency,
+            args.dependentName,
+            args.dependentPhoneNumber,
+          );
         },
       ),
       GoRoute(
