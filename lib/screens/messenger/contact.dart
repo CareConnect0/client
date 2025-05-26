@@ -20,8 +20,7 @@ class _ContactState extends ConsumerState<Contact> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final users =
-          ref.read(chattingViewModelProvider.notifier).getAvailableUsers();
+      ref.read(chattingViewModelProvider.notifier).getAvailableUsers();
 
       final repo = ref.read(chattingRepositoryProvider);
       await repo.connectSocket();
