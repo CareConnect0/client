@@ -13,7 +13,7 @@ class AvailableUser {
     return AvailableUser(
       userId: json['userId'],
       name: json['name'],
-      profileUrl: json['profileUrl'],
+      profileUrl: json['profileUrl'] ?? '',
     );
   }
 }
