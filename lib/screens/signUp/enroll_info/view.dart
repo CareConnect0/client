@@ -18,6 +18,21 @@ final isPasswordFocusedProvider = StateProvider<bool>((ref) => false);
 final isCheckPasswordFocusedProvider = StateProvider<bool>((ref) => false);
 final idCheckResultProvider = StateProvider<bool?>((ref) => null);
 
+bool isPasswordValid(String password) {
+  final lengthValid = password.length >= 8 && password.length <= 15;
+  final hasLetter = RegExp(r'[A-Za-z]').hasMatch(password);
+  final hasNumber = RegExp(r'\d').hasMatch(password);
+  final hasSpecial = RegExp(r'[!@#\$&*~%^(),.?":{}|<>]').hasMatch(password);
+
+  return lengthValid && hasLetter && hasNumber && hasSpecial;
+}
+
+bool isIdValid(String id) {
+  final lengthValid = id.length >= 8 && id.length <= 15;
+  final hasOnlyLettersAndNumbers = RegExp(r'^[a-zA-Z0-9]+$').hasMatch(id);
+  return lengthValid && hasOnlyLettersAndNumbers;
+}
+
 class EnrollInfo extends ConsumerWidget {
   EnrollInfo({super.key});
 
@@ -30,12 +45,16 @@ class EnrollInfo extends ConsumerWidget {
     final id = ref.watch(idProvider);
     final password = ref.watch(passwordProvider);
     final checkPassword = ref.watch(checkPasswordProvider);
+    final idCheckResult = ref.watch(idCheckResultProvider);
 
     final isAllValidProvider = Provider<bool>((ref) {
       return id.isNotEmpty &&
+          isIdValid(id) &&
           password.isNotEmpty &&
+          isPasswordValid(password) &&
           checkPassword.isNotEmpty &&
           password == checkPassword &&
+          (idCheckResult == true) &&
           (type[0] == true || type[1] == true);
     });
     final isAllValid = ref.watch(isAllValidProvider);
@@ -62,24 +81,24 @@ class EnrollInfo extends ConsumerWidget {
                         padding: EdgeInsets.symmetric(vertical: 56.5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: type[0]
-                              ? CareConnectColor.primary[900]
-                              : CareConnectColor.neutral[100],
+                          color:
+                              type[0]
+                                  ? CareConnectColor.primary[900]
+                                  : CareConnectColor.neutral[100],
                         ),
                         child: Center(
                           child: Bold_22px(
                             text: '피보호자',
-                            color: type[0]
-                                ? CareConnectColor.white
-                                : CareConnectColor.neutral[400],
+                            color:
+                                type[0]
+                                    ? CareConnectColor.white
+                                    : CareConnectColor.neutral[400],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 28,
-                  ),
+                  SizedBox(width: 28),
                   Expanded(
                     child: InkWell(
                       onTap: () {
@@ -89,16 +108,18 @@ class EnrollInfo extends ConsumerWidget {
                         padding: EdgeInsets.symmetric(vertical: 56.5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: type[1]
-                              ? CareConnectColor.primary[900]
-                              : CareConnectColor.neutral[100],
+                          color:
+                              type[1]
+                                  ? CareConnectColor.primary[900]
+                                  : CareConnectColor.neutral[100],
                         ),
                         child: Center(
                           child: Bold_22px(
                             text: '보호자',
-                            color: type[1]
-                                ? CareConnectColor.white
-                                : CareConnectColor.neutral[400],
+                            color:
+                                type[1]
+                                    ? CareConnectColor.white
+                                    : CareConnectColor.neutral[400],
                           ),
                         ),
                       ),
@@ -106,61 +127,57 @@ class EnrollInfo extends ConsumerWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 31,
-              ),
+              SizedBox(height: 31),
               IdTextField(ref),
-              SizedBox(
-                height: 27,
-              ),
+              SizedBox(height: 27),
               PasswordTextField(ref),
-              SizedBox(
-                height: 27,
-              ),
+              SizedBox(height: 27),
               CheckPasswordTextField(ref),
-              SizedBox(
-                height: 46,
-              ),
+              SizedBox(height: 46),
               PageIndicator(),
-              SizedBox(
-                height: 39,
-              ),
+              SizedBox(height: 39),
             ],
           ),
         ),
       ),
       bottomSheet: GestureDetector(
-        onTap: isAllValid
-            ? () {
-                final userType = type[0] ? 'DEPENDENT' : 'GUARDIAN';
+        onTap:
+            isAllValid
+                ? () {
+                  final userType = type[0] ? 'DEPENDENT' : 'GUARDIAN';
 
-                final signupData = SignupData(
-                  username: id,
-                  password: password,
-                  userType: userType,
-                );
+                  final signupData = SignupData(
+                    username: id,
+                    password: password,
+                    userType: userType,
+                  );
 
-                type[0]
-                    ? context.go('/signUp/checkVerification', extra: signupData)
-                    : context.go('/signUp/idVerification', extra: signupData);
-              }
-            : null,
+                  type[0]
+                      ? context.go(
+                        '/signUp/checkVerification',
+                        extra: signupData,
+                      )
+                      : context.go('/signUp/idVerification', extra: signupData);
+                }
+                : null,
         child: Container(
           width: double.maxFinite,
           color: CareConnectColor.white,
           child: Container(
             height: 72,
             decoration: BoxDecoration(
-              color: isAllValid
-                  ? CareConnectColor.primary[900]
-                  : CareConnectColor.neutral[100],
+              color:
+                  isAllValid
+                      ? CareConnectColor.primary[900]
+                      : CareConnectColor.neutral[100],
             ),
             child: Center(
               child: Semibold_24px(
                 text: "다음",
-                color: isAllValid
-                    ? CareConnectColor.white
-                    : CareConnectColor.neutral[400],
+                color:
+                    isAllValid
+                        ? CareConnectColor.white
+                        : CareConnectColor.neutral[400],
               ),
             ),
           ),
@@ -175,33 +192,34 @@ class EnrollInfo extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semibold_20px(text: '아이디'),
-        SizedBox(
-          height: 6,
-        ),
+        SizedBox(height: 6),
         TextFormField(
           onChanged: (value) {
             ref.read(idProvider.notifier).state = value;
             ref.read(idCheckResultProvider.notifier).state = null;
           },
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: CareConnectColor.black),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: CareConnectColor.black,
+          ),
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: idCheckResult != null
-                  ? (idCheckResult
-                      ? BorderSide.none
-                      : BorderSide(color: const Color(0xFFF63D68)))
-                  : BorderSide.none,
+              borderSide:
+                  idCheckResult != null
+                      ? (idCheckResult
+                          ? BorderSide.none
+                          : BorderSide(color: const Color(0xFFF63D68)))
+                      : BorderSide.none,
             ),
             filled: true,
-            fillColor: idCheckResult != null
-                ? (idCheckResult
-                    ? CareConnectColor.neutral[100]
-                    : const Color(0xFFFFF1F3))
-                : CareConnectColor.neutral[100],
+            fillColor:
+                idCheckResult != null
+                    ? (idCheckResult
+                        ? CareConnectColor.neutral[100]
+                        : const Color(0xFFFFF1F3))
+                    : CareConnectColor.neutral[100],
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: CareConnectColor.black),
@@ -223,8 +241,10 @@ class EnrollInfo extends ConsumerWidget {
                     .checkUsername(id);
               },
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
                 child: Container(
                   width: 71,
                   height: 34,
@@ -243,15 +263,27 @@ class EnrollInfo extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Medium_14px(
+                text: "아이디는 8~15자의 영문자 또는 숫자만 사용할 수 있어요.",
+                color: CareConnectColor.neutral[400],
+              ),
+            ],
+          ),
+        ),
         if (idCheckResult != null)
-          Text(
-            idCheckResult ? '사용할 수 있는 아이디입니다.' : '중복된 아이디입니다.',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: CareConnectColor.neutral[400],
-            ),
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              Medium_14px(
+                text: idCheckResult ? '사용할 수 있는 아이디입니다.' : '중복된 아이디입니다.',
+                color: CareConnectColor.neutral[400],
+              ),
+            ],
           ),
       ],
     );
@@ -272,8 +304,10 @@ class EnrollInfo extends ConsumerWidget {
             ref.read(isPasswordFocusedProvider.notifier).state = hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(passwordProvider.notifier).state = value,
+            onChanged:
+                (value) => ref.read(passwordProvider.notifier).state = value,
+            onTap:
+                () => ref.read(isPasswordFocusedProvider.notifier).state = true,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -302,26 +336,42 @@ class EnrollInfo extends ConsumerWidget {
               ),
 
               // ✅ focused거나 password가 비어있지 않으면 eye 아이콘 보이기
-              suffixIcon: (isFocused || password.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureProvider.notifier).state =
-                            !ref.read(obscureProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || password.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureProvider.notifier).state =
+                              !ref.read(obscureProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
+        if (isFocused)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Medium_14px(
+                  text: "비밀번호는 8~15자, 영어/숫자/특수기호를 포함해야 해요.",
+                  color: CareConnectColor.neutral[400],
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -341,8 +391,9 @@ class EnrollInfo extends ConsumerWidget {
             ref.read(isCheckPasswordFocusedProvider.notifier).state = hasFocus;
           },
           child: TextFormField(
-            onChanged: (value) =>
-                ref.read(checkPasswordProvider.notifier).state = value,
+            onChanged:
+                (value) =>
+                    ref.read(checkPasswordProvider.notifier).state = value,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -371,23 +422,26 @@ class EnrollInfo extends ConsumerWidget {
               ),
 
               // 👇 focused 상태 또는 값이 있을 때만 아이콘 보이게
-              suffixIcon: (isFocused || checkPassword.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(obscureCheckProvider.notifier).state =
-                            !ref.read(obscureCheckProvider);
-                      },
-                      icon: SvgPicture.asset(
-                        isObscure
-                            ? "assets/icons/eye-slash.svg"
-                            : "assets/icons/eye-open.svg",
-                        color: CareConnectColor.black,
-                      ),
-                    )
-                  : null,
+              suffixIcon:
+                  (isFocused || checkPassword.isNotEmpty)
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(obscureCheckProvider.notifier).state =
+                              !ref.read(obscureCheckProvider);
+                        },
+                        icon: SvgPicture.asset(
+                          isObscure
+                              ? "assets/icons/eye-slash.svg"
+                              : "assets/icons/eye-open.svg",
+                          color: CareConnectColor.black,
+                        ),
+                      )
+                      : null,
 
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 19,
+              ),
             ),
           ),
         ),
