@@ -53,7 +53,7 @@ class Congratulation extends ConsumerWidget {
       ),
       bottomSheet: GestureDetector(
         onTap: () {
-          context.go('/SignIn');
+          context.go('/signIn');
         },
         child: Container(
           width: double.maxFinite,
