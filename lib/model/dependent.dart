@@ -16,7 +16,7 @@ class Dependent {
       dependentId: json['dependentId'],
       username: json['username'],
       name: json['name'],
-      profileUrl: json['profileUrl'],
+      profileUrl: json['profileUrl'] ?? '',
     );
   }
 }
