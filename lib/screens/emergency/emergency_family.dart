@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class EmergencyFamily extends ConsumerWidget {
-  EmergencyFamily({super.key});
+  final int? alarmDependentId;
+  EmergencyFamily(this.alarmDependentId, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,7 +84,11 @@ class EmergencyFamily extends ConsumerWidget {
   }
 
   Widget EmergencyCard(BuildContext context, WidgetRef ref) {
-    final dependentId = ref.read(dependentSelectedIdProvider);
+    final int dependentId =
+        (alarmDependentId == null)
+            ? ref.read(dependentSelectedIdProvider)
+            : alarmDependentId!;
+
     return Expanded(
       child: FutureBuilder<List<EmergencyItem>>(
         future: ref
