@@ -142,8 +142,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/emergency/family/:id',
+        builder: (context, state) {
+          final idString = state.pathParameters['id'];
+          final id = idString != null ? int.tryParse(idString) : null;
+          return EmergencyFamily(id);
+        },
+      ),
+      GoRoute(
         path: '/emergency/family',
-        builder: (context, state) => EmergencyFamily(),
+        builder: (context, state) => EmergencyFamily(null),
       ),
       GoRoute(
         path: '/emergency/player',

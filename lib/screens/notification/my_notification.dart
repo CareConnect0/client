@@ -141,7 +141,9 @@ class _MyNotificationState extends ConsumerState<MyNotification> {
     ).format(item.createdAt);
 
     return InkWell(
-      onTap: () => context.push(getRoute(item.notificationType)),
+      onTap:
+          () =>
+              context.push(getRoute(item.notificationType, item.dependentId!)),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
@@ -229,7 +231,7 @@ class _MyNotificationState extends ConsumerState<MyNotification> {
     }
   }
 
-  String getRoute(String type) {
+  String getRoute(String type, int dependentId) {
     switch (type) {
       case 'SCHEDULE_CREATE':
       case 'SCHEDULE_CREATE_BY_GUARDIAN':
@@ -237,7 +239,7 @@ class _MyNotificationState extends ConsumerState<MyNotification> {
       case 'CHAT':
         return '/contact';
       case 'EMERGENCY':
-        return '/emergency/family';
+        return '/emergency/family/$dependentId';
       default:
         return '/notification';
     }
