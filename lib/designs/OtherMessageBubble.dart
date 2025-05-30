@@ -71,7 +71,7 @@ class OtherMessageBubble extends ConsumerWidget {
                     await tts.playTTS(message);
                   },
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
+                    width: MediaQuery.of(context).size.width * 0.55,
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
