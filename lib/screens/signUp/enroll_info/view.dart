@@ -128,7 +128,7 @@ class EnrollInfo extends ConsumerWidget {
                 ],
               ),
               SizedBox(height: 31),
-              IdTextField(ref),
+              IdTextField(ref, context),
               SizedBox(height: 27),
               PasswordTextField(ref),
               SizedBox(height: 27),
@@ -186,7 +186,7 @@ class EnrollInfo extends ConsumerWidget {
     );
   }
 
-  Widget IdTextField(WidgetRef ref) {
+  Widget IdTextField(WidgetRef ref, BuildContext context) {
     final idCheckResult = ref.watch(idCheckResultProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,9 +236,19 @@ class EnrollInfo extends ConsumerWidget {
             suffixIcon: InkWell(
               onTap: () async {
                 final id = ref.read(idProvider);
-                await ref
-                    .read(userViewModelProvider.notifier)
-                    .checkUsername(id);
+                if (isIdValid(id)) {
+                  await ref
+                      .read(userViewModelProvider.notifier)
+                      .checkUsername(id);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('8~15자 사이로 입력해주세요.'),
+                      backgroundColor: CareConnectColor.black.withOpacity(0.5),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(
