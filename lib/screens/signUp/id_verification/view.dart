@@ -270,12 +270,12 @@ class IdVerification extends ConsumerWidget {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
                               .state = true;
-                          timer?.cancel();
-                          ref.read(timerProvider.notifier).state = 300;
                         } catch (_) {
                           ref
                               .read(isVerificationSuccessProvider.notifier)
                               .state = false;
+                          ref.read(isButtonVisibleProvider.notifier).state =
+                              true;
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -286,6 +286,8 @@ class IdVerification extends ConsumerWidget {
                             ),
                           );
                         }
+                        timer?.cancel();
+                        ref.read(timerProvider.notifier).state = 300;
                       },
                       child: Container(
                         width: 73,
