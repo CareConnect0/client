@@ -63,7 +63,6 @@ class ProfileTerms extends StatelessWidget {
 """;
 
   final service_terms = """
-
 함께하루 서비스 이용약관
 본 약관은 함께하루 앱의 구체적인 서비스 이용 방식 및 제한, 이용자의 권리와 책임을 설명합니다.
 
@@ -109,7 +108,6 @@ class ProfileTerms extends StatelessWidget {
 
 📅 시행일: 2025년 5월 30일
 📧 문의: s24318609@gmail.com
-
 """;
 
   @override
